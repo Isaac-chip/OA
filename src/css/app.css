@@ -1,0 +1,140 @@
+html,
+body {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.layout-view{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    padding: 0px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.ivu-layout{
+    background: #fff;
+}
+
+.wrapper-header{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+
+
+.wrapper-header .apps {
+    display: inline-block;
+    float: left;
+    margin-left: 22px;
+    padding-left: 22px;
+    position: relative;
+    top: 5px;
+}
+
+.mysearch{
+    border: none;
+}
+.wrapper-header .apps:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 24px;
+    background: #ebedee;
+    position: absolute;
+    top: 16px;
+    left: 0;
+}
+
+.apps-menu {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.wrapper-container {
+    display: flex;
+    position: relative;
+    background: #fff;
+    height: 100%;
+    margin: 67px 0px 20px;
+    bottom: 0px;
+    padding-bottom: 67px;
+}
+.ivu-layout-sider{
+    overflow-y:auto;
+}
+
+.ivu-layout-sider::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 0px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+
+.ivu-layout-sider:after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 100%;
+    background: #dcdee2;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.wrapper-header-nav-logo {
+    height: 50px;
+    margin-top: 8px;
+    float: left;
+    line-height: 50px;
+}
+
+.wrapper-header-nav-logo span{
+    font-size: 24px;
+}
+.wrapper-header-nav-logo img{
+    height: 100%;
+    border-style: none;
+}
+
+.info-menu-sign-in {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.ivu-avatar.ivu-avatar-icon {
+    font-size: 18px;
+}
+
+.info-menu-sign-in .ivu-avatar {
+    background-color: #87d068;
+}
+.wrapper-header-nav-search {
+    float: left;
+    margin-left: 60px;
+}
+
+.wrapper-header-nav-list {
+    height: inherit;
+    float: right;
+}
+
+.router-view-content{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    padding: 15px;
+    background: #fff;
+    box-sizing: border-box;
+}

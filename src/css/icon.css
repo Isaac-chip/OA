@@ -1,0 +1,8 @@
+.party-info{
+    width: 36px;
+    height: 36px;
+    background-image: url(../assets/images/party.png);
+    display: block;
+    background-size: 100% 100%;
+    margin: 0 auto;
+}
