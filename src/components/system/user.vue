@@ -37,24 +37,16 @@
                         </FormItem>
                     </Col>
                 </Row>
+                
                 <Row>
-                    <Col span="12">
-                        <FormItem label="用户类型" prop="userType">
-                            <Select v-model="userForm.userType">
-                                <Option value='0'>党委用户</Option>
-                                <Option value='1'>支部用户</Option>
-                                <Option value='2'>普通用户</Option>
-                            </Select>
+                    <FormItem label="所属组织" prop="deptName">
+                            <treeselect 
+                                    :options="departments"
+                                    :max-height="200"
+                                    @select="orgSelect"
+                                    noResultsText="没有找到匹配结果"
+                                    placeholder="请选择所属组织..." />
                         </FormItem>
-                    </Col>
-                    <Col span="12">
-                        <FormItem label="所属组织" prop="deptId">
-                            <treeselect v-model="userForm.deptId" 
-                                        :options="departments"
-                                        :max-height="200"
-                                        placeholder="请选择所属组织..." />
-                        </FormItem>
-                    </Col>
                 </Row>
                 <Row>
                     <Col span="12">
@@ -68,15 +60,25 @@
                         </FormItem>
                     </Col>
                 </Row>
-                <Row>
-                     <FormItem label="是否锁定">
-                        <i-switch v-model="userForm.disabled" size="large">
-                            <span slot="open">是</span>
-                            <span slot="close">否</span>
-                        </i-switch>
-                    </FormItem>
+               <Row>
+                   <Col span="12">
+                        <FormItem label="用户类型" prop="userType">
+                            <Select v-model="userForm.userType">
+                                <Option value='0'>党委用户</Option>
+                                <Option value='1'>支部用户</Option>
+                                <Option value='2'>普通用户</Option>
+                            </Select>
+                        </FormItem>
+                    </Col>
+                    <Col span="12">
+                        <FormItem label="是否锁定">
+                            <i-switch v-model="userForm.disabled" size="large">
+                                <span slot="open">是</span>
+                                <span slot="close">否</span>
+                            </i-switch>
+                        </FormItem>
+                    </Col>
                 </Row>
-
                 <Row>
                     <div style="text-align:center">
                         <Button type="primary" @click="addUser('userForm')">提交</Button>
@@ -146,7 +148,8 @@ export default {
                 username:'',
                 name:'',
                 userType:'',
-                deptId:'',
+                deptId:-1,
+                deptName:null,
                 phone:'',
                 email:'',
                 disabled:false,
@@ -169,7 +172,7 @@ export default {
                 ],
                 phone : [
                     { required: true,  message: '电话不能为空', trigger: 'blur' }
-                ],
+                ]
             }
         }
     },
@@ -205,6 +208,7 @@ export default {
                     var data = response.data;
                     console.log(data);
                     self.usersDatas = data.data.records;
+                    self.dataCount = data.data.total;
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -219,6 +223,10 @@ export default {
             this.isUpdate = false;
             this.loadDepartment();
         },
+        orgSelect:function(node){
+            this.userForm.deptId = node.did;
+            this.userForm.deptName = node.title;
+        },
         loadDepartment:function(){
             var self = this;
             self.$http({
@@ -231,6 +239,15 @@ export default {
             .then(function (response) {
                 if(response.status ==200){
                     var data = response.data;
+                    const arrChange = arr => arr.map(item => {
+                        const res = {};
+                        if(item.children && item.children.length == 0){
+                           delete item.children ;
+                        }else{
+                            arrChange(item.children);
+                        }
+                    });
+                    arrChange(data);
                     self.departments = data;
                 }
             }).catch(function (error) {
@@ -246,6 +263,11 @@ export default {
             var self = this;
             this.$refs[name].validate((valid) => {
                 if(valid){
+                    console.log(this.userForm.deptName);
+                    if(self.userForm.deptName == '' || self.userForm.deptName ==null) {
+                         this.$Message.error('请选择所属组织!');
+                         return;
+                    }
                     self.userForm.tenantId = self.$constants.userInfo.tenantId;
                     self.$http({
                         url:self.$constants.BIURL+'/user',
@@ -256,6 +278,8 @@ export default {
                     .then(function (response) {
                         if(response.status ==200){
                             var data = response.data;
+                            self.userForm.deptId = -1;
+                            self.userForm.deptName ='';
                             if(data.code == 1){
                                 self.$Message.error({
                                     content: data.data,
@@ -264,7 +288,8 @@ export default {
                             }else{
                                 self.current = 1;
                                 self.userModal = false;
-                                self.$refs.userForm.resetFields();
+                                self.$refs['userForm'].resetFields();
+                                this.loadUser();
                                 if(self.isUpdate){
                                     self.$Message.success({
                                         content: '数据修改成功!',
@@ -295,6 +320,8 @@ export default {
         hideUserModel:function(name){
             this.$refs[name].resetFields();
             this.userModal = false;
+            this.userForm.deptId = -1;
+            this.userForm.deptName ='';
         }
     },
     mounted:function(){
