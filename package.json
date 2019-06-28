@@ -11,9 +11,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@riophae/vue-treeselect": "0.0.38",
+    "axios": "^0.18.0",
     "iview": "^3.4.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.6"
+    "vue-router": "^3.0.6",
+    "vue-table-with-tree-grid": "^0.2.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

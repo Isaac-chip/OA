@@ -30,6 +30,27 @@ body {
     box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 }
 
+.bi-main-container{
+    height: 100%; 
+    padding: 40px 0 0; 
+    box-sizing: border-box ; 
+    position: relative;
+}
+
+.breadcrumb{
+    color: #999;
+    font-size: 14px;
+    border-bottom: 1px solid #e8eaec;
+    height: 40px;
+    line-height: 40px;
+    position: absolute;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    padding-left: 20px;
+    margin-top: -2px;
+}
+
 
 .wrapper-header .apps {
     display: inline-block;
@@ -65,9 +86,8 @@ body {
     position: relative;
     background: #fff;
     height: 100%;
-    margin: 67px 0px 20px;
+    margin: 67px 0px 0px;
     bottom: 0px;
-    padding-bottom: 67px;
 }
 .ivu-layout-sider{
     overflow-y:auto;
@@ -96,6 +116,7 @@ body {
     margin-top: 8px;
     float: left;
     line-height: 50px;
+    margin-left: -34px;
 }
 
 .wrapper-header-nav-logo span{
@@ -134,7 +155,76 @@ body {
     width: 100%;
     height: 100%;
     margin: 0px auto;
+    background: #fff;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.bi-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
     padding: 15px;
     background: #fff;
     box-sizing: border-box;
+}
+
+.back-view{
+    height: 28px;
+    width: auto;
+    display: flex;
+    cursor:hand !important;
+}
+
+.back-view img{
+    width: 24px;
+    height: 22px;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+
+.back-view span{
+    color: #2d8cf0;
+    font-size: 13px;
+    padding-left: 3px;
+    margin-top: 3px;
+}
+
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+ ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .05);
+    border-radius: 10px;
+    -webkit-box-shadow: inset 1px 1px 0 rgba(202, 124, 124, 0.1);
+}
+/*鼠标悬浮在该类指向的控件上时滑块的样式*/
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1);
+}
+/*鼠标悬浮在滑块上时滑块的样式*/
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, .4);
+    -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1);
+}
+/*正常时候的主干部分*/
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: white;
+}
+/*鼠标悬浮在滚动条上的主干部分*/
+
+::-webkit-scrollbar-track:hover {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .4);
+    background-color: rgba(0, 0, 0, .01);
 }

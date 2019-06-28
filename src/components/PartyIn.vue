@@ -1,5 +1,11 @@
 <template>
-    <div class="partyIn">
+    <div class="bi-main-container">
+      <Breadcrumb class="breadcrumb">
+          <BreadcrumbItem to="/">首页</BreadcrumbItem>
+          <BreadcrumbItem>党建业务</BreadcrumbItem>
+          <BreadcrumbItem>发展党员</BreadcrumbItem>
+      </Breadcrumb>
+      <div class="bi-container">
       <Steps :current="0">
           <Step title="进行中" content="申请入党"></Step>
           <Step title="待进行" content="入党积极分子的确定和培养教育"></Step>
@@ -113,7 +119,7 @@
             <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
         </FormItem>
     </Form>
-      
+      </div>
     </div>
 </template>
 
