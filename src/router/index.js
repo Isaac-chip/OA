@@ -9,11 +9,13 @@ import Menu from "@/components/system/menu"
 import Role from "@/components/system/role"
 import User from "@/components/system/user"
 import Department from "@/components/system/department"
+import Menbermanage from "@/components/system/menbermanage"
 
 Vue.use(Router)
 
 export default 
  new Router({
+  mode:'history',
   routes: [
     {
       path: '/',
@@ -51,6 +53,10 @@ export default
       path: '/system/dept',
       name: 'dept',
       component: Department
+    },{
+      path: '/system/menbermanage',
+      name: 'menbermanage',
+      component: Menbermanage
     }
   ]
 })

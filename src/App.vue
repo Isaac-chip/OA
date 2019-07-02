@@ -60,7 +60,7 @@
                             党务信息
                         </template>
                         <MenuItem name="1-1" to="/system/dept">党组织管理</MenuItem>
-                        <MenuItem name="1-2">党员管理</MenuItem>
+                        <MenuItem name="1-2" to="/system/menbermanage">党员管理</MenuItem>
                     </Submenu>
                     <Submenu name="2">
                         <template slot="title">
