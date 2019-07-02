@@ -241,24 +241,24 @@ export default{
                         title:'序号',
                         key:'num',
                         align:'center',
-                        width:100,
+                        width:80,
                     },
                     {
                         title: '服务主题',
                         key: 'theme',
                         align:'center',
-                        width:100,
+                       
                     },
                     {
                         title: '手机号码',
                         key: 'phone',
                         align:'center',
-                        width:150,
+                        
                     },
                     {
                         title: '所属组织',
                         key: 'suborganize',
-                        width:450,
+                        width:280,
                     },
                     {
                         title: '政治面貌',
