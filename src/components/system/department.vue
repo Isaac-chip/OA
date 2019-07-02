@@ -14,10 +14,10 @@
                              <div class="dept_title">
                                 <div>党组织管理</div>
                                 <div class="dept_icon_header">
-                                    <div class="i-icon i-icon-add" />
+                                    <div class="i-icon i-icon-add" @click="showDeptModal" />
                                     <div class="i-icon i-icon-edit" />
                                     <div class="i-icon i-icon-delete" />
-                                    <div class="i-icon i-icon-refresh" />
+                                    <div class="i-icon i-icon-refresh" @click="refreshDept" />
                                 </div>
                              </div>
                         </div>
@@ -39,13 +39,97 @@
                 </Col>
             </Row>
         </div>
+
+        <Modal v-model="deptFormModal" title="新增组织" :footer-hide="true" :mask-closable="false" style="width:600px">
+            <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="80" >
+                <Row>
+                    <Col span="12">
+                        <FormItem label="组织名称" prop="deptName">
+                            <Input v-model="deptForm.deptName" placeholder="请输入组织名称" />
+                        </FormItem>
+                    </Col>
+                    <Col span="12">
+                        <FormItem label="组织编号" prop="deptCode">
+                            <Input v-model="deptForm.deptCode" placeholder="请输入组织编号" />
+                        </FormItem>
+                    </Col>
+                </Row>
+                
+                <Row>
+                    <FormItem label="所属组织">
+                        <treeselect 
+                                :options="departmentDatas"
+                                :max-height="200"
+                                @select="orgSelect"
+                                noResultsText="没有找到匹配结果"
+                                placeholder="请选择所属组织..." />
+                    </FormItem>
+                </Row>
+                <Row>
+                    <Col span="12">
+                        <FormItem label="组织级别" prop="partyTypeVal">
+                            <Select v-model="deptForm.partyTypeVal" placeholder="请选择组织级别">
+                                <Option value='0'>省委组织</Option>
+                                <Option value='1'>市委组织</Option>
+                                <Option value='2'>县委组织</Option>
+                                <Option value='3'>党工委组织</Option>
+                                <Option value='4'>党支部</Option>
+                            </Select>
+                        </FormItem>
+                    </Col>
+                    <Col span="12">
+                        <FormItem label="组织类型" prop="deptType">
+                            <Select v-model="deptForm.deptType" placeholder="请选择组织类型">
+                                <Option value='0'>村(社区)党组织</Option>
+                                <Option value='1'>机关事业单位党组织</Option>
+                                <Option value='2'>国企企业党组织</Option>
+                                <Option value='3'>非公有经济和社会党组织</Option>
+                            </Select>
+                        </FormItem>
+                    </Col>
+                </Row>
+               <Row>
+                   <Col span="12">
+                        <FormItem label="(位置)经度" prop="lat">
+                            <Input v-model="deptForm.lat" placeholder="请输入经度" />
+                        </FormItem>
+                    </Col>
+                    <Col span="12">
+                        <FormItem label="(位置)纬度" prop="lng">
+                            <Input v-model="deptForm.lng" placeholder="请输入纬度" />
+                        </FormItem>
+                    </Col>
+                </Row>
+                <Row>
+                    <FormItem label="所在地址" prop="address">
+                        <Input v-model="deptForm.address" placeholder="所在位置" />
+                    </FormItem>
+                </Row>
+                <Row>
+                    <FormItem label="描述" prop="memo">
+                        <Input v-model="deptForm.memo" placeholder="输入描述" />
+                    </FormItem>
+                </Row>
+                <Row>
+                    <div style="text-align:center">
+                        <Button type="primary" @click="addDept('deptForm')">提交</Button>
+                        <Button style="margin-left: 8px" @click="hidedeptModel('deptForm')">关闭</Button>
+                    </div>
+                </Row>
+
+            </Form>
+        </Modal>
     </div>
 </template>
 
 <script>
 
+import Treeselect from '@riophae/vue-treeselect';
+import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+
 export default{
     name: 'departmentView',
+    components: { Treeselect },
     data (){
         return {
              // 初始化信息总条数
@@ -57,6 +141,34 @@ export default{
             queryStr:'',
             deptQueryStr:'',
             deptCode:'--',
+            deptFormModal:false,
+            deptForm:{
+                did:'',
+                deptName:'',
+                deptCode:'',
+                partyType:'',
+                parentId:-1,
+                deptType:'',
+                memo:'',
+                tenantId:'',
+                lat:'',
+                lng:'',
+                address:''
+            },
+            deptRuleValidate:{
+                deptName: [
+                    { required: true, message: '部门名称不能为空', trigger: 'blur' }
+                ],
+                deptCode: [
+                    { required: true,  message: '部门编码不能为空', trigger: 'blur' }
+                ],
+                partyTypeVal: [
+                    { required: true,  message: '组织级别不能为空', trigger: 'change' }
+                ],
+                deptType: [
+                    { required: true,type: 'string', message: '组织类型不能为空', trigger: 'change' }
+                ]
+            },
             departmentDatas:[],
             usersDatas:[],
             usersCloumns:[{
@@ -80,6 +192,12 @@ export default{
         }
     },
     methods:{
+        showDeptModal:function(){
+            this.deptFormModal = true;
+        },
+         orgSelect:function(node){
+            this.deptForm.parentId = node.did;
+        },
         onSeach:function(){
             this.current = 1;
             this.loadUser();
@@ -143,6 +261,15 @@ export default{
             .then(function (response) {
                 if(response.status ==200){
                     var data = response.data;
+                     const arrChange = arr => arr.map(item => {
+                        const res = {};
+                        if(item.children && item.children.length == 0){
+                           delete item.children ;
+                        }else{
+                            arrChange(item.children);
+                        }
+                    });
+                    arrChange(data);
                     self.departmentDatas = data;
                 }
             }).catch(function (error) {
@@ -152,7 +279,71 @@ export default{
                 });
                 console.log(error);
             });
+        },
+        refreshDept:function(){
+            this.loadDepartment();
+        },
+        addDept:function(name){
+            var self = this;
+            this.$refs[name].validate((valid) => {
+                if(valid){
+                     if(self.deptForm.parentId == '' || self.deptForm.parentId ==null) {
+                         this.$Message.error('请选择所属组织!');
+                         return;
+                    }
+                    self.deptForm.tenantId = self.$constants.userInfo.tenantId;
+                    self.$http({
+                        url:self.$constants.BIURL+'/political/department',
+                        method:'POST',
+                        dataType:'json',
+                        data:self.deptForm
+                    })
+                    .then(function (response) {
+                        if(response.status ==200){
+                            var data = response.data;
+                            self.deptForm.parentId = -1;
+                            if(data.code == 1){
+                                self.$Message.error({
+                                    content: data.data,
+                                    duration: 2
+                                }); 
+                            }else{
+                                self.current = 1;
+                                self.deptFormModal = false;
+                                self.$refs['deptForm'].resetFields();
+                                self.loadDepartment();
+                                if(self.isUpdate){
+                                    self.$Message.success({
+                                        content: '数据修改成功!',
+                                        duration: 2
+                                    });
+                                }else{
+                                    self.$Message.success({
+                                        content: '数据添加成功!',
+                                        duration: 2
+                                    });
+                                }
+                            }
+                        
+                        }
+                    }) .catch(function (error) {
+                        self.$Message.error({
+                            content: error.message,
+                            duration: 2
+                        });
+                        console.log(error);
+                    });
+                }else{
+                    this.$Message.error('表单校验失败，请输入必填项!');
+                }
+            });
+        },
+        hidedeptModel:function(name){
+            this.$refs[name].resetFields();
+            this.deptFormModal = false;
+            this.deptForm.parentId = -1;
         }
+
     },
     mounted:function(){
        // console.log('...');
@@ -201,7 +392,7 @@ export default{
 
 .dept_icon_header div{
     margin-right: 10px;
-    cursor: hand !important;
+    cursor: pointer;
 }
 
 .userView{
