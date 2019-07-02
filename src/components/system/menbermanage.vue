@@ -31,8 +31,8 @@
                     <Table ref="table" border  :columns="columns1" :data="data1" no-data-text="暂时没有数据"></Table>
                 </div>
                 <Row >
-                    <Col span="4" style="font-size:15px; margin-top:15px;">显示页数 1 / 3,440</Col>
-                    <Col span="20">
+                    <Col span="5" style="font-size:15px; margin-top:15px;">显示页数 1 / 3,440</Col>
+                    <Col span="18">
                         <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
                     </Col>
                 </Row>
@@ -372,7 +372,7 @@ export default{
                     {
                         title: '所属组织',
                         key: 'suborganize',
-                        width:500,
+                        width:450,
                     },
                     {
                         title: '政治面貌',

@@ -10,6 +10,7 @@ import Role from "@/components/system/role"
 import User from "@/components/system/user"
 import Department from "@/components/system/department"
 import Menbermanage from "@/components/system/menbermanage"
+import Volunteer from "@/components/system/volunteer"
 
 Vue.use(Router)
 
@@ -57,6 +58,10 @@ export default
       path: '/system/menbermanage',
       name: 'menbermanage',
       component: Menbermanage
+    },{
+      path: '/system/volunteer',
+      name: 'volunteer',
+      component: Volunteer
     }
   ]
 })

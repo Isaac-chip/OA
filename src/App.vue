@@ -114,7 +114,7 @@
                             <Icon type="ios-analytics"></Icon>
                             党群服务
                         </template>
-                        <MenuItem name="5-1">志愿服务</MenuItem>
+                        <MenuItem name="5-1" to="/system/Volunteer">志愿服务</MenuItem>
                         <MenuItem name="5-2">党费缴纳</MenuItem>
                         <MenuItem name="5-3">互动交流</MenuItem>
                         <MenuItem name="5-4">党群心声</MenuItem>
