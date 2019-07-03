@@ -289,7 +289,7 @@ export default {
                                 self.current = 1;
                                 self.userModal = false;
                                 self.$refs['userForm'].resetFields();
-                                this.loadUser();
+                                self.loadUser();
                                 if(self.isUpdate){
                                     self.$Message.success({
                                         content: '数据修改成功!',
