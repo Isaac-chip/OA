@@ -1,36 +1,36 @@
 <template lang="html">
-  <div >
+  <div>
     <Breadcrumb class="breadcrumb">
-        <BreadcrumbItem to="/">首页</BreadcrumbItem>
-        <BreadcrumbItem>系统管理</BreadcrumbItem>
-        <BreadcrumbItem>菜单管理</BreadcrumbItem>
+      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem>系统管理</BreadcrumbItem>
+      <BreadcrumbItem>菜单管理</BreadcrumbItem>
     </Breadcrumb>
     <div class="bi-container">
-    <zk-table
-      ref="table"
-      sum-text="sum"
-      index-text="序号"
-      :data="data"
-      :columns="columns"
-      :stripe="props.stripe"
-      :border="props.border"
-      :show-header="props.showHeader"
-      :show-summary="props.showSummary"
-      :show-row-hover="props.showRowHover"
-      :show-index="props.showIndex"
-      :tree-type="props.treeType"
-      :is-fold="props.isFold"
-      :expand-type="props.expandType"
-      :selection-type="props.selectionType">
-      <template slot="$expand" scope="scope">
-        {{ `My name is ${scope.row.name},
-           this rowIndex is ${scope.rowIndex}.`
-         }}
-      </template>
-      <template slot="likes" scope="scope">
-        {{ scope.row.likes.join(',') }}
-      </template>
-    </zk-table>
+      <zk-table
+        ref="table"
+        sum-text="sum"
+        index-text="序号"
+        :data="data"
+        :columns="columns"
+        :stripe="props.stripe"
+        :border="props.border"
+        :show-header="props.showHeader"
+        :show-summary="props.showSummary"
+        :show-row-hover="props.showRowHover"
+        :show-index="props.showIndex"
+        :tree-type="props.treeType"
+        :is-fold="props.isFold"
+        :expand-type="props.expandType"
+        :selection-type="props.selectionType">
+        <template slot="$expand" scope="scope">
+          {{ `My name is ${scope.row.name},
+          this rowIndex is ${scope.rowIndex}.`
+          }}
+        </template>
+        <template slot="likes" scope="scope">
+          {{ scope.row.likes.join(',') }}
+        </template>
+      </zk-table>
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@
 <script>
   export default {
     name: 'example',
-    data() {
+    data () {
       return {
         props: {
           stripe: false,
@@ -213,16 +213,15 @@
             template: 'likes',
           },
         ],
-      };
+      }
     },
     computed: {
-      propList() {
+      propList () {
         return Object.keys(this.props).map(item => ({
           name: item,
-        }));
+        }))
       },
     },
-    methods: {
-    },
-  };
+    methods: {},
+  }
 </script>
