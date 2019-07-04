@@ -216,7 +216,7 @@
                 标准化台账
               </template>
               <MenuItem name="11-1">党建阵地</MenuItem>
-              <MenuItem name="11-2">发展党员</MenuItem>
+              <MenuItem name="11-2" to="/partyDevelopment/ApplicationForParty">发展党员</MenuItem>
               <MenuItem name="11-3">三会一课</MenuItem>
               <MenuItem name="11-4">四议两公开</MenuItem>
               <MenuItem name="11-5">党务公开</MenuItem>
