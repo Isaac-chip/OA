@@ -1,15 +1,15 @@
 <template>
-  <div id="app">
+  <div id="app" >
     <layout class="layout-view">
       <!-- 头部布局 -->
-      <Header class="wrapper-header">
+      <Header  class="wrapper-header">
         <div class="wrapper-header-nav-logo">
           <!-- <img src="./assets/logo.png"> -->
           <span>合浦党建E网通</span>
 
         </div>
         <div class="apps">
-          <Dropdown trigger="click">
+          <Dropdown  trigger="click" >
             <a href="javascript:void(0)">
               <img src="https://file.iviewui.com/icon/application.png" class="apps-menu">
               <i class="apps-arrow ivu-icon ivu-icon-ios-arrow-down"></i>
@@ -41,21 +41,17 @@
           </Dropdown>
         </div>
         <div class="wrapper-header-nav-search">
-          <Input suffix="ios-search" placeholder="输入内容查找" style="width: auto;border:none" class="mysearch"/>
+          <Input suffix="ios-search" placeholder="输入内容查找" style="width: auto;border:none" class="mysearch" />
         </div>
         <div class="wrapper-header-nav-list ">
-          <div class="info-menu-sign-in"><span
-            class="ivu-avatar ivu-avatar-circle ivu-avatar-default ivu-avatar-icon"><i
-            class="ivu-icon ivu-icon-ios-person"></i></span>
-            <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large"><!----> <!----> <span>登录</span></button>
-          </div>
+          <div class="info-menu-sign-in"><span class="ivu-avatar ivu-avatar-circle ivu-avatar-default ivu-avatar-icon"><i class="ivu-icon ivu-icon-ios-person"></i></span> <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large"><!----> <!----> <span>登录</span></button></div>
         </div>
       </Header>
       <Layout class="wrapper-container">
         <Sider hide-trigger :style="{background: '#fff',height:'100%'}">
           <Menu active-name="home" theme="primary" width="auto" :open-names="['1']">
             <MenuItem name="home">
-              <Icon type="md-chatbubbles"/>
+              <Icon type="md-chatbubbles" />
               首页
             </MenuItem>
             <Submenu name="1">
@@ -64,14 +60,14 @@
                 党务信息
               </template>
               <MenuItem name="1-1" to="/system/dept">党组织管理</MenuItem>
-              <MenuItem name="1-2">党员管理</MenuItem>
+              <MenuItem name="1-2" to="/system/menbermanage">党员管理</MenuItem>
             </Submenu>
             <Submenu name="2">
               <template slot="title">
                 <Icon type="ios-keypad"></Icon>
                 党建业务
               </template>
-              <MenuItem name="2-1">
+              <MenuItem name="2-1" >
                 <Icon type="ios-apps"></Icon>
                 党员发展
               </MenuItem>
@@ -109,8 +105,8 @@
                 <Icon type="ios-bookmark"></Icon>
                 党讯管理
               </template>
-              <MenuItem name="3-1" to="/partyManage/columnManage">栏目管理</MenuItem>
-              <MenuItem name="3-2" to="/partyManage/contentPublish">内容发布</MenuItem>
+              <MenuItem name="3-1">栏目管理</MenuItem>
+              <MenuItem name="3-2">内容发布</MenuItem>
             </Submenu>
 
             <Submenu name="5">
@@ -118,7 +114,7 @@
                 <Icon type="ios-analytics"></Icon>
                 党群服务
               </template>
-              <MenuItem name="5-1">志愿服务</MenuItem>
+              <MenuItem name="5-1" to="/partyService/Volunteer">志愿服务</MenuItem>
               <MenuItem name="5-2">党费缴纳</MenuItem>
               <MenuItem name="5-3">互动交流</MenuItem>
               <MenuItem name="5-4">党群心声</MenuItem>
@@ -220,7 +216,7 @@
                 标准化台账
               </template>
               <MenuItem name="11-1">党建阵地</MenuItem>
-              <MenuItem name="11-2" to="/partyDevelopment/ApplicationForParty">发展党员</MenuItem>
+              <MenuItem name="11-2">发展党员</MenuItem>
               <MenuItem name="11-3">三会一课</MenuItem>
               <MenuItem name="11-4">四议两公开</MenuItem>
               <MenuItem name="11-5">党务公开</MenuItem>
@@ -245,7 +241,7 @@
             </Submenu>
           </Menu>
         </Sider>
-        <Layout>
+        <Layout >
           <Content class="router-view-content">
             <router-view/>
           </Content>
@@ -258,9 +254,11 @@
 
 <script>
   export default {
-    name: 'app',
-    data () {
-      return {}
+    name:"app",
+    data(){
+      return {
+
+      }
     }
   }
 </script>
@@ -275,14 +273,14 @@
     overflow: hidden;
   }
 
-  .quickAccess {
+  .quickAccess{
     width: 630px;
     height: 300px;
     max-width: 630px;
     max-height: 395px;
   }
 
-  .quickAccess .headerTitle {
+  .quickAccess .headerTitle{
     width: 100%;
     height: 44px;
     line-height: 44px;
@@ -290,8 +288,7 @@
     margin-left: 20px;
     font-weight: 700;
   }
-
-  .quickAccess .headerTitle:after {
+  .quickAccess .headerTitle:after{
     content: "";
     display: block;
     width: 4px;
@@ -304,7 +301,7 @@
     z-index: 111111;
   }
 
-  .quickAccess .content {
+  .quickAccess .content{
     position: relative;
     display: flex;
     display: -webkit-flex;
@@ -314,19 +311,19 @@
     align-items: flex-start;
   }
 
-  .quickAccess .content .item {
+  .quickAccess .content .item{
     position: relative;
     width: 12.5%;
     text-align: center;
   }
 
-  .quickAccess .content .item a {
+  .quickAccess .content .item a{
     width: 100%;
     text-align: center;
     margin: 0 auto;
   }
 
-  .quickAccess .content .item a .title {
+  .quickAccess .content .item a .title{
     color: #666;
   }
 </style>
