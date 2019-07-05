@@ -10,12 +10,13 @@ import Role from "@/components/system/role"
 import User from "@/components/system/user"
 import Department from "@/components/system/department"
 import Menbermanage from "@/components/system/menbermanage"
-import Volunteer from "@/components/system/volunteer"
+import Volunteer from "@/components/partyService/volunteer"
+import ApplicationForParty from '../components/partyDevelopment/applicationForParty'
 
 Vue.use(Router)
 
-export default 
- new Router({
+export default
+new Router({
   mode:'history',
   routes: [
     {
@@ -59,9 +60,13 @@ export default
       name: 'menbermanage',
       component: Menbermanage
     },{
-      path: '/system/volunteer',
+      path: '/partyService/volunteer',
       name: 'volunteer',
       component: Volunteer
+    },{
+      path:'/partyDevelopment/applicationForParty',
+      name:'applicationForParty',
+      component:ApplicationForParty
     }
   ]
 })
