@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-        <BreadcrumbItem to="/">首页</BreadcrumbItem>
-        <BreadcrumbItem>系统管理</BreadcrumbItem>
-        <BreadcrumbItem>菜单管理</BreadcrumbItem>
+      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem>系统管理</BreadcrumbItem>
+      <BreadcrumbItem>菜单管理</BreadcrumbItem>
     </Breadcrumb>
     <div class="bi-container">
     <Row>
@@ -149,7 +149,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
   export default {
     name: 'menuView',
     components: { Treeselect },
-    data() {
+    name: 'example',
+    data () {
       return {
         queryStr:'',
         menuModal:false,
@@ -211,13 +212,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
             template: 'action',
           },
         ],
-      };
+      }
     },
     computed: {
-      propList() {
+      propList () {
         return Object.keys(this.props).map(item => ({
           name: item,
-        }));
+        }))
       },
     },
     methods: {
@@ -388,4 +389,3 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
       this.loadMenus();
     }
   };
-</script>
