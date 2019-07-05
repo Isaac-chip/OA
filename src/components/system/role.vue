@@ -13,7 +13,7 @@
                     <Table border ref="selection" :columns="roleCloumns" :data="roleDatas" :min-height="200" style="margin-top:10px;">
                         <template slot-scope="{ row, index }" slot="action">
                             <Button type="primary" size="small" style="margin-right: 5px" @click="update(index)">修改</Button>
-                            <Button type="error" size="small" @click="remove(index)">删除</Button>
+                            <Button type="error" size="small" @click="deleteDept(index)">删除</Button>
                         </template>
                     </Table>
                     <Page :total="dataCount" :page-size="pageSize" show-total @on-change="changepage" class="pageView"></Page>
@@ -103,18 +103,7 @@ export default{
              },{
                 roleName:"支部管理员"
              }],
-            userCloumns:[{
-                title: '用户名称',
-                key: 'nickName'
-            },{
-                title: '所属组织',
-                key: 'orgName'
-            },{
-                title: '操作',
-                slot: 'action',
-                width: 100,
-                align: 'center'
-            }],
+            userCloumns:[],
             userDatas:[{
                 nickName:"张三",
                 orgName:'xxx/xxx/xxx/xxx'
@@ -210,6 +199,42 @@ export default{
                     this.$Message.error('表单校验失败，请输入必填项!');
                 }
                 
+            });
+        },
+        deleteDept:function(index){
+            var self = this;
+            const data = this.roleDatas[index];
+
+            this.$Modal.confirm({
+                title:'系统提示',
+                content:'确定要删除该记录吗?',
+                okText:'确定',
+                cancelText:'取消',
+                onOk:function(){
+                    self.handleDelete(data);
+                }
+            });
+        },
+        handleDelete:function(data){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/role/'+data.rid,
+                method:'DELETE'
+            })
+            .then(function (response) {
+                if(response.status ==200){
+                    self.$Message.success({
+                        content: '数据删除成功!',
+                        duration: 2
+                    });
+                    self.loadRoles();
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
             });
         },
         showRoleModal:function(){
