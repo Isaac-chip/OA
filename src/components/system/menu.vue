@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
-      <BreadcrumbItem>系统管理</BreadcrumbItem>
-      <BreadcrumbItem>菜单管理</BreadcrumbItem>
+        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem>系统管理</BreadcrumbItem>
+        <BreadcrumbItem>菜单管理</BreadcrumbItem>
     </Breadcrumb>
     <div class="bi-container">
     <Row>
@@ -53,12 +53,13 @@
     </zk-table>
     </div>
 
-    <Modal  v-model="menuModal" title="新增\修改菜单" :footer-hide="true" :mask-closable="false" class="userFrom">
+    <Modal  v-model="menuModal" title="新增\修改菜单" :footer-hide="true" :mask-closable="false" class="menuFrom">
         <Form ref="menuForm" :model="menuForm" :rules="menuRuleValidate" :label-width="80"  >
             <Row>
                 <Col span="12">
                     <FormItem label="父级菜单">
                         <treeselect 
+                            v-model="menuForm.parentId"
                             :options="meunTreeDatas"
                             :max-height="200"
                             @select="menuSelect"
@@ -102,8 +103,8 @@
                     </FormItem>
                 </Col>
                 <Col span="12">
-                    <FormItem label="模块入口类" prop="menuClass">
-                        <Input v-model="menuForm.menuClass" placeholder="请输入模块入口类" />
+                    <FormItem label="模块入口类" prop="mainClass">
+                        <Input v-model="menuForm.mainClass" placeholder="请输入模块入口类" />
                     </FormItem>
                 </Col>
             </Row>
@@ -122,7 +123,7 @@
             <Row>
                 <Col span="12">
                     <FormItem label="菜单图标" prop="menuIcon">
-                        <Input v-model="menuForm.menuUrl" placeholder="请输入菜单图标" />
+                        <Input v-model="menuForm.menuIcon" placeholder="请输入菜单图标" />
                     </FormItem>
                 </Col>
             </Row>
@@ -149,8 +150,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
   export default {
     name: 'menuView',
     components: { Treeselect },
-    name: 'example',
-    data () {
+    data() {
       return {
         queryStr:'',
         menuModal:false,
@@ -160,7 +160,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
           menuUrl:'',
           menuType:'',
           menuMode:'',
-          parentId:-1,
+          parentId:0,
           menuIcon:'',
           sortNo:1,
           modelKey:'',
@@ -212,13 +212,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
             template: 'action',
           },
         ],
-      }
+      };
     },
     computed: {
-      propList () {
+      propList() {
         return Object.keys(this.props).map(item => ({
           name: item,
-        }))
+        }));
       },
     },
     methods: {
@@ -245,10 +245,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
                 //处理树形结构数据输出格式
 
                 const arrChange = function(datas){
-                  console.log(datas);
                     for(var i =0; i<datas.length;i++){
                       var item = datas[i];
-                      console.log(item.children);
                       if(item.children && item.children.length == 0){
                            delete item.children ;
                         }else{
@@ -273,16 +271,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
         });
       },
       menuSelect:function(node){
-         this.menuForm.deptId = node.mId;
+         this.menuForm.parentId = node.mid;
       },
       addOrUpdate:function(name){
           var self = this;
           this.$refs[name].validate((valid) => {
               if(valid){
-                  if(self.menuForm.parentId == -1) {
-                        this.$Message.error('请选择所属父菜单!');
-                        return;
-                  }
                   self.menuForm.tenantId = self.$constants.userInfo.tenantId;
                   var url = self.$constants.BIURL+'/menu';
                   var method = 'POST';
@@ -348,7 +342,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
           this.menuForm = Object.assign({}, data);
           this.menuForm.menuType = this.menuForm.menuType+'';
           this.menuForm.menuMode = this.menuForm.menuMode+'';
-          this.userModal = true;
+          this.menuModal = true;
       },
       deleteMenu:function(data){
           var self = this;
@@ -389,3 +383,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
       this.loadMenus();
     }
   };
+</script>
+
+<style>
+.menuFrom .ivu-modal{
+    width: 620px !important;
+}
+</style>
