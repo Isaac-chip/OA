@@ -105,7 +105,7 @@
                 <Icon type="ios-bookmark"></Icon>
                 党讯管理
               </template>
-              <MenuItem name="3-1">栏目管理</MenuItem>
+              <MenuItem name="3-1" to="/partyNews/catalog">栏目管理</MenuItem>
               <MenuItem name="3-2">内容发布</MenuItem>
             </Submenu>
 

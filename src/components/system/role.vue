@@ -222,12 +222,43 @@ export default{
             this.loadRoleUser();
             this.loadMenus();
         },
-        resourceMenuClick:function(rowIndex){
-            var checkProps =  this.$refs.table.getCheckedProp();
-            if(checkProps && checkProps.length >0){
-                
-            }
-            console.log(rowIndex);
+        resourceMenuClick:function(index,rows){
+            var self = this;
+            var mids = [];
+            rows.map(item=>{
+                if(item._isChecked){
+                    mids.push(item.mid);
+                }
+            });
+            self.batchSave(self.roleId,mids.join(','));
+        },
+        batchSave:function(roleId,mIds){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/biRoleMenu/saveBatch',
+                method:'GET',
+                dataType:'json',
+                params:{
+                    roleId:self.roleId,
+                    mIds:mIds
+                }
+            })
+            .then(function (response) {
+                if(response.status ==200){
+                    var data = response.data;
+                    if(data.code == 1){
+                        self.$Message.error({
+                            content: data.data,
+                            duration: 2
+                        }); 
+                    }
+                }
+            }) .catch(function (error) {
+                self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+            });
         },
         loadRoleUser:function(roleId){
             var self = this;

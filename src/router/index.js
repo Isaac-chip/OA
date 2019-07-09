@@ -13,6 +13,9 @@ import Menbermanage from "@/components/system/menbermanage"
 import Volunteer from "@/components/partyService/volunteer"
 import ApplicationForParty from '../components/partyDevelopment/applicationForParty'
 
+/**党讯管理 */
+import Catalog from '@/components/partyNews/catalog'
+
 Vue.use(Router)
 
 export default
@@ -67,6 +70,10 @@ new Router({
       path:'/partyDevelopment/applicationForParty',
       name:'applicationForParty',
       component:ApplicationForParty
+    },{
+      path:'/partyNews/catalog',
+      name:'catalog',
+      component:Catalog
     }
   ]
 })
