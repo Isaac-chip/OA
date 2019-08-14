@@ -90,9 +90,8 @@
               <FormItem label="考核频率" prop="khpl">
                 <Select v-model="amListfromValidate.khpl">
                   <Option value='0'>每年</Option>
-                  <Option value='1'>每月</Option>
-                  <Option value='2'>每周</Option>
-                  <Option value='3'>每天</Option>
+                  <Option value='1'>每季</Option>
+                  <Option value='2'>每月</Option>
                 </Select>
               </FormItem>
             </Col>
@@ -107,9 +106,8 @@
               <FormItem label="提醒周期" prop="txzq">
                 <Select v-model="amListfromValidate.txzq">
                   <Option value='0'>每年</Option>
-                  <Option value='1'>每月</Option>
-                  <Option value='2'>每周</Option>
-                  <Option value='4'>每天</Option>
+                  <Option value='1'>每季</Option>
+                  <Option value='2'>每月</Option>
                 </Select>
               </FormItem>
             </Col>
@@ -175,7 +173,7 @@
                 <Option v-for="item in partyOrgs" :value="item.dId" :key="item.deptName">{{ item.deptName }}</Option>
               </AutoComplete>
               <div style="margin-top:10px">
-                <Tag v-for="item in partyOutOrgs" type="dot" closable color="primary" @on-close="deletePartyOrgs(item)">
+                <Tag v-for="item in partyOutOrgs" :key="item.deptId" type="dot" closable color="primary" @on-close="deletePartyOrgs(item)">
                   {{item.deptName}}
                 </Tag>
               </div>
@@ -202,7 +200,7 @@
                 <Option v-for="item in partyBranchs" :value="item.dId" :key="item.deptName">{{ item.deptName }}</Option>
               </AutoComplete>
               <div style="margin-top:10px">
-                <Tag v-for="item in partyOutBranchs" type="dot" closable color="primary"
+                <Tag v-for="item in partyOutBranchs" :key="item.deptId" type="dot" closable color="primary"
                      @on-close="deletePartyOutBranchs(item)">{{item.deptName}}
                 </Tag>
               </div>
@@ -235,7 +233,7 @@
                 <Option v-for="item in partyPeoples" :value="item.dId" :key="item.deptName">{{ item.userName }}</Option>
               </AutoComplete>
               <div style="margin-top:10px">
-                <Tag v-for="item in partyOutPeoples" type="dot" closable color="primary"
+                <Tag v-for="item in partyOutPeoples" :key="item.userName" type="dot" closable color="primary"
                      @on-close="deletePartyOutPeoples(item)">{{item.userName}}
                 </Tag>
               </div>

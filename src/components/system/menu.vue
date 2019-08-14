@@ -123,8 +123,11 @@
             <Row>
                 <Col span="12">
                     <FormItem label="菜单图标" prop="menuIcon">
-                        <Input v-model="menuForm.menuIcon" placeholder="请输入菜单图标" />
+                        <Input v-model="menuForm.menuIcon" placeholder="请输入菜单图标" >
+                             <Button @click="showImageView" slot="append" icon="ios-images"></Button>
+                        </Input>
                     </FormItem>
+                    <image-view ref="imageView"></image-view>
                 </Col>
             </Row>
             <Row>
@@ -144,12 +147,13 @@
 </template>
 
 <script>
+import ImageView from '../public/imageView';
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 
   export default {
     name: 'menuView',
-    components: { Treeselect },
+    components: { Treeselect ,ImageView},
     data() {
       return {
         queryStr:'',
@@ -160,7 +164,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
           menuUrl:'',
           menuType:'',
           menuMode:'',
-          parentId:0,
+          parentId:null,
           menuIcon:'',
           sortNo:1,
           modelKey:'',
@@ -211,8 +215,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
             type: 'template',
             template: 'action',
           },
-        ],
-      };
+        ]
+      }
     },
     computed: {
       propList() {
@@ -222,6 +226,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
       },
     },
     methods: {
+       showImageView:function(){
+            this.$refs['imageView'].showImageModel(true);
+      },
       onSeach:function(val){
         this.queryStr = val;
         this.loadMenus();

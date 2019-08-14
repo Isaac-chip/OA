@@ -73,7 +73,8 @@
                 <Option value='1'>市委组织</Option>
                 <Option value='2'>县委组织</Option>
                 <Option value='3'>党工委组织</Option>
-                <Option value='4'>党支部</Option>
+                <Option value='4'>党总支</Option>
+                <Option value='5'>党支部</Option>
               </Select>
             </FormItem>
           </Col>
