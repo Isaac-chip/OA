@@ -5,6 +5,7 @@ import iView from 'iview'
 import axios from 'axios'
 import qs from 'qs'
 import constants from './constants'
+import Utils from './utils';
 import 'iview/dist/styles/iview.css'
 import './css/login.css'
 import './css/app.css'
@@ -45,10 +46,20 @@ router.afterEach(route => {
   iView.LoadingBar.finish()
 })
 
+let access_token = '';
+
 axios.interceptors.request.use(config => {
-  iView.LoadingBar.start()
-  if (constants.access_token !=null && constants.access_token !='') {
-      config.headers['Authorization'] = "bearer "+constants.access_token;
+  iView.LoadingBar.start();
+  access_token = constants.access_token;
+  if (access_token ==null || access_token =='') {
+    var userInfo =window.localStorage.getItem('userInfo');
+    if(userInfo !=null && userInfo!=''){
+      constants.userInfo = JSON.parse(userInfo);
+      access_token = JSON.parse(userInfo).access_token;
+    }
+  }
+  if(access_token !=null && access_token !=''){
+    config.headers['Authorization'] = "bearer "+ access_token;
   }
   return config
 }, error => {

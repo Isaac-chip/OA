@@ -63,6 +63,7 @@ export const randomLenNum = (len, date) => {
   if (date) random = random + Date.now()
   return random
 }
+import Utils from "./utils";
 import Base64  from "js-base64/base64.js";
 import CryptoJS from "crypto-js/crypto-js.js";
   export default {
@@ -151,6 +152,8 @@ import CryptoJS from "crypto-js/crypto-js.js";
                         self.$constants.userInfo.deptCode = data.deptCode;
                         self.$constants.access_token = data.access_token;
                         self.$router.push({path: '/home'});
+                        console.log(data);
+                        window.localStorage.setItem('userInfo', JSON.stringify(data));
                     }else{
                        self.$Message.error({
                           content: data.msg,

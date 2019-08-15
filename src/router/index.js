@@ -18,6 +18,8 @@ import User from "@/components/system/user"
 import Department from "@/components/system/department"
 import PartyUser from "@/components/system/partyUser"
 import PartyUserTable from "@/components/system/partyUserTable"
+import ApkEdition from "@/components/system/ApkEdition"
+import SysLogs from "@/components/system/sysLogs"
 import Volunteer from "@/components/partyService/volunteer"
 
 /**党讯管理 */
@@ -88,6 +90,14 @@ new Router({
           path: '/system/dept',
           name: 'dept',
           component: Department
+        },{
+          path: '/system/apkEdition',
+          name: 'apkEdition',
+          component: ApkEdition
+        },{
+          path: '/system/sysLogs',
+          name: 'sysLogs',
+          component: SysLogs
         },{
           path: '/system/partyUser',
           name: 'partyUser',

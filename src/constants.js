@@ -2,6 +2,7 @@ export default {
 	devEnv: "dev", // 开发环境配置，dev开发模式，prod生产模式
 	//BIURL: "http://192.168.1.104:9010/admin/",
 	//BIURL: "http://172.16.1.198:8082/mobile
+	PREPATH:'http://120.24.51.37/group1/',
 	BASEPATH:"http://localhost:9010",
 	BIURL: "http://localhost:9010/admin",
 	client_id:'wpb',
@@ -10,7 +11,7 @@ export default {
 	scope:'server',
 	access_token:'',
 	userInfo:{
-		userId:6,
+		userId:1,
 		username:'admin',
 		name:'系统管理员',
 		deptId:1,

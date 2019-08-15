@@ -127,7 +127,8 @@
                              <Button @click="showImageView" slot="append" icon="ios-images"></Button>
                         </Input>
                     </FormItem>
-                    <image-view ref="imageView"></image-view>
+                    <image-view ref="imageView"
+                        :imageSelect="imageSelect"></image-view>
                 </Col>
             </Row>
             <Row>
@@ -228,6 +229,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
     methods: {
        showImageView:function(){
             this.$refs['imageView'].showImageModel(true);
+             this.$refs['imageView'].loadImageByUser();
       },
       onSeach:function(val){
         this.queryStr = val;
@@ -279,6 +281,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
       },
       menuSelect:function(node){
          this.menuForm.parentId = node.mid;
+      },
+      imageSelect:function(value){
+        this.menuForm.menuIcon = value;
+        this.$refs['imageView'].showImageModel(false);
       },
       addOrUpdate:function(name){
           var self = this;
