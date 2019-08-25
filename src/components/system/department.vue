@@ -67,8 +67,8 @@
         </Row>
         <Row>
           <Col span="12">
-            <FormItem label="组织级别" prop="partyTypeVal">
-              <Select v-model="deptForm.partyTypeVal" placeholder="请选择组织级别">
+            <FormItem label="组织级别" prop="deptType">
+              <Select v-model="deptForm.deptType" placeholder="请选择组织级别">
                 <Option value='0'>省委组织</Option>
                 <Option value='1'>市委组织</Option>
                 <Option value='2'>县委组织</Option>
@@ -79,8 +79,8 @@
             </FormItem>
           </Col>
           <Col span="12">
-            <FormItem label="组织类型" prop="deptType">
-              <Select v-model="deptForm.deptType" placeholder="请选择组织类型">
+            <FormItem label="组织类型" prop="partyType">
+              <Select v-model="deptForm.partyType" placeholder="请选择组织类型">
                 <Option value='0'>村(社区)党组织</Option>
                 <Option value='1'>机关事业单位党组织</Option>
                 <Option value='2'>国企企业党组织</Option>

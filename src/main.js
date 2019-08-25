@@ -50,16 +50,20 @@ let access_token = '';
 
 axios.interceptors.request.use(config => {
   iView.LoadingBar.start();
-  access_token = constants.access_token;
-  if (access_token ==null || access_token =='') {
-    var userInfo =window.localStorage.getItem('userInfo');
-    if(userInfo !=null && userInfo!=''){
-      constants.userInfo = JSON.parse(userInfo);
-      access_token = JSON.parse(userInfo).access_token;
+  var url = config.url;
+  //如果是登录请求则不需要带token
+  if(url.indexOf('oauth/token') == -1){
+    access_token = constants.access_token;
+    if (access_token ==null || access_token =='') {
+      var userInfo =window.localStorage.getItem('userInfo');
+      if(userInfo !=null && userInfo!=''){
+        constants.userInfo = JSON.parse(userInfo);
+        access_token = JSON.parse(userInfo).access_token;
+      }
     }
-  }
-  if(access_token !=null && access_token !=''){
-    config.headers['Authorization'] = "bearer "+ access_token;
+    if(access_token !=null && access_token !=''){
+      config.headers['Authorization'] = "bearer "+ access_token;
+    }
   }
   return config
 }, error => {

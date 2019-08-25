@@ -229,6 +229,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css';
     methods: {
        showImageView:function(){
             this.$refs['imageView'].showImageModel(true);
+             this.$refs['imageView'].setHeaders();
              this.$refs['imageView'].loadImageByUser();
       },
       onSeach:function(val){

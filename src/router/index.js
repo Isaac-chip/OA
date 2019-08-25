@@ -20,6 +20,7 @@ import PartyUser from "@/components/system/partyUser"
 import PartyUserTable from "@/components/system/partyUserTable"
 import ApkEdition from "@/components/system/ApkEdition"
 import SysLogs from "@/components/system/sysLogs"
+import MailInfo from "@/components/system/mailInfo"
 import Volunteer from "@/components/partyService/volunteer"
 
 /**党讯管理 */
@@ -35,12 +36,18 @@ import LeaderMemberLogs from '@/components/builder/leaderMemberLogs'
 import FirstSecretary from '@/components/builder/firstSecretary'
 import FirstSecretaryLogs from '@/components/builder/firstSecretaryLogs'
 import DoubleSign from '@/components/builder/doubleSign'
-import { homedir } from 'os';
+
+/**学习教育 */
+import ExamSubjectType from '@/components/exam/examSubjectType'
+import ExamSubject from '@/components/exam/examSubject'
+import ExamQuestion from '@/components/exam/examQuestion'
+
 Vue.use(Router)
 
 export default
 new Router({
-  mode:'history',
+  base: '/',
+  mode: 'hash',
   routes: [{
       path:'/',
       name:'login',
@@ -79,6 +86,18 @@ new Router({
           name: 'menu',
           component: Menu
         },{
+          path: '/exam/examSubjectType',
+          name: 'examSubjectType',
+          component: ExamSubjectType
+        },{
+          path: '/exam/examSubject',
+          name: 'examSubject',
+          component: ExamSubject
+        },{
+          path: '/exam/examQuestion',
+          name: 'examQuestion',
+          component: ExamQuestion
+        },{
           path: '/system/role',
           name: 'role',
           component: Role
@@ -98,6 +117,10 @@ new Router({
           path: '/system/sysLogs',
           name: 'sysLogs',
           component: SysLogs
+        },{
+          path: '/system/mailInfo',
+          name: 'mailInfo',
+          component: MailInfo
         },{
           path: '/system/partyUser',
           name: 'partyUser',

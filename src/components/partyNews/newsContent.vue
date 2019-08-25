@@ -61,9 +61,10 @@
                             :on-format-error="handleFormatError"
                             :on-exceeded-size="handleMaxSize"
                             :before-upload="handleBeforeUpload"
+                            :headers="uploadHeaders" 
                             multiple
                             type="drag"
-                            action="http://localhost:9011/file/fileUpload"
+                            :action="contentFilePath"
                             style="display: inline-block;width:58px;">
                             <div style="width: 58px;height:58px;line-height: 58px;">
                                 <Icon type="ios-camera" size="20"></Icon>
@@ -150,6 +151,7 @@ export default {
             editorOption:{
                 height:'400px'
             },
+            contentFilePath:'',
             contentCloumns:[{
                 type: 'index',
                 width: 65,
@@ -221,6 +223,7 @@ export default {
             },
             imgUrl: '',
             visible: false,
+            uploadHeaders:{},
             uploadList: [],
             catalogDatas:[],
             defaultList:[],
@@ -231,7 +234,24 @@ export default {
             }
         }
     },
+    created:function(){
+        this.contentFilePath = this.$constants.BIURL + '/political/content/upload';
+        this.setHeaders();
+    },
     methods:{
+        setHeaders:function(){
+            var self = this;
+            var access_token = this.$constants.access_token;
+            if(access_token == null || access_token ==''){
+                var userInfo =window.localStorage.getItem('userInfo');
+                if(userInfo !=null && userInfo!=''){
+                    access_token = JSON.parse(userInfo).access_token;
+                }
+            }
+            self.uploadHeaders = {
+                'Authorization': "bearer " + access_token
+            };  
+        },
         onSeach:function(){
             this.current = 1;
             this.loadContents();

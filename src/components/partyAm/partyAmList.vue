@@ -165,6 +165,7 @@
           <div v-show="partyCom">
             <div style="margin:0px 28px">
               <div style="margin-bottom:10px">不参加考核党委</div>
+
               <AutoComplete
                 icon="ios-search"
                 placeholder="请输入党委名称搜索"
@@ -211,17 +212,7 @@
           <div v-show="partyPeople">
             <FormItem label="角色分类">
               <CheckboxGroup v-model="checkGroups">
-                <Checkbox label="0">系统管理员</Checkbox>
-                <Checkbox label="1">县委领导</Checkbox>
-                <Checkbox label="2">第一书记</Checkbox>
-                <Checkbox label="3">党(工)委管理员</Checkbox>
-                <Checkbox label="4">党支部管理员</Checkbox>
-                <Checkbox label="5">工作分队长</Checkbox>
-                <Checkbox label="6">工作组长</Checkbox>
-                <Checkbox label="7">工作队员</Checkbox>
-                <Checkbox label="8">流动党员</Checkbox>
-                <Checkbox label="9">普通党员</Checkbox>
-                <Checkbox label="10">发展党员</Checkbox>
+                <Checkbox v-for="item in roleLists" :key="item.rid" :label="item.rid">{{item.roleName}}</Checkbox>
               </CheckboxGroup>
             </FormItem>
             <div style="margin:0px 28px">
@@ -334,6 +325,7 @@
             align: 'center'
           }
         ],
+        roleLists:[],
         partyAmListDatas: [],
         partyAmDatas: [],
         amListfromValidate: {
@@ -431,6 +423,7 @@
             self.partyCom = false
             self.partyZb = false
             self.partyPeople = true
+            self.loadRoles();
             break
         }
 
@@ -658,7 +651,7 @@
           dataType: 'json',
           params: {
             deptType: type,
-            query: query
+            deptName: query
           }
         })
           .then(function (response) {
@@ -765,7 +758,33 @@
           self.$Loading.error()
           console.log(error)
         })
-      }
+      },
+      loadRoles:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/role/list',
+                method:'GET',
+                dataType:'json',
+                params:{
+                    current:1,
+                    size:100,
+                    tenantId:self.$constants.userInfo.tenantId
+                }
+            })
+            .then(function (response) {
+                if(response.status ==200){
+                    var data = response.data;
+                    console.log(data);
+                    self.roleLists = data.data.records;
+                }
+            }) .catch(function (error) {
+                self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        }
     },
     mounted: function () {
       this.loadPartyAmDatas()

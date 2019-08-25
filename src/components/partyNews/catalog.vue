@@ -33,7 +33,11 @@
                     <Input v-model="catalogForm.catalogName" placeholder="请输入栏目名称" />
                 </FormItem>
                 <FormItem label="栏目图标" prop="catalogIcon">
-                    <Input v-model="catalogForm.catalogIcon" placeholder="请输入栏目名称" />
+                    <Input v-model="catalogForm.catalogIcon" placeholder="请输入栏目名称" >
+                        <Button @click="showImageView" slot="append" icon="ios-images"></Button>
+                    </Input>
+                     <image-view ref="imageView"
+                        :imageSelect="imageSelect"></image-view>
                 </FormItem>
                 <FormItem label="链接地址" prop="catalogUrl">
                     <Input v-model="catalogForm.catalogUrl" placeholder="请输入栏目名称" />
@@ -68,8 +72,9 @@
 </template>
 
 <script>
-
+import ImageView from '../public/imageView';
 export default {
+    components: {ImageView},
     data () {
         return {
             queryStr:'',
@@ -97,6 +102,15 @@ export default {
         }
     },
     methods:{
+         showImageView:function(){
+            this.$refs['imageView'].showImageModel(true);
+            this.$refs['imageView'].setHeaders();
+            this.$refs['imageView'].loadImageByUser();
+        },
+         imageSelect:function(value){
+            this.catalogForm.catalogIcon = value;
+            this.$refs['imageView'].showImageModel(false);
+        },
         catalogSearch:function(value){
             this.queryStr =value;
             this.findAllCatalog();

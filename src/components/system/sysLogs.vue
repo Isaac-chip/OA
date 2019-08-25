@@ -11,8 +11,8 @@
                <Form :label-width="90">
                    <Row>
                     <Col span="8">
-                            <FormItem label="用户名:">
-                            <Input v-model="params.username"  @on-search="onSeach" placeholder="输入用户名或者姓名查找" />
+                            <FormItem label="操作人:">
+                            <Input v-model="params.username"  @on-search="onSeach" placeholder="输入操作人" />
                         </FormItem>
                     </Col>
                     <Col span="8">
@@ -143,6 +143,11 @@ export default {
         onDateSearch:function(value){
             this.params.startTime = value[0];
             this.params.endTime = value[1];
+            this.loadSysLogByQuery();
+        },
+        dateClearSearch:function(){
+           this.params.startTime = '';
+            this.params.endTime = '';
             this.loadSysLogByQuery();
         },
         loadSysLogByQuery:function(){

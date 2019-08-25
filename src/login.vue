@@ -54,6 +54,11 @@ input:-webkit-autofill {
   outline: none !important;
 }
 
+.login-main .ivu-input:focus{
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 </style>
 
 <script>
@@ -152,7 +157,6 @@ import CryptoJS from "crypto-js/crypto-js.js";
                         self.$constants.userInfo.deptCode = data.deptCode;
                         self.$constants.access_token = data.access_token;
                         self.$router.push({path: '/home'});
-                        console.log(data);
                         window.localStorage.setItem('userInfo', JSON.stringify(data));
                     }else{
                        self.$Message.error({
@@ -160,18 +164,16 @@ import CryptoJS from "crypto-js/crypto-js.js";
                           duration: 2
                       });
                     }
-                    console.log(data);
                 }
                 self.loginForm.password = '';
                 self.refreshCode();
-            }) .catch(function (error) {
+            }) .catch(function (error ,config, code, request, response) {
                 self.refreshCode();
                 self.loginForm.password = '';
                 self.$Message.error({
-                    content: error.message,
-                    duration: 2
+                    content: '用户名或密码错误，请重新输入！',
+                    duration: 3
                 });
-                console.log(error);
             });
           }
         });

@@ -105,16 +105,7 @@ export default {
         }
     },
     created:function(){
-        var access_token = this.$constants.access_token;
-        if(access_token == null || access_token ==''){
-            var userInfo =window.localStorage.getItem('userInfo');
-            if(userInfo !=null && userInfo!=''){
-                access_token = JSON.parse(userInfo).access_token;
-            }
-            this.uploadHeaders = {
-                'Authorization': "bearer " + access_token
-            };
-        }
+        this.setHeaders()
         this.fileServer = this.$constants.BIURL +'/img/upload';
         this.prePath = this.$constants.PREPATH;
     },
@@ -156,9 +147,24 @@ export default {
         },
         handleSuccess:function(response, file, fileList){
             this.loadImageByUser();
+        },
+        setHeaders:function(){
+            var self = this;
+            var access_token = this.$constants.access_token;
+            if(access_token == null || access_token ==''){
+                var userInfo =window.localStorage.getItem('userInfo');
+                if(userInfo !=null && userInfo!=''){
+                    access_token = JSON.parse(userInfo).access_token;
+                }
+            }
+            self.uploadHeaders = {
+                'Authorization': "bearer " + access_token
+            };  
         }
     },
     mounted:function(){
+        
+        this.setHeaders();
         //this.loadImageByUser();
     }
 }
