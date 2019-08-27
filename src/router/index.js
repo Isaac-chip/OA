@@ -41,6 +41,8 @@ import DoubleSign from '@/components/builder/doubleSign'
 import ExamSubjectType from '@/components/exam/examSubjectType'
 import ExamSubject from '@/components/exam/examSubject'
 import ExamQuestion from '@/components/exam/examQuestion'
+import CourseContent from '@/components/exam/courseContent'
+import StudyCatalog from '@/components/exam/studyCatalog'
 
 Vue.use(Router)
 
@@ -97,6 +99,14 @@ new Router({
           path: '/exam/examQuestion',
           name: 'examQuestion',
           component: ExamQuestion
+        },{
+          path: '/exam/courseContent',
+          name: 'courseContent',
+          component: CourseContent
+        },{
+          path: '/exam/studyCatalog',
+          name: 'studyCatalog',
+          component: StudyCatalog
         },{
           path: '/system/role',
           name: 'role',
