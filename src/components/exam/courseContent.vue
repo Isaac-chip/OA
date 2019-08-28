@@ -44,7 +44,7 @@
                     </FormItem>
                     <FormItem label="标题图片" >
                         <div class="demo-upload-list" :key="item.url" v-for="item in uploadList">
-                            <img :src="'http://120.24.51.37/group1/'+item.url">
+                            <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -71,7 +71,7 @@
                         </Upload>
 
                         <Modal title="图片预览" v-model="visible">
-                            <img :src="'http://120.24.51.37/group1/' + imgName + ''" v-if="visible" style="width: 100%">
+                            <img :src="imgName" v-if="visible" style="width: 100%">
                         </Modal>
                     </FormItem>
                     <FormItem label="发布状态" >
@@ -82,14 +82,20 @@
                         </RadioGroup>
                     </FormItem>
                     <Row>
-                        <Col span="5">
-                            <FormItem v-model="courseForm.isTop" label="是否置顶" >
-                                <Checkbox label="1" >置顶</Checkbox>
+                        <Col span="6">
+                            <FormItem  label="是否置顶" >
+                                 <RadioGroup v-model="courseForm.isTop">
+                                    <Radio label="1" >是</Radio>
+                                    <Radio label="0">否</Radio>
+                                </RadioGroup>
                             </FormItem>
                         </Col>
                         <Col span="7">
-                            <FormItem v-model="courseForm.isDailyPush" label="每日推送" >
-                                <Checkbox label="1" >每日推送</Checkbox>
+                            <FormItem  label="每日推送" >
+                                 <RadioGroup v-model="courseForm.isDailyPush">
+                                    <Radio label="1" >是</Radio>
+                                    <Radio label="0">否</Radio>
+                                </RadioGroup>
                             </FormItem>
                         </Col>
                     </Row>
@@ -263,6 +269,22 @@ export default {
             this.pageSize = value;
             this.loadContents();
         },
+        clearForm:function(){
+            this.courseForm={
+                catalogId:null,
+                state:0,
+                title:'',
+                expiryDate:'',
+                author:'',
+                newsfrom:'',
+                content:'',
+                isTop:0,
+                isDailyPush:0,
+                creatorId:-1,
+                titlePic:'',
+                sortNo:0
+            }
+        },
         loadContents:function(){
             var self = this;
             self.$http({
@@ -294,6 +316,7 @@ export default {
         showContentModal:function(){
             this.contentModal = true;
             this.isUpdate = false;
+            this.clearForm();
         },
         addConent:function(name){
             var self = this;
@@ -326,6 +349,7 @@ export default {
                                 self.current = 1;
                                 self.contentModal = false;
                                 self.$refs['courseForm'].resetFields();
+                                self.clearForm();
                                 self.loadContents();
                                 if(self.isUpdate){
                                     self.$Message.success({
@@ -364,7 +388,7 @@ export default {
             this.uploadList = [];
             this.uploadList.push({
                 'name':'image',
-                'url':this.courseForm.titlePic
+                'url':this.$constants.PREPATH+this.courseForm.titlePic
             });
         },
         deleteContent:function(index){
@@ -409,7 +433,7 @@ export default {
                 this.courseForm.titlePic = data.filePath;
                 this.uploadList.push({
                     'name':data.name,
-                    'url':data.filePath
+                    'url':this.$constants.PREPATH+data.filePath
                 });
             }
         },

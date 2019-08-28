@@ -2,20 +2,20 @@
     <div class="bi-main-container">
          <Breadcrumb class="breadcrumb">
             <BreadcrumbItem to="/">首页</BreadcrumbItem>
-            <BreadcrumbItem>党讯管理</BreadcrumbItem>
-            <BreadcrumbItem>信息发布</BreadcrumbItem>
+            <BreadcrumbItem>学习教育</BreadcrumbItem>
+            <BreadcrumbItem to="/exam/studyCatalog">专题学习</BreadcrumbItem>
+            <BreadcrumbItem>专题列表</BreadcrumbItem>
         </Breadcrumb>
 
         <div class="bi-container">
              <Row class="header">
                 <Col  span="2"><Button @click="showContentModal">新增</Button></Col>
                 <Col  span="7">
-                    <Input v-model="queryStr" search enter-button @on-search="onSeach" placeholder="输入用户名或者姓名查找" />
+                    <Input v-model="queryStr" search enter-button @on-search="onSeach" placeholder="输入标题或副标题查找" />
                 </Col>
             </Row>
             <Table border ref="selection" :columns="contentCloumns" :data="contentDatas" :min-height="200">
                 <template slot-scope="{ row, index }" slot="action">
-                    <Button  size="small" style="margin-right: 5px" @click="resetPwd(index)">查看评论</Button>
                     <Button  size="small" style="margin-right: 5px" @click="updateContent(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteContent(index)">删除</Button>
                 </template>
@@ -24,28 +24,28 @@
         </div>
 
         <Modal v-model="contentModal" title="信息发布" :footer-hide="true" :mask-closable="false" class="contentFrom" width="600">
-                <Form ref="contentForm" :model="contentForm" :rules="userRuleValidate" :label-width="80"  >
-                    <FormItem label="所属栏目">
-                        <treeselect 
-                                v-model="contentForm.catalogId"
-                                :options="catalogDatas"
-                                :max-height="200"
-                                @select="orgSelect"
-                                noResultsText="没有找到匹配结果"
-                                placeholder="请选择所属栏目..." />
-                    </FormItem>
+                <Form ref="studyContentForm" :model="studyContentForm" :rules="userRuleValidate" :label-width="80"  >
                     <FormItem label="标题" prop="title">
-                        <Input v-model="contentForm.title" placeholder="请输入标题" />
+                        <Input v-model="studyContentForm.title" placeholder="请输入标题" />
+                    </FormItem>
+                     <FormItem label="副标题" prop="subTitle">
+                        <Input v-model="studyContentForm.subTitle" placeholder="请输入副标题" />
                     </FormItem>
                     <FormItem label="有效日期">
-                        <DatePicker v-model="contentForm.expiryDate" type="datetime" placeholder="请选择有效日期" ></DatePicker>
+                        <DatePicker v-model="studyContentForm.expiryDate" type="datetime" placeholder="请选择有效日期" ></DatePicker>
+                    </FormItem>
+                     <FormItem label="作者">
+                        <Input v-model="studyContentForm.author" placeholder="请输入作者" />
+                    </FormItem>
+                     <FormItem label="信息来源">
+                        <Input v-model="studyContentForm.newsfrom"  placeholder="请输入信息来源" />
                     </FormItem>
                     <FormItem label="序号">
-                        <Input v-model="contentForm.sortNo" type="number" placeholder="请输入标题" />
+                        <Input v-model="studyContentForm.sortNo" type="number" placeholder="请输入标题" />
                     </FormItem>
                     <FormItem label="标题图片" >
                         <div class="demo-upload-list" :key="item.url" v-for="item in uploadList">
-                            <img :src="'http://120.24.51.37/group1/'+item.url">
+                            <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -72,28 +72,27 @@
                         </Upload>
 
                         <Modal title="图片预览" v-model="visible">
-                            <img :src="'http://120.24.51.37/group1/' + imgName + ''" v-if="visible" style="width: 100%">
+                            <img :src="imgName" v-if="visible" style="width: 100%">
                         </Modal>
                     </FormItem>
                     <FormItem label="发布状态" >
-                         <!-- v-model="contentForm.isTop" -->
-                        <RadioGroup v-model="contentForm.state">
+                        <RadioGroup v-model="studyContentForm.used">
                             <Radio label="1" >已发布</Radio>
                             <Radio label="0">未发布</Radio>
                         </RadioGroup>
                     </FormItem>
                     <Row>
                         <Col span="6">
-                            <FormItem  label="是否置顶" >
-                                <RadioGroup v-model="courseForm.isTop">
+                            <FormItem label="是否置顶" >
+                                <RadioGroup v-model="studyContentForm.isTop">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
                                 </RadioGroup>
                             </FormItem>
                         </Col>
                         <Col span="7">
-                            <FormItem v-model="contentForm.isDailyPush" label="每日推送" >
-                                 <RadioGroup v-model="courseForm.isDailyPush">
+                            <FormItem  label="每日推送" >
+                                 <RadioGroup v-model="studyContentForm.isDailyPush">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
                                 </RadioGroup>
@@ -103,13 +102,13 @@
                     <Row style="height:360px;margin-bottom:20px;">
                         <quill-editor ref="myTextEditor"
                             :options="editorOption" 
-                            v-model="contentForm.content">
+                            v-model="studyContentForm.content">
                         </quill-editor>
                     </Row>
                     <Row>
                         <div style="text-align:center">
-                            <Button type="primary" @click="addConent('contentForm')">提交</Button>
-                            <Button style="margin-left: 8px" @click="hideContentModel('contentForm')">关闭</Button>
+                            <Button type="primary" @click="addConent('studyContentForm')">提交</Button>
+                            <Button style="margin-left: 8px" @click="hideContentModel('studyContentForm')">关闭</Button>
                         </div>
                     </Row>
                 </Form>
@@ -137,11 +136,7 @@
 </style>
 <script>
 
-import Treeselect from '@riophae/vue-treeselect';
-import '@riophae/vue-treeselect/dist/vue-treeselect.css';
-
 export default {
-    components: { Treeselect },
     data() {
         return {
             // 初始化信息总条数
@@ -164,41 +159,40 @@ export default {
                 title:'序号',
                 align: 'center'
             },{
-                title: '栏目',
-                width:'100px',
-                key: 'catalogName'
+                title: '预览图片',
+                key: 'titlePic',
+                width:'120px',
+                render : (h, params) => {
+                    var self = this;
+                    var titlePic = params.row.titlePic;
+                    return h('img',{
+                        attrs:{
+                            src:self.$constants.PREPATH+titlePic
+                        },
+                        style: {
+                            width: '64px',
+                            height:'64px'
+                        }
+                    }) 
+                }
             },{
                 title: '标题',
                 key: 'title',
-                width:'280px'
+                width:'220px'
             },{
-                 title: '创建人',
-                key: 'userName'
+                title: '副标题',
+                key: 'subTitle',
+                width:'220px'
             },{
                 title: '创建时间',
                 key: 'creatTs',
-            },{
-                 title: '状态',
-                key: 'state',
-                render: (h, params) => {
-                    const row = params.row
-                    var text = row.state;
-                    switch(text){
-                        case 0:
-                            return h('span','未发布');
-                            break;
-                        case 1:
-                            return h('span','已发布');
-                            break;
-                    }
-                    return h('span', '已发布')
-                }
             },{
                  title: '置顶',
                 key: 'isTop',
                 render: (h, params) => {
                     const row = params.row
                     var text = row.isTop;
+                    console.log(text);
                     switch(text){
                         case 0:
                             return h('span','否');
@@ -211,15 +205,18 @@ export default {
             },{
                 title: '操作',
                 slot: 'action',
-                width: 210,
+                width: 140,
                 align: 'center'
             }],
             contentDatas:[],
-            contentForm:{
+            catalogId:'',
+            studyContentForm:{
                 catalogId:null,
-                state:0,
+                used:0,
                 title:'',
                 expiryDate:'',
+                author:'',
+                newsfrom:'',
                 content:'',
                 isTop:0,
                 isDailyPush:0,
@@ -241,7 +238,7 @@ export default {
         }
     },
     created:function(){
-        this.contentFilePath = this.$constants.BIURL + '/political/content/upload';
+        this.contentFilePath = this.$constants.BIURL + '/file/upload';
         this.setHeaders();
     },
     methods:{
@@ -270,18 +267,33 @@ export default {
             this.pageSize = value;
             this.loadContents();
         },
+        clearForm:function(){
+            this.studyContentForm={
+                catalogId:null,
+                used:0,
+                title:'',
+                expiryDate:'',
+                author:'',
+                newsfrom:'',
+                content:'',
+                isTop:0,
+                isDailyPush:0,
+                creatorId:-1,
+                titlePic:'',
+                sortNo:0
+            }
+        },
         loadContents:function(){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/content/findAll',
+                url:self.$constants.BIURL+'/study/content/list',
                 method:'GET',
                 dataType:'json',
                 params:{
                     current:self.current,
                     size:self.pageSize,
-                    query:self.queryStr,
-                    catalogId:self.catalogId,  
-                    tenantId:self.$constants.userInfo.tenantId
+                    title:self.queryStr,
+                    catalogId:self.catalogId
                 }
             })
             .then(function (response) {
@@ -302,66 +314,31 @@ export default {
         showContentModal:function(){
             this.contentModal = true;
             this.isUpdate = false;
-            this.loadCatalog();
-        },
-        orgSelect:function(node){
-            this.contentForm.catalogId = node.id;
-        },
-        loadCatalog:function(){
-            var self = this;
-            self.$http({
-                url:self.$constants.BIURL+'/political/catalog/findAll',
-                method:'GET',
-                params:{
-                queryStr:''
-                }
-            }).then(function (response) {
-                if(response.status ==200){
-                    var data = response.data;
-                    const arrChange = arr => arr.map(item => {
-                        const res = {};
-                        if(item.children && item.children.length == 0){
-                           delete item.children ;
-                        }else{
-                            arrChange(item.children);
-                        }
-                    });
-                    arrChange(data.data);
-                    self.catalogDatas = data.data;
-            }}).catch(function (error) {
-                self.$Message.error({
-                    content: error.message,
-                    duration: 2
-                });
-            });
+            this.clearForm();
         },
         addConent:function(name){
             var self = this;
             this.$refs[name].validate((valid) => {
                 if(valid){
-                    if(self.contentForm.catalogId == -1) {
-                         this.$Message.error('请选择所属栏目!');
-                         return;
-                    }
-                    self.contentForm.tenantId = self.$constants.userInfo.tenantId;
-                    self.contentForm.expiryDate = self.$convertDate(self.contentForm.expiryDate);
-                    self.contentForm.creatorId = self.$constants.userInfo.userId;
-                    var url = self.$constants.BIURL+'/political/content';
+                    self.studyContentForm.tenantId = self.$constants.userInfo.tenantId;
+                    self.studyContentForm.expiryDate = self.$convertDate(self.studyContentForm.expiryDate);
+                    self.studyContentForm.creatorId = self.$constants.userInfo.userId;
+                    self.studyContentForm.studyCatalogId = self.catalogId;
+                    var url = self.$constants.BIURL+'/study/content';
                     var method = 'POST';
                     if(self.isUpdate){
-                        url = self.$constants.BIURL+'/political/content';
                         method='PUT';
                     }
                     self.$http({
                         url:url,
                         method:method,
                         dataType:'json',
-                        data:self.contentForm
+                        data:self.studyContentForm
                     })
                     .then(function (response) {
                         if(response.status ==200){
                             var data = response.data;
-                            self.contentForm.catalogId = -1;
+                            self.studyContentForm.catalogId = -1;
                             if(data.code == 1){
                                 self.$Message.error({
                                     content: data.data,
@@ -370,7 +347,8 @@ export default {
                             }else{
                                 self.current = 1;
                                 self.contentModal = false;
-                                self.$refs['contentForm'].resetFields();
+                                self.$refs['studyContentForm'].resetFields();
+                                self.clearForm();
                                 self.loadContents();
                                 if(self.isUpdate){
                                     self.$Message.success({
@@ -401,17 +379,20 @@ export default {
         },
         updateContent:function(index){
             this.isUpdate = true;
-            this.loadCatalog();
-            this.contentForm = Object.assign({}, this.contentDatas[index]);
-            this.contentForm.isTop = this.contentForm.isTop+'';
-            this.contentForm.isDailyPush = this.contentForm.isDailyPush+'';
-            this.contentForm.state = this.contentForm.state +'';
+            this.studyContentForm = Object.assign({}, this.contentDatas[index]);
+            this.studyContentForm.isTop = this.studyContentForm.isTop+'';
+            this.studyContentForm.isDailyPush = this.studyContentForm.isDailyPush+'';
+            this.studyContentForm.used = this.studyContentForm.used +'';
             this.contentModal = true;
+            this.uploadList = [];
+            this.uploadList.push({
+                'name':'image',
+                'url':this.$constants.PREPATH+this.studyContentForm.titlePic
+            });
         },
         deleteContent:function(index){
             var self = this;
             const data = this.contentDatas[index];
-
             this.$Modal.confirm({
                 title:'系统提示',
                 content:'确定要删除该记录吗?',
@@ -425,7 +406,7 @@ export default {
         handleDelete:function(data){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/content/'+data.id,
+                url:self.$constants.BIURL+'/study/content/'+data.id,
                 method:'DELETE'
             })
             .then(function (response) {
@@ -434,7 +415,7 @@ export default {
                         content: '数据删除成功!',
                         duration: 2
                     });
-                    self.loadUser();
+                    self.loadContents();
                 }
             }) .catch(function (error) {
                     self.$Message.error({
@@ -447,17 +428,17 @@ export default {
         handleSuccess :function(response, file, fileList){
             var data = response.data;
             if(data){
-                this.contentForm.titlePic = data.filePath;
+                this.studyContentForm.titlePic = data.filePath;
                 this.uploadList.push({
                     'name':data.name,
-                    'url':data.filePath
+                    'url':this.$constants.PREPATH+data.filePath
                 });
             }
         },
         hideContentModel:function(name){
             this.$refs[name].resetFields();
             this.contentModal = false;
-            this.contentForm.catalogId = -1;
+            this.studyContentForm.catalogId = -1;
         },
         handleView (name) {
             this.imgName = name;
@@ -465,7 +446,7 @@ export default {
         },
         handleRemove (file) {
             this.uploadList.splice(this.uploadList.indexOf(file), 1);
-            this.contentForm.titlePic = '';
+            this.studyContentForm.titlePic = '';
         },
         handleFormatError (file) {
             this.$Notice.warning({
@@ -485,6 +466,7 @@ export default {
         }
     },
     mounted:function(){
+        this.catalogId = this.$route.query.id
         this.loadContents();
     }
 }

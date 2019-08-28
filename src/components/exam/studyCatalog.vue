@@ -15,6 +15,7 @@
             </Row>
             <Table border ref="selection" :columns="contentCloumns" :data="contentDatas" :min-height="200">
                 <template slot-scope="{ row, index }" slot="action">
+                    <Button  size="small" style="margin-right: 5px" @click="loadStudyConentList(index)">专题列表</Button>
                     <Button  size="small" style="margin-right: 5px" @click="updateContent(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteContent(index)">删除</Button>
                 </template>
@@ -32,7 +33,7 @@
                     </FormItem>
                     <FormItem label="专题图片" >
                         <div class="demo-upload-list" :key="item.url" v-for="item in uploadList">
-                            <img :src="'http://120.24.51.37/group1/'+item.url">
+                            <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -59,7 +60,7 @@
                         </Upload>
 
                         <Modal title="图片预览" v-model="visible">
-                            <img :src="'http://120.24.51.37/group1/' + imgName + ''" v-if="visible" style="width: 100%">
+                            <img :src="imgName" v-if="visible" style="width: 100%">
                         </Modal>
                     </FormItem>
                     <FormItem label="发布状态" >
@@ -69,7 +70,7 @@
                             <Radio label="0">未发布</Radio>
                         </RadioGroup>
                     </FormItem>
-                     <FormItem label="专题描述">
+                     <FormItem label="专题描述" prop="memo">
                          <Input v-model="studyCatalogForm.memo" type="textarea" :autosize="{minRows: 2,maxRows: 4}" placeholder=""></Input>
                     </FormItem>
                     <Row>
@@ -125,9 +126,9 @@ export default {
                 title:'序号',
                 align: 'center'
             },{
-                title: '预览图片',
+                title: '专题图片',
                 key: 'catalogIcon',
-                width:'120px',
+                width:'100px',
                 render : (h, params) => {
                     var self = this;
                     var catalogIcon = params.row.catalogIcon;
@@ -143,23 +144,19 @@ export default {
                 }
             },{
                 title: '专题名称',
-                key: 'title',
-                width:'220px'
+                key: 'catalogName',
+                width:'240px'
             },{
                 title: '专题描述',
                 key: 'memo',
                 width:'220px'
             },{
-                title: '状态',
-                key: 'catalogState',
-                width:'80px'
-            },{
                 title: '创建时间',
-                key: 'creatTs',
+                key: 'createTs',
             },{
                 title: '操作',
                 slot: 'action',
-                width: 140,
+                width: 220,
                 align: 'center'
             }],
             contentDatas:[],
@@ -177,13 +174,17 @@ export default {
             catalogDatas:[],
             defaultList:[],
             userRuleValidate:{
-                title: [
-                    { required: true, message: '标题不能为空', trigger: 'blur' }
+                catalogName: [
+                    { required: true, message: '专题名称不能为空', trigger: 'blur' }
+                ],
+                memo: [
+                    { required: true, message: '专题描述不能为空', trigger: 'blur' }
                 ]
             }
         }
     },
     created:function(){
+        this.imgUrl = this.$constants.BIURL
         this.contentFilePath = this.$constants.BIURL + '/file/upload';
         this.setHeaders();
     },
@@ -244,6 +245,8 @@ export default {
         showContentModal:function(){
             this.contentModal = true;
             this.isUpdate = false;
+            this.uploadList = [];
+            this.$refs['studyCatalogForm'].resetFields();
         },
         addConent:function(name){
             var self = this;
@@ -303,15 +306,23 @@ export default {
                 
             });
         },
+        loadStudyConentList:function(index){
+            var data = this.contentDatas[index];
+            this.$router.push({
+                'name': 'studyContent',
+                'path': '/exam/studyContent',
+                query: {'id': data.id}
+            })
+        },
         updateContent:function(index){
             this.isUpdate = true;
             this.studyCatalogForm = Object.assign({}, this.contentDatas[index]);
-            this.studyCatalogForm.state = this.studyCatalogForm.state +'';
+            this.studyCatalogForm.catalogState = this.studyCatalogForm.catalogState +'';
             this.contentModal = true;
             this.uploadList = [];
             this.uploadList.push({
                 'name':'image',
-                'url':this.studyCatalogForm.catalogIcon
+                'url':this.$constants.PREPATH+this.studyCatalogForm.catalogIcon
             });
         },
         deleteContent:function(index){
@@ -352,11 +363,12 @@ export default {
         },
         handleSuccess :function(response, file, fileList){
             var data = response.data;
+            var self = this;
             if(data){
                 this.studyCatalogForm.catalogIcon = data.filePath;
                 this.uploadList.push({
                     'name':data.name,
-                    'url':data.filePath
+                    'url': this.$constants.PREPATH+data.filePath
                 });
             }
         },

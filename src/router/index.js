@@ -43,6 +43,7 @@ import ExamSubject from '@/components/exam/examSubject'
 import ExamQuestion from '@/components/exam/examQuestion'
 import CourseContent from '@/components/exam/courseContent'
 import StudyCatalog from '@/components/exam/studyCatalog'
+import StudyContent from '@/components/exam/studyContent'
 
 Vue.use(Router)
 
@@ -107,6 +108,10 @@ new Router({
           path: '/exam/studyCatalog',
           name: 'studyCatalog',
           component: StudyCatalog
+        },{
+          path: '/exam/studyContent',
+          name: 'studyContent',
+          component: StudyContent
         },{
           path: '/system/role',
           name: 'role',
