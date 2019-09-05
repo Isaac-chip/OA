@@ -45,6 +45,13 @@ import CourseContent from '@/components/exam/courseContent'
 import StudyCatalog from '@/components/exam/studyCatalog'
 import StudyContent from '@/components/exam/studyContent'
 
+/**日常工作 */
+import UserSignRules from '@/components/dailyJob/userSignRules'
+import UserSignManager from '@/components/dailyJob/userSignManager'
+
+/**乡村振兴 */
+import DeptMap from '@/components/map/deptMap'
+
 Vue.use(Router)
 
 export default
@@ -112,6 +119,18 @@ new Router({
           path: '/exam/studyContent',
           name: 'studyContent',
           component: StudyContent
+        },{
+          path: '/dailyJob/userSignRules',
+          name: 'userSignRules',
+          component: UserSignRules
+        },{
+          path: '/dailyJob/userSignManager',
+          name: 'userSignManager',
+          component: UserSignManager
+        },{
+          path: '/map/deptMap',
+          name: 'deptMap',
+          component: DeptMap
         },{
           path: '/system/role',
           name: 'role',
