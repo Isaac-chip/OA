@@ -133,6 +133,7 @@ import cr3Img from '@/assets/images/cr3.png'
 
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import exportUtils from '@/vendor/export.js'
 
 export default {
     components: { Treeselect },
@@ -480,13 +481,26 @@ export default {
             }
             switch(name){
                 case 'exp1':
-                    window.open(this.$constants.BIURL + '/political/employee/apply/one/exportPartyIn?tenantId='+tenantId+'&deptCode='+deptCode+'&ids='+ids);
+                    var params = {
+                        tenantId:tenantId,
+                        deptCode:deptCode,
+                        ids:ids
+                    }
+                    exportUtils.exportExcel(this.$constants.BIURL+'/political/employee/apply/one/exportPartyIn',params);
                     break;
                 case 'exp2':
-                    window.open(this.$constants.BIURL + '/political/employee/apply/one/exportPartyCommit?tenantId='+tenantId+'&deptCode='+deptCode+'&ids='+ids);
+                    var params = {
+                        tenantId:tenantId,
+                        deptCode:deptCode,
+                        ids:ids
+                    }
+                    exportUtils.exportExcel(this.$constants.BIURL+'/political/employee/apply/one/exportPartyCommit',params);
                     break;
                 case 'exp3':
-                    window.open(this.$constants.BIURL + '/political/employee/apply/one/exportWord?ids='+ids);
+                     var params = {
+                        ids:ids
+                    }
+                    exportUtils.exportExcel(this.$constants.BIURL+'/political/employee/apply/one/exportWord',params);
                     break;
             }
         }

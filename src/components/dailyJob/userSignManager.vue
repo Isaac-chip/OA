@@ -35,7 +35,7 @@
                <Col  span="24" style="text-align:right">
                 <Button @click="searchByQuery"  icon="ios-search">搜索</Button>
                 <Divider type="vertical"/>
-                <Button icon="ios-cloud-upload">导出Excel</Button>
+                <Button @click="exportExcel" icon="ios-cloud-upload">导出Excel</Button>
                 </Col>
             </Row>
              <Table border ref="selection" :columns="userSignCloumns" :data="userSignDatas">
@@ -61,6 +61,7 @@
 
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import exportUtils from '@/vendor/export.js'
 
 export default {
     components: { Treeselect },
@@ -257,6 +258,15 @@ export default {
                     duration: 2
                 });
                 console.log(error);
+            });
+        },
+        exportExcel:function(){
+            var self = this;
+            exportUtils.exportExcel(this.$constants.BIURL+'/user/sign/register/export',this.params,function(){
+                self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
             });
         }
     },

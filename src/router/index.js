@@ -21,7 +21,6 @@ import PartyUserTable from "@/components/system/partyUserTable"
 import ApkEdition from "@/components/system/ApkEdition"
 import SysLogs from "@/components/system/sysLogs"
 import MailInfo from "@/components/system/mailInfo"
-import Volunteer from "@/components/partyService/volunteer"
 
 /**党讯管理 */
 import Catalog from '@/components/partyNews/catalog'
@@ -48,6 +47,8 @@ import StudyContent from '@/components/exam/studyContent'
 /**日常工作 */
 import UserSignRules from '@/components/dailyJob/userSignRules'
 import UserSignManager from '@/components/dailyJob/userSignManager'
+import UserSignSpecial from '@/components/dailyJob/userSignSpecial'
+import MeetingNotice from '@/components/dailyJob/meetingNotice'
 
 /**乡村振兴 */
 import DeptMap from '@/components/map/deptMap'
@@ -128,6 +129,14 @@ new Router({
           name: 'userSignManager',
           component: UserSignManager
         },{
+          path: '/dailyJob/userSignSpecial',
+          name: 'userSignSpecial',
+          component: UserSignSpecial
+        },{
+          path: '/dailyJob/meetingNotice',
+          name: 'meetingNotice',
+          component: MeetingNotice
+        },{
           path: '/map/deptMap',
           name: 'deptMap',
           component: DeptMap
@@ -163,10 +172,6 @@ new Router({
           path: '/system/partyUserTable',
           name: 'partyUserTable',
           component: PartyUserTable
-        },{
-          path: '/partyService/volunteer',
-          name: 'volunteer',
-          component: Volunteer
         },{
           path:'/partyNews/catalog',
           name:'catalog',
