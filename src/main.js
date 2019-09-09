@@ -106,3 +106,12 @@ new Vue({
   components: {App},
   template: '<app/>'
 })
+
+
+Vue.filter('status', function (value) {
+  if(value==true) {
+    return '禁用'
+  }else {
+    return '启用'
+  }
+})
