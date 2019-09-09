@@ -1,0 +1,59 @@
+.party-info{
+    width: 36px;
+    height: 36px;
+    background-image: url(../assets/images/party.png);
+    display: block;
+    background-size: 100% 100%;
+    margin: 0 auto;
+}
+
+.i-icon {
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    vertical-align: middle;
+}
+
+.i-icon-add{
+    background: url(../assets/icons/add.png);
+    display: block;
+    background-size: 100% 100%;
+    margin: 0 auto;
+    width: 24px;
+    height: 24px;
+}
+
+.i-icon-edit{
+    background: url(../assets/icons/edit.png);
+    display: block;
+    background-size: 100% 100%;
+    margin: 0 auto;
+    width: 21px;
+    height: 21px;
+    margin-top: 2px;
+}
+
+.i-icon-delete{
+    background: url(../assets/icons/delete.png);
+    display: block;
+    background-size: 100% 100%;
+    margin: 0 auto;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+}
+
+.i-icon-refresh{
+    background: url(../assets/icons/refresh.png);
+    display: block;
+    background-size: 100% 100%;
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+}

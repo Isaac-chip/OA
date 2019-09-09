@@ -1,0 +1,273 @@
+html,
+body {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.layout-view{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    padding: 0px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.ivu-layout{
+    background: #fff;
+}
+
+.wrapper-header{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+
+.bi-main-container{
+    height: 100%;
+    padding: 40px 0 0;
+    box-sizing: border-box ;
+    position: relative;
+}
+
+.breadcrumb{
+    color: #999;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    position: absolute;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    padding-left: 20px;
+    margin-top: -2px;
+}
+
+
+.wrapper-header .apps {
+    display: inline-block;
+    float: left;
+    margin-left: 22px;
+    padding-left: 22px;
+    position: relative;
+    top: 5px;
+}
+
+.mysearch{
+    border: none;
+}
+.wrapper-header .apps:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 24px;
+    background: #ebedee;
+    position: absolute;
+    top: 16px;
+    left: 0;
+}
+
+.apps-menu {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.wrapper-container {
+    display: flex;
+    position: relative;
+    background: #fff;
+    height: 100%;
+    margin: 67px 0px 0px;
+    bottom: 0px;
+}
+.ivu-layout-sider{
+    overflow-y:auto;
+}
+
+.ivu-layout-sider::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 0px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+
+.ivu-layout-sider:after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 100%;
+    background: #dcdee2;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.wrapper-header-nav-logo {
+    height: 50px;
+    margin-top: 8px;
+    float: left;
+    line-height: 50px;
+    margin-left: -34px;
+    color: #ff6a00;
+}
+
+.wrapper-header-nav-logo span{
+    font-size: 24px;
+}
+.wrapper-header-nav-logo img{
+    height: 100%;
+    border-style: none;
+}
+
+.info-menu-sign-in {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.ivu-avatar.ivu-avatar-icon {
+    font-size: 18px;
+}
+
+.info-menu-sign-in .ivu-avatar {
+    background-color: #87d068;
+}
+.wrapper-header-nav-search {
+    float: left;
+    margin-left: 60px;
+}
+
+.wrapper-header-nav-list {
+    height: inherit;
+    float: right;
+}
+
+.router-view-content{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    background: #fff;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.bi-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0px auto;
+    padding: 15px;
+    background: #fff;
+    box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+.back-view{
+    height: 28px;
+    width: auto;
+    display: flex;
+    cursor:hand !important;
+}
+
+.back-view img{
+    width: 24px;
+    height: 22px;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+
+.back-view span{
+    color: #2d8cf0;
+    font-size: 13px;
+    padding-left: 3px;
+    margin-top: 3px;
+}
+
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+ ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .05);
+    border-radius: 10px;
+    -webkit-box-shadow: inset 1px 1px 0 rgba(202, 124, 124, 0.1);
+}
+/*鼠标悬浮在该类指向的控件上时滑块的样式*/
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1);
+}
+/*鼠标悬浮在滑块上时滑块的样式*/
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, .4);
+    -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1);
+}
+/*正常时候的主干部分*/
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: white;
+}
+/*鼠标悬浮在滚动条上的主干部分*/
+
+::-webkit-scrollbar-track:hover {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .4);
+    background-color: rgba(0, 0, 0, .01);
+}
+
+
+.demo-upload-list{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    margin-right: 4px;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
+}
+.demo-upload-list-cover{
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+}
+.demo-upload-list:hover .demo-upload-list-cover{
+    display: block;
+}
+.demo-upload-list-cover i{
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 2px;
+}
+
+.ivu-form-item{
+    margin-bottom: 18px !important;
+}
