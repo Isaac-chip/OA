@@ -153,7 +153,7 @@ export default {
   box-sizing: border-box;
   position: relative;
   .table-wrap {
-    min-height: 521px;
+    min-height: 490px;
   }
   .page-wrap {
     min-height: 50px;

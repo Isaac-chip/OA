@@ -55,7 +55,8 @@ export default {
       columns: [
         {
           title: "序号",
-          key: "id"
+          key: "id",
+          maxWidth:80
         },
        
         {
@@ -67,32 +68,32 @@ export default {
           key: "ruleName"
         },  {
           title: "默认分值",
-          key: "defScore"
+          key: "defScore",
+          maxWidth:80
         },
          {
           title: "最低分",
-          key: "minScore"
+          key: "minScore",
+          maxWidth:80
         },
           {
           title: "最高分",
-          key: "maxScore"
+          key: "maxScore",
+          maxWidth:80
         },
        
 
-       
-        {
-          title: "创建者",
-          key: "creator"
-        },
         {
           title: "创建人名称",
-          key: "creatorName"
+          key: "creatorName",
+          maxWidth:120
         },
       
        
         {
           title: "状态",
-          slot: "disabled"
+          slot: "disabled",
+           maxWidth:80
         },
         
       
@@ -101,7 +102,9 @@ export default {
           title: "操作",
           slot: "action",
           fixed: "right",
-          minWidth:80
+          minWidth:80,
+           maxWidth:190,
+
         }
       ]
     };
