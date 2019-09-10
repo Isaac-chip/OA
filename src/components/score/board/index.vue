@@ -127,7 +127,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.ruleEditModal.init({
           deleted: false,
-          deptId: 0,
+         
           deptName: "",
           disabled: false,
           id: 0,
@@ -136,8 +136,6 @@ export default {
           modifier: "",
 
           starLevel: "",
-
-          tenantId: "",
 
           userName: ""
         });

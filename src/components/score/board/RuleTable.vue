@@ -4,6 +4,10 @@
  
 
       <template slot-scope="{ row }" slot="disabled">{{ row.disabled | disabledFilter }}</template>
+      <template slot-scope="{ row }" slot="starLevel">
+
+         <Rate  v-model="row.starLevel"  disabled />
+      </template>
 
       <template slot-scope="{ row }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px" @click="editRule(row)">修改</Button>
@@ -44,13 +48,19 @@ export default {
         {
           title: "序号",
           key: "id",
-          maxWidth: 80
+          maxWidth: 70
         },
 
         {
           title: "部门名称",
           key: "deptName",
           minWidth: 100
+        },
+        
+         {
+          title: "用户名称",
+          key: "userName",
+          maxWidth: 110
         },
         {
           title: "活跃度",
@@ -65,7 +75,8 @@ export default {
         },
         {
           title: "星级",
-          key: "starLevel",
+          slot: "starLevel",
+          minWidth:100
       
         },
 

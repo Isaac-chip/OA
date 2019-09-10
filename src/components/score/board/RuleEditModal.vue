@@ -6,32 +6,30 @@
     width="50%"
     @close="cancel"
   >
-    <Form
-      v-loading="loading"
-      ref="formValidate"
-   
-      :model="model"
-      :label-width="100"
-    >
-    
-       <FormItem label="部门id" prop="deptId">
-        <Input type="number" v-model="model.deptId" placeholder />
+    <Form v-loading="loading" ref="formValidate" :model="model" :label-width="100">
+      <FormItem label="所属组织" prop="deptId">
+        <treeselect
+          v-model="model.deptId"
+          :options="departments"
+          :max-height="200"
+          @select="orgSelect"
+          noResultsText="没有找到匹配结果"
+          placeholder="请选择所属组织..."
+        />
       </FormItem>
 
-     <FormItem label="星级" prop="starLevel">
-        <Input v-model="model.starLevel" placeholder />
+      <FormItem label="星级" prop="starLevel">
+        <Rate  v-model="model.starLevel"   />
       </FormItem>
-      <FormItem label="租户id" prop="tenantId">
-        <Input v-model="model.tenantId" placeholder />
-      </FormItem>
-     <FormItem label="用户名称" prop="userName">
+
+      <FormItem label="用户名称" prop="userName">
         <Input v-model="model.userName" placeholder />
       </FormItem>
       <FormItem label="活跃度" prop="liveness">
         <Input v-model="model.liveness" placeholder />
       </FormItem>
 
-      <FormItem label="个人积分排名" prop="scoreRank">
+      <!-- <FormItem label="个人积分排名" prop="scoreRank">
         <Input type="number" v-model="model.scoreRank" placeholder />
       </FormItem>
       <FormItem label="个人学习积分" prop="studyScore">
@@ -43,7 +41,7 @@
       </FormItem>
       <FormItem label="总评分" prop="totalScore">
         <Input type="number" v-model="model.totalScore" placeholder />
-      </FormItem>
+      </FormItem> -->
       <FormItem label="备注" prop="memo">
         <Input v-model="model.memo" placeholder />
       </FormItem>
@@ -60,8 +58,11 @@
 </template>
 
 <script>
+import Treeselect from '@riophae/vue-treeselect';
+import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 export default {
   name: "RuleModal",
+  components:{Treeselect},
   data() {
     return {
       ruleEditModalShow: false,
@@ -84,7 +85,9 @@ export default {
       model: {
         createTime: 0,
         deleted: false,
-        deptId: 0,
+        deptId: {
+          type:Number
+        },
         deptName: "",
         disabled: false,
         id: 0,
@@ -92,26 +95,30 @@ export default {
         memo: "",
         modifier: "",
         modifyTime: 0,
-        scoreRank: 0,
+        // scoreRank: 0,
         starLevel: "",
-        studyScore: 0,
-        tenantId: "",
-        totalScore: 0,
+        // studyScore: 0,
+        // totalScore: 0,
         userId: 0,
-        userName: "",
-        volServiceScore: 0
+        // userName: "",
+        // volServiceScore: 0
       },
-      loading: false
+      loading: false,
+      departments:[],
     };
   },
   methods: {
     init(row) {
-      this.ruleEditModalShow = true;
+        this.ruleEditModalShow = true;
+      this.loadDepartment()
       this.model = { ...row };
+      
+    
+     
     },
     asyncOK() {},
     cancel() {
-       this.handleReset();
+      this.handleReset();
       this.ruleEditModalShow = false;
       this.$emit("ruleEditModalCancel");
     },
@@ -128,7 +135,7 @@ export default {
           })
             .then(res => {
               this.loading = false;
-             
+
               this.cancel();
               if (res.data.code == 0) {
                 this.$Message.success(res.data.msg || "操作成功");
@@ -150,7 +157,46 @@ export default {
     },
     handleReset() {
       this.$refs["formValidate"].resetFields();
-    }
+    },
+     loadDepartment(){
+            var self = this;
+            self.loading = true
+            self.$http({
+                url:self.$constants.BIURL+'/political/department/list',
+                method:'GET',
+                params:{
+                    // query:self.deptQueryStr
+                }
+            })
+            .then(response=> {
+               self.loading = false
+                if(response.status ==200){
+                    const data = response.data;
+                    const arrChange = arr => arr.map(item => {
+                        const res = {};
+                        if(item.children && item.children.length == 0){
+                           delete item.children ;
+                        }else{
+                            arrChange(item.children);
+                        }
+                    });
+                    arrChange(data);
+                    self.departments = data;
+                    
+                }
+            }).catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+
+         orgSelect(node){
+            this.model.deptId = node.did;
+            this.mdoel.deptName = node.title;
+        },
   }
 };
 </script>
