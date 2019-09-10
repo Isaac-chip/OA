@@ -17,6 +17,13 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import BaiduMap from 'vue-baidu-map'
 
+
+import 'element-ui/lib/theme-chalk/index.css';
+import './assets/style/style.scss';
+import ElementUI from 'element-ui';
+Vue.use(ElementUI);
+
+
 Vue.use(BaiduMap,{
   ak:'UXTxGY2P3obB5GZ0IBEYBPui0NkUdG0o'
 });
@@ -40,18 +47,18 @@ Vue.filter('date', (value) => {
 });
 
 Vue.prototype.$timeToDate = function(value){
-  let date = new Date(value); 
-  let y = date.getFullYear(); 
-  let MM = date.getMonth() + 1; 
-  MM = MM < 10 ? ('0' + MM) : MM; 
-  let d = date.getDate(); 
-  d = d < 10 ? ('0' + d) : d; 
-  let h = date.getHours(); 
-  h = h < 10 ? ('0' + h) : h; 
-  let m = date.getMinutes(); 
-  m = m < 10 ? ('0' + m) : m; 
-  let s = date.getSeconds(); 
-  s = s < 10 ? ('0' + s) : s; 
+  let date = new Date(value);
+  let y = date.getFullYear();
+  let MM = date.getMonth() + 1;
+  MM = MM < 10 ? ('0' + MM) : MM;
+  let d = date.getDate();
+  d = d < 10 ? ('0' + d) : d;
+  let h = date.getHours();
+  h = h < 10 ? ('0' + h) : h;
+  let m = date.getMinutes();
+  m = m < 10 ? ('0' + m) : m;
+  let s = date.getSeconds();
+  s = s < 10 ? ('0' + s) : s;
   return y+'-'+MM+'-'+d+' '+h+':'+m;
 }
 

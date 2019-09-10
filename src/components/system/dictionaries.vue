@@ -223,7 +223,7 @@ export default {
                         var data = response.data;
                         console.log(data);
                         self.partyUserDatas = data.data.records;
-                        self.dataCount = data.data.size;
+                        self.dataCount = data.data.total;
                     }
                 })
                 .catch(function(error) {

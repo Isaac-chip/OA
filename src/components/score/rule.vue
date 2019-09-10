@@ -1,0 +1,152 @@
+<template>
+  <div class="rule-wrap h-100 d-flex flex-column">
+    <div class="bread pl-20 d-flex mt-10">
+         <Breadcrumb >
+      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem>积分管理</BreadcrumbItem>
+      <BreadcrumbItem>积分规则</BreadcrumbItem>
+    </Breadcrumb>
+    </div>
+
+   
+    <div class="p-15">
+      <Button @click="addRule()" class="mb-10">添加</Button>
+
+      <div class="table-wrap">
+        <rule-table
+          @ruleEditModalSuccess="ruleEditModalSuccess"
+          @editRule="editRule"
+          :records="records"
+          :pages="pages"
+          :ruleLoading="ruleLoading"
+        ></rule-table>
+      </div>
+      <div class="mt-10 d-flex jc-end page-wrap">
+        <Page
+          @on-page-size-change="changeSize"
+          @on-change="changePage"
+          show-sizer
+          show-total
+          :total="pages.total"
+          :current="pages.current"
+          :page-size="pages.size"
+        />
+      </div>
+    </div>
+    <rule-edit-modal
+      @ruleEditModalSuccess="ruleEditModalSuccess"
+      @ruleEditModalCancel="ruleEditModalCancel"
+      ref="ruleEditModal"
+      v-if="ruleEditModalShow"
+    ></rule-edit-modal>
+  </div>
+</template>
+
+<script>
+import RuleTable from "./RuleTable";
+import RuleEditModal from "./RuleEditModal";
+export default {
+  name: "Rule",
+  components: {
+    RuleTable,
+    RuleEditModal
+  },
+  data() {
+    return {
+      records: [],
+      pages: {
+        current: 1,
+        pages: 1,
+        total: 0,
+        size: 10
+      },
+      ruleLoading: false,
+      ruleEditModalShow: false
+    };
+  },
+  methods: {
+    fetchRuleList() {
+      this.ruleLoading = true;
+      this.$http({
+        url: this.$constants.BIURL + "/political/score/rule/list",
+        method: "GET",
+        dataType: "json",
+        params: {
+          current: this.pages.current,
+          size: this.pages.size
+        }
+      })
+        .then(res => {
+          this.ruleLoading = false;
+          if (res.data.code == 0) {
+            const { records, current, pages, total, size } = res.data.data;
+            this.records = records;
+            this.pages = {
+              current,
+              pages,
+              total,
+              size
+            };
+          } else {
+            this.$Message.error(res.data.msg || "请求规则列表错误");
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    ruleEditModalSuccess() {
+      // this.ruleEditModalShow = false
+      this.fetchRuleList();
+    },
+    editRule(row) {
+      this.ruleEditModalShow = true;
+      this.$nextTick(() => {
+        this.$refs.ruleEditModal.init(row);
+      });
+
+      // console.log(row)
+    },
+    addRule() {
+      this.ruleEditModalShow = true;
+      this.$nextTick(() => {
+        this.$refs.ruleEditModal.init({ id: 0 });
+      });
+    },
+    ruleEditModalCancel() {
+      this.ruleEditModalShow = false;
+    },
+    changePage(current) {
+      this.pages.current = current;
+      this.fetchRuleList();
+    },
+    changeSize(size) {
+      this.pages.size = size;
+      this.fetchRuleList();
+    }
+  },
+  created() {
+    this.fetchRuleList(1);
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.rule-wrap {
+  
+  // min-height: 800px;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  .table-wrap {
+    min-height: 500px;
+  }
+  .page-wrap {
+    min-height: 50px;
+  }
+  .bread {
+    height: 40px;
+  }
+}
+</style>
