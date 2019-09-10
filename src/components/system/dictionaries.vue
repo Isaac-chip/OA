@@ -29,8 +29,8 @@
                                     {{ row.disabled | status }}
                                 </template>
                             </Table>
-                            <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
 
+                            <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages.total" :current="pages.current" :page-size="pages.size" />
                         </div>
                     </Card>
                 </div>
@@ -56,11 +56,11 @@ export default {
             // 每页显示多少条
             pageSize: 15,
             deptId: null,
-            params: {
-                size: 15,
+            pages: {
                 current: 1,
-                deptCode: "",
-                query: ""
+                pages: 1,
+                total: 0,
+                size: 10
             },
             partyUserCloumns: [
                 {
@@ -223,7 +223,7 @@ export default {
                         var data = response.data;
                         console.log(data);
                         self.partyUserDatas = data.data.records;
-                        self.dataCount = data.data.total;
+                        self.pages.total = data.data.total;
                     }
                 })
                 .catch(function(error) {
@@ -233,6 +233,14 @@ export default {
                     });
                     console.log(error);
                 });
+        },
+        changePage(current) {
+            this.pages.current = current;
+            this.load_list();
+        },
+        changeSize(size) {
+            this.pages.size = size;
+            this.load_list();
         }
     },
     mounted: function() {
