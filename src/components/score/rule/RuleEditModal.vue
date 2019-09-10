@@ -9,8 +9,12 @@
     <Form
     v-loading="loading"
      ref="formValidate" :rules="ruleValidate" :model="model" :label-width="100">
-      <FormItem label="栏目名称" prop="catalogName">
-        <Input v-model="model.catalogName" placeholder />
+       <FormItem label="积分规则名称" prop="ruleName">
+        <Input v-model="model.ruleName" placeholder />
+      </FormItem>
+
+       <FormItem label="默认分值" prop="defScore">
+        <Input type="number" v-model="model.defScore" placeholder />
       </FormItem>
       <FormItem label="最低分" prop="minScore">
         <Input type="number" v-model="model.minScore" placeholder />
@@ -18,9 +22,11 @@
       <FormItem label="最高分" prop="maxScore">
         <Input type="number" v-model="model.maxScore" placeholder />
       </FormItem>
-      <FormItem label="积分规则名称" prop="ruleName">
-        <Input v-model="model.ruleName" placeholder />
-      </FormItem>
+      <FormItem label="是否禁用" prop="disabled">
+        <i-switch v-model="model.disabled"  />
+        </FormItem>
+      
+     
 
       <FormItem>
         <Button type="primary" @click="handleSubmit()">提交</Button>

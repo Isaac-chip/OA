@@ -1,22 +1,30 @@
 <template>
   <div class="rule-wrap h-100 d-flex flex-column">
     <div class="bread pl-20 d-flex mt-10">
-         <Breadcrumb >
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
-      <BreadcrumbItem>积分管理</BreadcrumbItem>
-      <BreadcrumbItem>积分规则</BreadcrumbItem>
-    </Breadcrumb>
+      <Breadcrumb>
+        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem>积分管理</BreadcrumbItem>
+        <BreadcrumbItem>积分规则</BreadcrumbItem>
+      </Breadcrumb>
     </div>
 
-   
     <div class="p-15">
-
       <Row>
-        <Col :span="2"> <Button @click="addRule()" class="mt-1">添加</Button></Col>
-        <Col :span="7"> <Input width="500px" v-model="queryStr" search enter-button @on-search="onSeach" placeholder="输入规则名称查找" /></Col>
+        <Col :span="2">
+          <Button @click="addRule()" class="mt-1">添加</Button>
+        </Col>
+        <Col :span="7">
+          <Input
+            width="500px"
+            v-model="queryStr"
+            search
+            enter-button
+            @on-search="onSeach"
+            placeholder="输入规则名称查找"
+          />
+        </Col>
       </Row>
-     
-      
+
       <div class="table-wrap mt-10">
         <rule-table
           @ruleEditModalSuccess="ruleEditModalSuccess"
@@ -58,7 +66,7 @@ export default {
   },
   data() {
     return {
-      queryStr:'',
+      queryStr: "",
       records: [],
       pages: {
         current: 1,
@@ -80,7 +88,7 @@ export default {
         params: {
           current: this.pages.current,
           size: this.pages.size,
-          query:this.queryStr
+          query: this.queryStr
         }
       })
         .then(res => {
@@ -117,17 +125,25 @@ export default {
     addRule() {
       this.ruleEditModalShow = true;
       this.$nextTick(() => {
-        this.$refs.ruleEditModal.init({ id: 0 });
+        this.$refs.ruleEditModal.init({
+          id: 0,
+          catalogId: 0,
+          catalogName: "",
+
+          deleted: false,
+          disabled: false,
+
+          ruleName: ""
+        });
       });
     },
     ruleEditModalCancel() {
       this.ruleEditModalShow = false;
     },
     // 关键词查询
-    onSeach(){
-      this.pages.current =1
-      this.fetchRuleList()
-      
+    onSeach() {
+      this.pages.current = 1;
+      this.fetchRuleList();
     },
     changePage(current) {
       this.pages.current = current;
@@ -146,14 +162,13 @@ export default {
 
 <style lang="less" scoped>
 .rule-wrap {
-  
   // min-height: 800px;
   height: 100%;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   position: relative;
   .table-wrap {
-    min-height: 490px;
+    min-height: 500px;
   }
   .page-wrap {
     min-height: 50px;
@@ -161,8 +176,6 @@ export default {
   .bread {
     height: 40px;
   }
-  /deep/ .ivu-input-wrapper {
-    // width: 500px;
-  }
+ 
 }
 </style>
