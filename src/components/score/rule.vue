@@ -10,9 +10,14 @@
 
    
     <div class="p-15">
-      <Button @click="addRule()" class="mb-10">添加</Button>
 
-      <div class="table-wrap">
+      <Row>
+        <Col :span="2"> <Button @click="addRule()" class="mt-1">添加</Button></Col>
+        <Col :span="7"> <Input width="500px" v-model="queryStr" search enter-button @on-search="onSeach" placeholder="输入规则名称查找" /></Col>
+      </Row>
+     
+      
+      <div class="table-wrap mt-10">
         <rule-table
           @ruleEditModalSuccess="ruleEditModalSuccess"
           @editRule="editRule"
@@ -53,6 +58,7 @@ export default {
   },
   data() {
     return {
+      queryStr:'',
       records: [],
       pages: {
         current: 1,
@@ -73,7 +79,8 @@ export default {
         dataType: "json",
         params: {
           current: this.pages.current,
-          size: this.pages.size
+          size: this.pages.size,
+          query:this.queryStr
         }
       })
         .then(res => {
@@ -116,6 +123,12 @@ export default {
     ruleEditModalCancel() {
       this.ruleEditModalShow = false;
     },
+    // 关键词查询
+    onSeach(){
+      this.pages.current =1
+      this.fetchRuleList()
+      
+    },
     changePage(current) {
       this.pages.current = current;
       this.fetchRuleList();
@@ -140,13 +153,16 @@ export default {
   box-sizing: border-box;
   position: relative;
   .table-wrap {
-    min-height: 500px;
+    min-height: 521px;
   }
   .page-wrap {
     min-height: 50px;
   }
   .bread {
     height: 40px;
+  }
+  /deep/ .ivu-input-wrapper {
+    // width: 500px;
   }
 }
 </style>
