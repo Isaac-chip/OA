@@ -26,10 +26,11 @@
                         <div id="table">
                             <Table border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas">
                                 <template slot-scope="{ row, index }" slot="disabled">
-                                   {{ row.disabled | status }}
+                                    {{ row.disabled | status }}
                                 </template>
                             </Table>
-                            <Page :page-size="params.size" show-total class="pageView"></Page>
+                            <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
+
                         </div>
                     </Card>
                 </div>
@@ -51,8 +52,15 @@ export default {
     data() {
         return {
             queryStr: "",
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 15,
+            deptId: null,
             params: {
-                current: 1
+                size: 15,
+                current: 1,
+                deptCode: "",
+                query: ""
             },
             partyUserCloumns: [
                 {
@@ -79,7 +87,7 @@ export default {
                 {
                     title: "状态",
                     key: "disabled",
-                    slot:"disabled",
+                    slot: "disabled",
                     // width: "50"
                     filters: [
                         {
@@ -215,6 +223,7 @@ export default {
                         var data = response.data;
                         console.log(data);
                         self.partyUserDatas = data.data.records;
+                        self.dataCount = data.data.total;
                     }
                 })
                 .catch(function(error) {

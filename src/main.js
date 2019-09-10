@@ -113,3 +113,13 @@ new Vue({
   components: {App},
   template: '<app/>'
 })
+
+
+//全局过滤器
+Vue.filter('status', function (value) {
+  if(value==true) {
+    return '禁用'
+  }else {
+    return '启用'
+  }
+})
