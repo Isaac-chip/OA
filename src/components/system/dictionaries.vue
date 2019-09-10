@@ -216,10 +216,11 @@ export default {
                     url: self.$constants.BIURL + "/biDictType/list",
                     method: "GET",
                     dataType: "json",
-                    params: self.params
+                    params: self.pages
                 })
                 .then(function(response) {
-                    if (response.status == 200) {
+                    console.log(response)
+                    if (response.data.code == 0) {
                         var data = response.data;
                         console.log(data);
                         self.partyUserDatas = data.data.records;
