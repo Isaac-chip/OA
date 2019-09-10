@@ -29,8 +29,15 @@
                                     {{ row.disabled | status }}
                                 </template>
                             </Table>
-
-                            <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages.total" :current="pages.current" :page-size="pages.size" />
+                              <div class="mt-10 d-flex jc-end">
+                            <Page 
+                            @on-page-size-change="changeSize"
+                             @on-change="changePage" 
+                             show-sizer show-total 
+                             :total="pages.total" 
+                            :current="pages.current"
+                             :page-size="pages.size" />
+                              </div>
                         </div>
                     </Card>
                 </div>
@@ -209,21 +216,29 @@ export default {
         };
     },
     methods: {
-        load_list: function() {
+        load_list() {
             var self = this;
             self
                 .$http({
                     url: self.$constants.BIURL + "/biDictType/list",
                     method: "GET",
                     dataType: "json",
-                    params: self.params
+                    params: {
+                        pageNo:self.pages.current,
+                        pageSize:self.pages.size
+                    }
                 })
-                .then(function(response) {
-                    if (response.status == 200) {
-                        var data = response.data;
-                        console.log(data);
-                        self.partyUserDatas = data.data.records;
-                        self.pages.total = data.data.total;
+                .then(res=>{
+                    if (res.data.code==0) {
+                       const {records,current,pages,size,total} = res.data.data
+                        
+                        self.partyUserDatas = records;
+                        self.pages.current = current;
+                        self.pages.pages = pages;
+                        self.pages.size = size;
+                        self.pages.total = total;
+                    }else {
+                        this.$Message.error(res.data.msg || "请求列表失败")
                     }
                 })
                 .catch(function(error) {
@@ -243,8 +258,8 @@ export default {
             this.load_list();
         }
     },
-    mounted: function() {
-        this.load_list();
+    created(){
+        this.load_list()
     }
 };
 </script>
