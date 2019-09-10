@@ -108,6 +108,7 @@ new Vue({
 })
 
 
+//全局过滤器
 Vue.filter('status', function (value) {
   if(value==true) {
     return '禁用'
