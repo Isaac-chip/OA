@@ -61,7 +61,7 @@
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 export default {
-  name: "RuleModal",
+  name: "BoardModal",
   components:{Treeselect},
   data() {
     return {
