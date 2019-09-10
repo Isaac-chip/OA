@@ -1,30 +1,18 @@
 <template>
   <div>
-    <Table 
-    border 
-    :columns="columns" :loading="ruleLoading" :data="records">
-      <template slot-scope="{ row }" slot="deleted">{{ row.deleted | deletedFilter }}</template>
+    <Table border :columns="columns" :loading="ruleLoading" :data="records">
+ 
 
       <template slot-scope="{ row }" slot="disabled">{{ row.disabled | disabledFilter }}</template>
 
-      <template slot-scope="{ row }" slot="modifyTime">{{ row.modifyTime | modifyTimeFilter }}</template>
-
-      <template slot-scope="{ row }" slot="createTime">{{ row.createTime | modifyTimeFilter }}</template>
       <template slot-scope="{ row }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px" @click="editRule(row)">修改</Button>
-
-         <Button
-          :type="row.disabled?'primary':'error'"
-          size="small"
-          @click="selectedRule('disabled',`/political/score/rule/disabled/${row.id}`)"
-        >{{row.disabled?'开启':'禁用'}}</Button>
 
         <Button
           type="error"
           size="small"
-          @click="selectedRule('delete',`/political/score/rule/${row.id}`)"
+          @click="selectedRule('delete',`/political/score/board/${row.id}`)"
         >删除</Button>
-
       </template>
     </Table>
   </div>
@@ -56,55 +44,66 @@ export default {
         {
           title: "序号",
           key: "id",
-          maxWidth:80
+          maxWidth: 80
         },
-       
-        {
-          title: "栏目名称",
-          key: "catalogName"
-        },
-          {
-          title: "规则名称",
-          key: "ruleName"
-        },  {
-          title: "默认分值",
-          key: "defScore",
-          maxWidth:80
-        },
-         {
-          title: "最低分",
-          key: "minScore",
-          maxWidth:80
-        },
-          {
-          title: "最高分",
-          key: "maxScore",
-          maxWidth:80
-        },
-       
 
         {
-          title: "创建人名称",
-          key: "creatorName",
-          maxWidth:120
+          title: "部门名称",
+          key: "deptName",
+          minWidth: 100
         },
-      
+        {
+          title: "活跃度",
+          key: "liveness",
+         
+        },
        
+        {
+          title: "个人积分排名",
+          key: "scoreRank",
+         
+        },
+        {
+          title: "星级",
+          key: "starLevel",
+      
+        },
+
+        {
+          title: "个人学习积分",
+          key: "studyScore",
+    
+        },
+
+        {
+          title: "总评分",
+          key: "totalScore",
+      
+        },
+
+        {
+          title: "个人志愿服务积分",
+          key: "volServiceScore",
+          
+        },
+
         {
           title: "状态",
           slot: "disabled",
-           maxWidth:80
+         
         },
-        
-      
-       
+         {
+          title: "备注",
+          key: "memo",
+         
+        },
+
         {
           title: "操作",
           slot: "action",
           fixed: "right",
-          minWidth:80,
-           maxWidth:190,
-
+          minWidth: 80,
+         
         }
       ]
     };
@@ -139,7 +138,7 @@ export default {
     },
     deleteHandle() {
       // 此操作将${this.selectedType=='disabled'?'禁用':'删除'},
-      this.$confirm(  `是否继续此操作?`, "提示", {
+      this.$confirm(`是否继续此操作?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

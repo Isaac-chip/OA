@@ -168,7 +168,7 @@ export default {
   box-sizing: border-box;
   position: relative;
   .table-wrap {
-    min-height: 490px;
+    min-height: 500px;
   }
   .page-wrap {
     min-height: 50px;
@@ -176,8 +176,6 @@ export default {
   .bread {
     height: 40px;
   }
-  /deep/ .ivu-input-wrapper {
-    // width: 500px;
-  }
+ 
 }
 </style>
