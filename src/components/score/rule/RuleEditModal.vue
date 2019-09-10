@@ -128,7 +128,7 @@ export default {
               this.loading = false
               this.handleReset();
               this.cancel();
-              console.log(err, "ruleerr");
+              // console.log(err, "ruleerr");
             });
         }else {
 
@@ -174,7 +174,7 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
+                // console.log(error);
             });
         },
 

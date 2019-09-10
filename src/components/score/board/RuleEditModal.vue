@@ -96,7 +96,7 @@ export default {
         modifier: "",
         modifyTime: 0,
         // scoreRank: 0,
-        starLevel: "",
+        starLevel: 0,
         // studyScore: 0,
         // totalScore: 0,
         userId: 0,
@@ -112,9 +112,9 @@ export default {
         this.ruleEditModalShow = true;
       this.loadDepartment()
       this.model = { ...row };
-      
-    
-     
+
+
+
     },
     asyncOK() {},
     cancel() {
@@ -148,7 +148,7 @@ export default {
               this.loading = false;
               this.handleReset();
               this.cancel();
-              console.log(err, "ruleerr");
+              // console.log(err, "ruleerr");
             });
         } else {
         }
@@ -182,14 +182,14 @@ export default {
                     });
                     arrChange(data);
                     self.departments = data;
-                    
+
                 }
             }).catch(function (error) {
                     self.$Message.error({
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
+                // console.log(error);
             });
         },
 

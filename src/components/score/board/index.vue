@@ -95,6 +95,10 @@ export default {
           this.ruleLoading = false;
           if (res.data.code == 0) {
             const { records, current, pages, total, size } = res.data.data;
+            records.forEach(item => {
+              item.starLevel = +item.starLevel;
+            });
+
             this.records = records;
             this.pages = {
               current,
@@ -107,7 +111,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
+          // console.log(err);
         });
     },
     ruleEditModalSuccess() {
@@ -127,7 +131,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.ruleEditModal.init({
           deleted: false,
-         
+
           deptName: "",
           disabled: false,
           id: 0,
@@ -135,7 +139,9 @@ export default {
           memo: "",
           modifier: "",
 
-          starLevel: "",
+          starLevel: {
+            type: Number
+          },
 
           userName: ""
         });

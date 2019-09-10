@@ -1,7 +1,7 @@
 <template>
   <div>
     <Table border :columns="columns" :loading="ruleLoading" :data="records">
- 
+
 
       <template slot-scope="{ row }" slot="disabled">{{ row.disabled | disabledFilter }}</template>
       <template slot-scope="{ row }" slot="starLevel">
@@ -56,7 +56,7 @@ export default {
           key: "deptName",
           minWidth: 100
         },
-        
+
          {
           title: "用户名称",
           key: "userName",
@@ -65,48 +65,48 @@ export default {
         {
           title: "活跃度",
           key: "liveness",
-         
+
         },
-       
+
         {
           title: "个人积分排名",
           key: "scoreRank",
-         
+
         },
         {
           title: "星级",
           slot: "starLevel",
           minWidth:100
-      
+
         },
 
         {
           title: "个人学习积分",
           key: "studyScore",
-    
+
         },
 
         {
           title: "总评分",
           key: "totalScore",
-      
+
         },
 
         {
           title: "个人志愿服务积分",
           key: "volServiceScore",
-          
+
         },
 
         {
           title: "状态",
           slot: "disabled",
-         
+
         },
          {
           title: "备注",
           key: "memo",
-         
+
         },
 
         {
@@ -114,7 +114,7 @@ export default {
           slot: "action",
           fixed: "right",
           minWidth: 80,
-         
+
         }
       ]
     };

@@ -23,6 +23,9 @@
             placeholder="输入规则名称查找"
           />
         </Col>
+        <Col :span="10">
+        <Button @click="downloadTemplate()" class="mt-1">下载规则模板</Button>
+        </Col>
       </Row>
 
       <div class="table-wrap mt-10">
@@ -107,7 +110,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
+          // console.log(err);
         });
     },
     ruleEditModalSuccess() {
@@ -151,6 +154,22 @@ export default {
     changeSize(size) {
       this.pages.size = size;
       this.fetchRuleList();
+    },
+    /**下载规则模板 */
+    downloadTemplate(){
+      this.$http({
+        url: this.$constants.BIURL + "/political/score/rule/excel/template",
+        method: "GET",
+        // dataType: "json",
+        // params: {
+        //   current: this.pages.current,
+        //   size: this.pages.size,
+        //   query: this.queryStr
+        // }
+      })
+      .then(res=>{
+        console.log(res)
+      })
     }
   },
   created() {
