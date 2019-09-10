@@ -13,6 +13,17 @@
         <Input v-model="model.ruleName" placeholder />
       </FormItem>
 
+      <FormItem label="选择栏目" prop="catalogId">
+        <treeselect
+          v-model="model.catalogId"
+          :options="departments"
+          :max-height="200"
+          @select="orgSelect"
+          noResultsText="没有找到匹配结果"
+          placeholder="请选择所属栏目..."
+        />
+      </FormItem>
+
        <FormItem label="默认分值" prop="defScore">
         <Input type="number" v-model="model.defScore" placeholder />
       </FormItem>
@@ -25,8 +36,8 @@
       <FormItem label="是否禁用" prop="disabled">
         <i-switch v-model="model.disabled"  />
         </FormItem>
-      
-     
+
+
 
       <FormItem>
         <Button type="primary" @click="handleSubmit()">提交</Button>
@@ -37,19 +48,16 @@
 </template>
 
 <script>
+import Treeselect from '@riophae/vue-treeselect';
+import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 export default {
   name: "RuleModal",
+  components:{Treeselect},
   data() {
     return {
       ruleEditModalShow: false,
       ruleValidate: {
-        catalogName: [
-          {
-            required: true,
-            message: "The catalogName cannot be empty",
-            trigger: "blur"
-          }
-        ],
+
         ruleName: [
           {
             required: true,
@@ -59,7 +67,9 @@ export default {
         ]
       },
       model: {
-        catalogId: 0,
+        catalogId: {
+          type:Number
+        },
         catalogName: "",
         createTime: 0,
         creator: 0,
@@ -75,13 +85,16 @@ export default {
         ruleName: "",
         tenantId: ""
       },
-      loading: false
+      loading: false,
+      departments:[]
     };
   },
   methods: {
     init(row) {
       this.ruleEditModalShow = true;
+
       this.model = { ...row };
+      this.loadDepartment()
     },
     asyncOK() {},
     cancel() {
@@ -125,7 +138,51 @@ export default {
     },
     handleReset() {
       this.$refs["formValidate"].resetFields();
-    }
+    },
+
+    /**栏目 */
+    loadDepartment(){
+
+            this.loading = true
+            this.$http({
+                url:this.$constants.BIURL+'/political/catalog/findAll',
+                method:'GET',
+                params:{
+                    queryStr:""
+                }
+            })
+            .then(response=> {
+               this.loading = false
+                if(response.data.code ==0){
+                    const {data} = response.data;
+                    const arrChange = arr => arr.map(item => {
+                        const res = {};
+                        if(item.children && item.children.length == 0){
+                           delete item.children ;
+                        }else{
+                            arrChange(item.children);
+                        }
+                    });
+                    arrChange(data);
+                    this.departments = data;
+
+                }else {
+                  this.$Message.error(response.data.msg||"请求栏目列表错误")
+                }
+            }).catch(function (error) {
+                    this.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+
+         orgSelect(node){
+          //  console.log(node)
+            this.model.catalogId = node.id;
+            this.$set(this.model,'catalogName',node.title)
+        },
   }
 };
 </script>

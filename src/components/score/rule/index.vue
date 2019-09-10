@@ -127,7 +127,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.ruleEditModal.init({
           id: 0,
-          catalogId: 0,
           catalogName: "",
 
           deleted: false,
@@ -176,6 +175,6 @@ export default {
   .bread {
     height: 40px;
   }
- 
+
 }
 </style>
