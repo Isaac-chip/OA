@@ -13,10 +13,10 @@
                         <p slot="title" style="color:rgb(107, 107, 107);">字典分类</p>
                         <div class="left_content" style="display:flex;">
                             <div style="display:flex;width:200px;">
-                                <span class="i-icon i-icon-add"></span>
+                                <span class="i-icon i-icon-add" @click="add_diag()"></span>
                                 <span class="i-icon i-icon-edit"></span>
                                 <span class="i-icon i-icon-delete"></span>
-                                <span class="i-icon i-icon-refresh"></span>
+                                <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
                             <div class="search" style="position: relative;left: 27%;">
                                 <Input v-model="queryStr" search enter-button placeholder="请输入分类名称" />
@@ -24,20 +24,14 @@
                         </div>
                         <!-- 表格部分 -->
                         <div id="table">
-                            <Table border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas">
+                            <Table highlight-row border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas" @on-current-change="get_line_value">
                                 <template slot-scope="{ row, index }" slot="disabled">
                                     {{ row.disabled | status }}
                                 </template>
                             </Table>
-                              <div class="mt-10 d-flex jc-end">
-                            <Page 
-                            @on-page-size-change="changeSize"
-                             @on-change="changePage" 
-                             show-sizer show-total 
-                             :total="pages.total" 
-                            :current="pages.current"
-                             :page-size="pages.size" />
-                              </div>
+                            <div class="mt-10 d-flex jc-end">
+                                <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages.total" :current="pages.current" :page-size="pages.size" />
+                            </div>
                         </div>
                     </Card>
                 </div>
@@ -50,16 +44,123 @@
 
             </Row>
         </div>
+        <!-- 模态框 -->
+        <Modal v-model="deptFormModal" title="新增系统参数" :footer-hide="true" :mask-closable="false" style="width:600px">
+            <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="80">
+                <Row>
+                    <Col span="12">
+                    <FormItem label="分类名称" prop="dictName">
+                        <Input v-model="deptForm.dictName" placeholder="请输入分类名称" />
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <FormItem label="分类编码" prop="dictCode">
+                        <Input v-model="deptForm.dictCode" placeholder="请输入分类编码" />
+                    </FormItem>
+                    </Col>
+                </Row>
 
+                <Row>
+                    <Col span="12">
+                    <FormItem label="显示类型" prop="showType">
+                        <Select v-model="deptForm.showType" placeholder="请选择显示类型">
+                            <Option value='0'>省委组织</Option>
+                            <Option value='1'>市委组织</Option>
+                            <Option value='2'>县委组织</Option>
+                            <Option value='3'>党工委组织</Option>
+                            <Option value='4'>党总支</Option>
+                            <Option value='5'>党支部</Option>
+                        </Select>
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <!-- <FormItem label="状态" prop="partyType">
+                        <Select v-model="deptForm.partyType" placeholder="请选择状态">
+                            <Option value='0'>启用</Option>
+                            <Option value='1'>禁用</Option>
+                           
+                        </Select>
+                    </FormItem> -->
+                    <FormItem label="状态" prop="orderNo">
+                        <Select v-model="deptForm.orderNo" placeholder="请选择状态">
+                            <Option value='0'>禁用</Option>
+                            <Option value='1'>启用</Option>
+
+                        </Select>
+                    </FormItem>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <FormItem label="备注" prop="memo">
+                        <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
+                        <textarea name="" id="" cols="65" rows="5" v-model="deptForm.memo" placeholder=""></textarea>
+                    </FormItem>
+                </Row>
+                <Row>
+                    <div style="text-align:center">
+                        <Button type="primary" @click="add_commit()">提交</Button>
+                        <Button style="margin-left: 8px" @click="deptFormModal=false">关闭</Button>
+                    </div>
+                </Row>
+
+            </Form>
+        </Modal>
     </div>
 </template>
 
 <script>
+import qs from 'qs'
 export default {
     data() {
         return {
+            // 模态框的
+            deptQueryStr: "",
+            dictCode: "--",
+            deptFormModal: false,
+            deptForm: {
+                dictName: "",
+                dictCode: "",
+
+                orderNo: "",
+                memo: "",
+                // tenantId: ""
+            },
+            deptRuleValidate: {
+                dictName: [
+                    {
+                        required: true,
+                        message: "分类名称不能为空",
+                        trigger: "blur"
+                    }
+                ],
+                dictCode: [
+                    {
+                        required: true,
+                        message: "分类编码不能为空",
+                        trigger: "blur"
+                    }
+                ],
+                showType: [
+                    {
+                        required: true,
+                        message: "显示不能为空",
+                        trigger: "change"
+                    }
+                ],
+                orderNo: [
+                    {
+                        required: true,
+                        // type: "string",
+                        message: "状态不能为空",
+                        trigger: "change"
+                    }
+                ]
+            },
+
             queryStr: "",
             dataCount: 0,
+
             // 每页显示多少条
             pageSize: 15,
             deptId: null,
@@ -120,17 +221,7 @@ export default {
                     title: "备注",
                     key: "memo",
                     // width: "50",
-                    render: (h, params) => {
-                        let value = params.row.sex;
-                        switch (value) {
-                            case 0:
-                                return h("span", "男");
-                                break;
-                            case 1:
-                                return h("span", "女");
-                                break;
-                        }
-                    }
+                    
                 }
             ],
             partyUserDatas: [],
@@ -216,6 +307,38 @@ export default {
         };
     },
     methods: {
+        refresh(){
+            this.load_list()
+        },
+        add_commit() {      
+            console.log(this.deptForm);
+            this.$http({
+                url: this.$constants.BIURL + "/biDictType",
+                method: "POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                data:this.deptForm
+             
+            })
+                .then(res => {
+                       this.deptFormModal = false;
+                       console.log(res)
+                       this.load_list()
+                    if (res.data.code == 0) {
+                       this.$Message.success(res.data.msg);
+                    } else {
+                        this.$Message.error(res.data.msg || "请求规则列表错误");
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        // 添加按钮
+        add_diag() {
+            this.deptFormModal = true;
+        },
         load_list() {
             var self = this;
             self
@@ -224,21 +347,26 @@ export default {
                     method: "GET",
                     dataType: "json",
                     params: {
-                        pageNo:self.pages.current,
-                        pageSize:self.pages.size
+                        pageNo: self.pages.current,
+                        pageSize: self.pages.size
                     }
                 })
-                .then(res=>{
-                    if (res.data.code==0) {
-                       const {records,current,pages,size,total} = res.data.data
-                        
+                .then(res => {
+                    if (res.data.code == 0) {
+                        const {
+                            records,
+                            current,
+                            pages,
+                            size,
+                            total
+                        } = res.data.data;
                         self.partyUserDatas = records;
                         self.pages.current = current;
                         self.pages.pages = pages;
                         self.pages.size = size;
                         self.pages.total = total;
-                    }else {
-                        this.$Message.error(res.data.msg || "请求列表失败")
+                    } else {
+                        this.$Message.error(res.data.msg || "请求列表失败");
                     }
                 })
                 .catch(function(error) {
@@ -256,10 +384,13 @@ export default {
         changeSize(size) {
             this.pages.size = size;
             this.load_list();
+        },
+        get_line_value(value, old_value) {
+            console.log(value);
         }
     },
-    created(){
-        this.load_list()
+    created() {
+        this.load_list();
     }
 };
 </script>
