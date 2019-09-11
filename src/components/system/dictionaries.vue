@@ -14,8 +14,8 @@
                         <div class="left_content" style="display:flex;">
                             <div style="display:flex;width:200px;">
                                 <span class="i-icon i-icon-add" @click="add_diag()"></span>
-                                <span class="i-icon i-icon-edit"></span>
-                                <span class="i-icon i-icon-delete"></span>
+                                <span class="i-icon i-icon-edit" @click="edit_diag()"></span>
+                                <span class="i-icon i-icon-delete" @click="del_diag()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
                             <div class="search" style="position: relative;left: 27%;">
@@ -114,6 +114,7 @@ import qs from 'qs'
 export default {
     data() {
         return {
+            flag :false,
             // 模态框的
             deptQueryStr: "",
             dictCode: "--",
@@ -307,8 +308,16 @@ export default {
         };
     },
     methods: {
+        edit_diag(){       
+            if(!this.flag){
+                this.$Message.error("请点击选择一条记录后操作");
+            }else {
+
+            }
+        },
         refresh(){
             this.load_list()
+
         },
         add_commit() {      
             console.log(this.deptForm);
@@ -340,6 +349,7 @@ export default {
             this.deptFormModal = true;
         },
         load_list() {
+            this.flag = false
             var self = this;
             self
                 .$http({
@@ -386,6 +396,7 @@ export default {
             this.load_list();
         },
         get_line_value(value, old_value) {
+            this.flag = true
             console.log(value);
         }
     },
