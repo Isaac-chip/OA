@@ -53,6 +53,11 @@ import MeetingNotice from '@/components/dailyJob/meetingNotice'
 /**乡村振兴 */
 import DeptMap from '@/components/map/deptMap'
 
+/**营商环境 */
+import OperatingWindow from '@/components/business/operatingWindow'
+import OperatingMatter from '@/components/business/operatingMatters'
+import OperatingScore  from '@/components/business/operatingScore'
+
 Vue.use(Router)
 
 export default
@@ -140,6 +145,18 @@ new Router({
           path: '/map/deptMap',
           name: 'deptMap',
           component: DeptMap
+        },{
+          path: '/business/operatingWindow',
+          name: 'operatingWindow',
+          component: OperatingWindow
+        },{
+          path: '/business/operatingMatters',
+          name: 'operatingMatter',
+          component: OperatingMatter
+        },{
+          path: '/business/operatingScore',
+          name: 'operatingScore',
+          component: OperatingScore
         },{
           path: '/system/role',
           name: 'role',

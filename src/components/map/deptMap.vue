@@ -5,7 +5,7 @@
             <BreadcrumbItem >乡村振兴</BreadcrumbItem>
             <BreadcrumbItem >党建地图</BreadcrumbItem>
         </Breadcrumb>
-        <div class="bi-container" id="container">
+        <div class="bi-container map-container" id="container">
             <baidu-map :style="{width:map.width,height:map.height}" class="map" ak="UXTxGY2P3obB5GZ0IBEYBPui0NkUdG0o" :zoom="map.zoom" :center="{lng: map.center.lng, lat: map.center.lat}"
                 @ready="handler" :scroll-wheel-zoom="true">
                  <!--缩放控件-->
@@ -35,7 +35,7 @@
 .header{
     margin-bottom: 15px;
     }
-.bi-container{
+.map-container{
     padding: 0px;
     overflow: hidden;
 }

@@ -1,9 +1,13 @@
 <template>
     <div class="selectUser">
         <Row class="searchview">
+            
              <AutoComplete
-                :data="userResults"
+                v-model="userQuery"
+                @on-search="findUserByUserName"
+                @on-select="userSelectHandle"
                 placeholder="搜索人员">
+                <Option v-for="(item,index) in userList" :value="item.name" :key="index">{{ item.name }}</Option>
             </AutoComplete>
         </Row>
         <Row class="selectHeader" :gutter="16">
@@ -12,39 +16,19 @@
                     <Tree show-checkbox @on-check-change="treeCheckClick" class="dept_tree" :data="departmentDatas"></Tree>
                 </div>
             </Col>
-            <Col span="12">
-                <Scroll class="userview" :on-reach-bottom="handleReachBottom">
-                    <div class="userItem" @on-change="userSelect" @click="userItemClick">
-                        <Checkbox></Checkbox>
+            <Col span="12" class="userview" >
+                <Scroll class="scrollView" :on-reach-bottom="handleReachBottom">
+                    <div v-for="(item, index) in userResults" :key="index" class="userItem" @click="userItemClick(item)">
+                        <Checkbox :true-value ="true" :value="item.disabled"></Checkbox>
                         <img :src="userIcon"/>
-                        <span>张三</span>
+                        <span>{{item.name}}</span> 
                     </div>
-                    <Checkbox class="userItem">
-                        <img :src="userIcon"/>
-                        <span>张三</span>
-                    </Checkbox>
-                    <Checkbox class="userItem">
-                        <img :src="userIcon"/>
-                        <span>张三</span>
-                    </Checkbox>
-                    <Checkbox class="userItem">
-                        <img :src="userIcon"/>
-                        <span>张三</span>
-                    </Checkbox>
-                    <Checkbox class="userItem">
-                        <img :src="userIcon"/>
-                        <span>张三</span>
-                    </Checkbox>
-                    <Checkbox class="userItem">
-                        <img :src="userIcon"/>
-                        <span>张三</span>
-                    </Checkbox>
                 </Scroll>
             </Col>
         </Row>
         <Row>已选择（{{resultDatas.length}}）</Row>
         <Row class="resultview">
-            <Tag v-for="item in resultDatas" :key="item.userId" type="dot" closable
+            <Tag v-for="(item,index) in resultDatas" :key="index" type="dot" closable
                     @on-close="deleteResultDatas(item)">{{item.name}}
             </Tag>
         </Row>
@@ -72,7 +56,7 @@
 .userview{
     position: relative;
     height: 200px;
-    overflow: scroll;
+    overflow: hidden;
     border: 1px solid #dcdee2;
 }
 
@@ -99,18 +83,35 @@
 .userItem img{
     width: 28px;
     height: 28px;
-    margin: 0px 6px;
+    margin: 0px 8px;
     border-radius: 50%;
+}
+.scrollView .ivu-scroll-container{
+    height: 200px !important;
 }
 </style>
 <script>
 import User from '@/assets/icons/user.png'
 export default {
     name:'selectUser',
+    props:{
+        resultSelectDatas:{
+            type: Function,
+            default: function prevToThree() {
+          
+            }
+        }
+    },
     data(){
         return {
             current:1,
+            size:15,
+            currentPage:1,
             userIcon:User,
+            userQuery:'',
+            deptCode:'',
+            dataCount:'',
+            userList:[],
             userResults:[],
             departmentDatas:[],
             resultDatas:[]
@@ -118,7 +119,11 @@ export default {
     },
     methods:{
         treeCheckClick:function(obj,item){
-           this.loadUserByDept(item.deptCode);
+            this.current = 1;
+            this.deptCode = item.deptCode;
+           if(item.checked){
+                this.loadUserByDept(item.deptCode);
+           }
         },
         loadDepartment:function(){
             var self = this;
@@ -151,7 +156,7 @@ export default {
                 });
             });
         },
-        loadUserByDept:function(deptCode){
+        loadUserByDept:function(deptCode,resolve){
             var self = this;
             var tenantId = this.$constants.userInfo.tenantId;
             self.$http({
@@ -168,8 +173,13 @@ export default {
             .then(function (response) {
                 if(response.status ==200){
                     var data = response.data;
-                    self.resultDatas = data.data.records;
-                    console.log(self.resultDatas);
+                    self.userResults = data.data.records;
+                    self.dataCount = data.data.total;
+                    self.currentPage = Math.ceil(self.dataCount / self.size);
+                    if(resolve){
+                        resolve();
+                    }
+                    console.log(self.userResults);
                 }
             }).catch(function (error) {
                 self.$Message.error({
@@ -178,17 +188,66 @@ export default {
                 });
             });
         },
-        deleteResultDatas:function(item){
-
+        findUserByUserName:function(deptCode,resolve){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/user/findUserByUserName',
+                method:'GET',
+                params:{
+                    current:1,
+                    size:15,
+                    query:self.userQuery
+                }
+            })
+            .then(function (response) {
+                if(response.status ==200){
+                    var data = response.data;
+                    self.userList = data.data.records;
+                }
+            }).catch(function (error) {
+                self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+            });
         },
         handleReachBottom:function(){
-            console.log('......scroll');
+           var self = this;
+           return new Promise(resolve => {
+               self.current += 1;
+               if(self.currentPage = self.current){
+                   return;
+               }
+               self.loadUserByDept(self.deptCode,resolve);
+           });
         },
-        userSelect:function(value){
-            console.log(value);
+        userSelectHandle:function(value){
+            this.userList.forEach(element => {
+                if(element.name == value){
+                    this.resultDatas.push(element);
+                    return;
+                }
+            });
+             
         },
-        userItemClick:function(){
-            console.log('......');
+        userItemClick:function(item){
+            if(item.disabled){
+                item.disabled = false;
+                let ind = this.resultDatas.findIndex(a=>a.userId==item.userId);
+                this.resultDatas.splice(ind,1);
+            }else{
+                item.disabled = true;
+                this.resultDatas.push(item);
+            }
+            this.resultSelectDatas(this.resultDatas);
+        },
+        deleteResultDatas:function(item){
+            this.userItemClick(item);
+            let ind = this.resultDatas.findIndex(a=>a.userId==item.userId);
+            if(ind >= 0){
+                this.resultDatas.splice(ind,1);
+            }
+            
         }
     },
     mounted:function(){
