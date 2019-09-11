@@ -4,15 +4,15 @@
       <Breadcrumb>
         <BreadcrumbItem to="/">首页</BreadcrumbItem>
         <BreadcrumbItem>积分管理</BreadcrumbItem>
-        <BreadcrumbItem>积分规则</BreadcrumbItem>
+        <BreadcrumbItem>党员积分管理</BreadcrumbItem>
       </Breadcrumb>
     </div>
 
     <div class="p-15">
       <Row>
-        <Col :span="2">
+        <!-- <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
-        </Col>
+        </Col> -->
         <Col :span="7">
           <Input
             width="500px"
@@ -20,15 +20,11 @@
             search
             enter-button
             @on-search="onSeach"
-            placeholder="输入规则名称查找"
+            placeholder="输入部门名称查找"
           />
         </Col>
-        <Col :span="10">
-          <Button @click="downloadTemplate()" class="mt-1">下载规则模板</Button>
-          <Button @click="ruleExcelExport()" class="mt-1">导出积分规则</Button>
-          <Button @click="ruleExcelImport()" class="mt-1">导入积分规则</Button>
-
-
+        <Col :span="15">
+          <Button @click="deptExcelExport()" class="mt-1">导出党组织积分</Button>
         </Col>
       </Row>
 
@@ -59,23 +55,17 @@
       ref="ruleEditModal"
       v-if="ruleEditModalShow"
     ></rule-edit-modal>
-    <import-modal
-    ref="importModal"
-    @importModalCancel="importModalCancel"
-     v-if="importModalShow"></import-modal>
   </div>
 </template>
 
 <script>
-import ImportModal from './ImportModal'
 import RuleTable from "./RuleTable";
 import RuleEditModal from "./RuleEditModal";
 export default {
   name: "Rule",
   components: {
     RuleTable,
-    RuleEditModal,
-    ImportModal
+    RuleEditModal
   },
   data() {
     return {
@@ -88,15 +78,14 @@ export default {
         size: 10
       },
       ruleLoading: false,
-      ruleEditModalShow: false,
-      importModalShow:false
+      ruleEditModalShow: false
     };
   },
   methods: {
     fetchRuleList() {
       this.ruleLoading = true;
       this.$http({
-        url: this.$constants.BIURL + "/political/score/rule/list",
+        url: this.$constants.BIURL + "/political/score/board/dept/list",
         method: "GET",
         dataType: "json",
         params: {
@@ -109,6 +98,10 @@ export default {
           this.ruleLoading = false;
           if (res.data.code == 0) {
             const { records, current, pages, total, size } = res.data.data;
+            records.forEach(item => {
+              item.starLevel = +item.starLevel;
+            });
+
             this.records = records;
             this.pages = {
               current,
@@ -140,13 +133,20 @@ export default {
       this.ruleEditModalShow = true;
       this.$nextTick(() => {
         this.$refs.ruleEditModal.init({
-          id: 0,
-          catalogName: "",
-
           deleted: false,
-          disabled: false,
 
-          ruleName: ""
+          deptName: "",
+          disabled: false,
+          id: 0,
+
+          memo: "",
+          modifier: "",
+
+          starLevel: {
+            type: Number
+          },
+
+          userName: ""
         });
       });
     },
@@ -166,22 +166,23 @@ export default {
       this.pages.size = size;
       this.fetchRuleList();
     },
-    /**下载规则模板 */
-    downloadTemplate() {
-      this.$http({
-        url: this.$constants.BIURL + "/political/score/rule/excel/template",
-        method: "GET",
-        //二进制流
-        responseType: "blob"
-        // dataType: "json",
-        // params: {
-        //   current: this.pages.current,
-        //   size: this.pages.size,
-        //   query: this.queryStr
-        // }
-      }).then(res => {
 
-        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+
+
+    /**
+     * 导出党组织积分
+     *
+     */
+    deptExcelExport(){
+       this.$http({
+        url: this.$constants.BIURL + "/political/score/board/dept/excel/export",
+        method: "GET",
+        dataType: "json",
+        params: {
+            // deptId:12
+        }
+      }).then(res=>{
+         let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
             let url = window.URL.createObjectURL(blob);
             let aLink = document.createElement("a");
             aLink.style.display = "none";
@@ -192,48 +193,7 @@ export default {
             aLink.click();
             document.body.removeChild(aLink);
             window.URL.revokeObjectURL(url);
-            // console.log(aLink)
-      });
-    },
-    ruleExcelExport(){
-        this.$http({
-        url: this.$constants.BIURL + "/political/score/rule/excel/export",
-        method: "GET",
-        //二进制流
-        responseType: "blob"
-        // dataType: "json",
-        // params: {
-        //   current: this.pages.current,
-        //   size: this.pages.size,
-        //   query: this.queryStr
-        // }
-      }).then(res => {
-
-        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
-            let url = window.URL.createObjectURL(blob);
-            let aLink = document.createElement("a");
-            aLink.style.display = "none";
-            aLink.href = url;
-
-            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
-            document.body.appendChild(aLink);
-            aLink.click();
-            document.body.removeChild(aLink);
-            window.URL.revokeObjectURL(url);
-            // console.log(aLink)
-      });
-    },
-    ruleExcelImport(){
-        this.importModalShow = true
-
-        this.$nextTick(() => {
-this.$refs.importModal.init()
-      });
-
-
-    },
-    importModalCancel(){
-      this.importModalShow = false
+      }).catch()
     }
   },
   created() {
