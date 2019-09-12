@@ -9,11 +9,11 @@
     </div>
 
     <div class="p-15">
-      <Row>
+      <Row  type="flex" justify="end">
         <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
         </Col>
-        <Col :span="7">
+        <Col :span="6">
           <Input
             width="500px"
             v-model="queryStr"
@@ -22,6 +22,13 @@
             @on-search="onSeach"
             placeholder="输入用户名查找"
           />
+        </Col>
+        <Col :span="6"  :offset="10">
+         
+          <Button @click="boardExcelExport()" class="mt-1">导出积分</Button>
+     
+
+
         </Col>
       </Row>
 
@@ -162,6 +169,32 @@ export default {
     changeSize(size) {
       this.pages.size = size;
       this.fetchRuleList();
+    },
+    boardExcelExport(){
+      this.$http({
+        url: this.$constants.BIURL + "/political/score/board/excel/export",
+        method: "GET",
+        //二进制流
+        responseType: "blob",
+        // dataType: "json",
+        params: {
+          query: this.queryStr
+        }
+      }).then(res => {
+
+        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+            let url = window.URL.createObjectURL(blob);
+            let aLink = document.createElement("a");
+            aLink.style.display = "none";
+            aLink.href = url;
+
+            aLink.setAttribute("download", `boardExcel${new Date().getTime()}.xls`);
+            document.body.appendChild(aLink);
+            aLink.click();
+            document.body.removeChild(aLink);
+            window.URL.revokeObjectURL(url);
+            // console.log(aLink)
+      });
     }
   },
   created() {

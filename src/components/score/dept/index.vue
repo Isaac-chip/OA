@@ -23,8 +23,8 @@
             placeholder="输入部门名称查找"
           />
         </Col>
-        <Col :span="15">
-          <Button @click="deptExcelExport()" class="mt-1">导出党组织积分</Button>
+        <Col :span="6"  :offset="10">
+          <Button @click="deptExcelExport()" class="mt-1">导出积分</Button>
         </Col>
       </Row>
 
@@ -176,10 +176,10 @@ export default {
     deptExcelExport(){
        this.$http({
         url: this.$constants.BIURL + "/political/score/board/dept/excel/export",
+        responseType: "blob",
         method: "GET",
-        dataType: "json",
         params: {
-            // deptId:12
+            query:this.queryStr
         }
       }).then(res=>{
          let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
