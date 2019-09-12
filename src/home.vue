@@ -81,7 +81,8 @@
         </Sider>
         <Layout >
           <Content class="router-view-content">
-            <router-view/>
+            <router-view v-show="!isShowDashBorad"/>
+            <dash-borad v-show="isShowDashBorad"></dash-borad>
           </Content>
         </Layout>
       </Layout>
@@ -99,8 +100,22 @@ import DashBorad from "@/components/home/dashboard";
     },
     data(){
       return {
+        isShowDashBorad:true,
         menuHtml:'',
         menuList:[]
+      }
+    },
+    watch: {
+      $route: {
+        handler: function(val, oldVal){
+          if(val.name == 'home'){
+            this.isShowDashBorad = true;
+          }else{
+            this.isShowDashBorad = false;
+          }
+        },
+        // 深度观察监听
+        deep: true
       }
     },
     methods:{
