@@ -200,13 +200,12 @@ export default {
         url: this.$constants.BIURL + "/political/score/rule/excel/export",
         method: "GET",
         //二进制流
-        responseType: "blob"
+        responseType: "blob",
         // dataType: "json",
-        // params: {
-        //   current: this.pages.current,
-        //   size: this.pages.size,
-        //   query: this.queryStr
-        // }
+        params: {
+         
+          query: this.queryStr
+        }
       }).then(res => {
 
         let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
