@@ -3,22 +3,30 @@
     :visible.sync="importModalShow"
     title="导入规则"
     :close-on-click-modal="false"
-    width="50%"
+    width="40%"
     @close="cancel"
   >
-    <!-- <upload-excel-component
-    v-if="!tableData.length"
-    :on-success="handleSuccess"  />
-    <Button v-if="tableData.length" @click="uploadExcel" class="mt-1">确认上传</Button>
-    <el-table
-     v-if="tableData.length"
-     :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
-      <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
-    </el-table>-->
-    <el-upload
-    :headers="headers"
-    drag
-  action="http://120.24.51.37:9010/admin/political/score/rule/excel/import"  />
+    <Upload
+      :show-upload-list="false"
+      :default-file-list="defaultList"
+      :on-error="onError"
+      :on-success="handleSuccess"
+      :headers="headers"
+      type="drag"
+      :action="this.$constants.BIURL +'/political/score/rule/excel/import'"
+    >
+      <div style="padding: 20px 0">
+        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+        <p>点击选择规则文件</p>
+      </div>
+    </Upload>
+    <ul>
+      <li v-for="(i,index) in defaultList" :key="index" class="file-list">
+          <span >文件名:{{i.name}}</span>
+          <span>--状态:{{i.msg}}</span>
+           <span>--说明:{{i.data}}</span>
+      </li>
+    </ul>
   </el-dialog>
 </template>
 
@@ -34,14 +42,17 @@ export default {
     return {
       tableData: [],
       tableHeader: [],
-      importModalShow: false
+      importModalShow: false,
+      defaultList: []
     };
   },
-  computed:{
-    headers(){
+  computed: {
+    headers() {
       return {
-        Authorization: 'bearer '+JSON.parse(window.localStorage.getItem('userInfo')).access_token
-      }
+        Authorization:
+          "bearer " +
+          JSON.parse(window.localStorage.getItem("userInfo")).access_token
+      };
     }
   },
   methods: {
@@ -49,31 +60,16 @@ export default {
       this.importModalShow = true;
     },
     cancel() {
-      (this.tableData = []),
-        (this.tableHeader = []),
-        (this.importModalShow = false);
-      this.$emit("importModalCancel");
+     
+        this.importModalShow = false;
+      this.$emit("importModalCancel")
     },
-
-    handleSuccess({ results, header }) {
-      this.tableData = results;
-      this.tableHeader = header;
-      // console.log(this.tableData);
-      // console.log(this.tableHeader);
+    handleSuccess(res, file) {
+      this.defaultList.push({ name: file.name, msg: file.response.msg, data:file.response.data });
     },
-    uploadExcel() {
-      //  this.tableData = results;
-      this.$http({
-        url: this.$constants.BIURL + "/political/score/rule/excel/import",
-        method: "POST",
-        //二进制流
-        header: "multipart/form-data",
-        // responseType: "blob"
-        dataType: "multipart/form-data",
-        data: {
-          file: this.tableData
-        }
-      });
+    
+    onError(res, file){
+      this.defaultList.push({ name: file.name, msg: file.response.msg,data:file.response.data });
     }
   }
 };
@@ -82,5 +78,12 @@ export default {
 <style lang="less" scoped>
 /deep/ .drop {
   width: 100% !important;
+}
+
+ul {
+  .file-list{
+    list-style: none;
+    border-bottom: 1px dashed #ccc;
+  }
 }
 </style>

@@ -9,13 +9,13 @@
     </div>
 
     <div class="p-15">
-      <Row>
+      <Row type="flex" justify="end">
         <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
         </Col>
-        <Col :span="7">
+        <Col :span="6">
           <Input
-            width="500px"
+            width="400px"
             v-model="queryStr"
             search
             enter-button
@@ -23,7 +23,7 @@
             placeholder="输入规则名称查找"
           />
         </Col>
-        <Col :span="10">
+        <Col :span="10"  :offset="6">
           <Button @click="downloadTemplate()" class="mt-1">下载规则模板</Button>
           <Button @click="ruleExcelExport()" class="mt-1">导出积分规则</Button>
           <Button @click="ruleExcelImport()" class="mt-1">导入积分规则</Button>
@@ -187,7 +187,7 @@ export default {
             aLink.style.display = "none";
             aLink.href = url;
 
-            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
+            aLink.setAttribute("download", `积分模板${new Date().getTime()}.xls`);
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);
@@ -233,6 +233,7 @@ this.$refs.importModal.init()
 
     },
     importModalCancel(){
+      this.fetchRuleList()
       this.importModalShow = false
     }
   },
