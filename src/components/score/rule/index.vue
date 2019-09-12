@@ -9,13 +9,13 @@
     </div>
 
     <div class="p-15">
-      <Row>
+      <Row type="flex" justify="end">
         <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
         </Col>
-        <Col :span="7">
+        <Col :span="6">
           <Input
-            width="500px"
+            width="400px"
             v-model="queryStr"
             search
             enter-button
@@ -23,8 +23,12 @@
             placeholder="输入规则名称查找"
           />
         </Col>
-        <Col :span="10">
-        <Button @click="downloadTemplate()" class="mt-1">下载规则模板</Button>
+        <Col :span="10"  :offset="6">
+          <Button @click="downloadTemplate()" class="mt-1">下载规则模板</Button>
+          <Button @click="ruleExcelExport()" class="mt-1">导出积分规则</Button>
+          <Button @click="ruleExcelImport()" class="mt-1">导入积分规则</Button>
+
+
         </Col>
       </Row>
 
@@ -55,17 +59,23 @@
       ref="ruleEditModal"
       v-if="ruleEditModalShow"
     ></rule-edit-modal>
+    <import-modal
+    ref="importModal"
+    @importModalCancel="importModalCancel"
+     v-if="importModalShow"></import-modal>
   </div>
 </template>
 
 <script>
+import ImportModal from './ImportModal'
 import RuleTable from "./RuleTable";
 import RuleEditModal from "./RuleEditModal";
 export default {
   name: "Rule",
   components: {
     RuleTable,
-    RuleEditModal
+    RuleEditModal,
+    ImportModal
   },
   data() {
     return {
@@ -78,7 +88,8 @@ export default {
         size: 10
       },
       ruleLoading: false,
-      ruleEditModalShow: false
+      ruleEditModalShow: false,
+      importModalShow:false
     };
   },
   methods: {
@@ -156,20 +167,73 @@ export default {
       this.fetchRuleList();
     },
     /**下载规则模板 */
-    downloadTemplate(){
+    downloadTemplate() {
       this.$http({
         url: this.$constants.BIURL + "/political/score/rule/excel/template",
         method: "GET",
+        //二进制流
+        responseType: "blob"
         // dataType: "json",
         // params: {
         //   current: this.pages.current,
         //   size: this.pages.size,
         //   query: this.queryStr
         // }
-      })
-      .then(res=>{
-        console.log(res)
-      })
+      }).then(res => {
+
+        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+            let url = window.URL.createObjectURL(blob);
+            let aLink = document.createElement("a");
+            aLink.style.display = "none";
+            aLink.href = url;
+
+            aLink.setAttribute("download", `积分模板${new Date().getTime()}.xls`);
+            document.body.appendChild(aLink);
+            aLink.click();
+            document.body.removeChild(aLink);
+            window.URL.revokeObjectURL(url);
+            // console.log(aLink)
+      });
+    },
+    ruleExcelExport(){
+        this.$http({
+        url: this.$constants.BIURL + "/political/score/rule/excel/export",
+        method: "GET",
+        //二进制流
+        responseType: "blob",
+        // dataType: "json",
+        params: {
+         
+          query: this.queryStr
+        }
+      }).then(res => {
+
+        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+            let url = window.URL.createObjectURL(blob);
+            let aLink = document.createElement("a");
+            aLink.style.display = "none";
+            aLink.href = url;
+
+            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
+            document.body.appendChild(aLink);
+            aLink.click();
+            document.body.removeChild(aLink);
+            window.URL.revokeObjectURL(url);
+            // console.log(aLink)
+      });
+    },
+    ruleExcelImport(){
+        this.importModalShow = true
+
+        this.$nextTick(() => {
+this.$refs.importModal.init()
+      });
+
+
+    },
+    importModalCancel(){
+      this.fetchRuleList()
+      this.importModalShow = false
     }
   },
   created() {
@@ -194,6 +258,5 @@ export default {
   .bread {
     height: 40px;
   }
-
 }
 </style>

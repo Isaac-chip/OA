@@ -61,6 +61,7 @@ import DeptMap from '@/components/map/deptMap'
 
 import rule from './modules/rule'
 import board from './modules/board'
+import dept from './modules/dept'
 
 Vue.use(Router)
 
@@ -230,7 +231,8 @@ export default
           component: DoubleSign
         },
         rule,
-        board
+        board,
+        dept
       ]
     }
     ]

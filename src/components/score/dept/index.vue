@@ -9,26 +9,22 @@
     </div>
 
     <div class="p-15">
-      <Row  type="flex" justify="end">
-        <Col :span="2">
+      <Row>
+        <!-- <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
-        </Col>
-        <Col :span="6">
+        </Col> -->
+        <Col :span="7">
           <Input
             width="500px"
             v-model="queryStr"
             search
             enter-button
             @on-search="onSeach"
-            placeholder="输入用户名查找"
+            placeholder="输入部门名称查找"
           />
         </Col>
         <Col :span="6"  :offset="10">
-         
-          <Button @click="boardExcelExport()" class="mt-1">导出积分</Button>
-     
-
-
+          <Button @click="deptExcelExport()" class="mt-1">导出积分</Button>
         </Col>
       </Row>
 
@@ -89,7 +85,7 @@ export default {
     fetchRuleList() {
       this.ruleLoading = true;
       this.$http({
-        url: this.$constants.BIURL + "/political/score/board/list",
+        url: this.$constants.BIURL + "/political/score/board/dept/list",
         method: "GET",
         dataType: "json",
         params: {
@@ -170,31 +166,34 @@ export default {
       this.pages.size = size;
       this.fetchRuleList();
     },
-    boardExcelExport(){
-      this.$http({
-        url: this.$constants.BIURL + "/political/score/board/excel/export",
-        method: "GET",
-        //二进制流
-        responseType: "blob",
-        // dataType: "json",
-        params: {
-          query: this.queryStr
-        }
-      }).then(res => {
 
-        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+
+
+    /**
+     * 导出党组织积分
+     *
+     */
+    deptExcelExport(){
+       this.$http({
+        url: this.$constants.BIURL + "/political/score/board/dept/excel/export",
+        responseType: "blob",
+        method: "GET",
+        params: {
+            query:this.queryStr
+        }
+      }).then(res=>{
+         let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
             let url = window.URL.createObjectURL(blob);
             let aLink = document.createElement("a");
             aLink.style.display = "none";
             aLink.href = url;
 
-            aLink.setAttribute("download", `boardExcel${new Date().getTime()}.xls`);
+            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);
             window.URL.revokeObjectURL(url);
-            // console.log(aLink)
-      });
+      }).catch()
     }
   },
   created() {
