@@ -52,7 +52,6 @@
     background: #f0f2f5;
     box-sizing: border-box;
     position: relative;
-    padding: 10px;
 }
 
 .firstRowView{

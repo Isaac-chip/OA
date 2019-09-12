@@ -21,6 +21,7 @@ import PartyUserTable from "@/components/system/partyUserTable"
 import ApkEdition from "@/components/system/ApkEdition"
 import SysLogs from "@/components/system/sysLogs"
 import MailInfo from "@/components/system/mailInfo"
+import Dictionaries from "@/components/system/dictionaries"
 
 /**党讯管理 */
 import Catalog from '@/components/partyNews/catalog'
@@ -57,6 +58,15 @@ import DeptMap from '@/components/map/deptMap'
 import OperatingWindow from '@/components/business/operatingWindow'
 import OperatingMatter from '@/components/business/operatingMatters'
 import OperatingScore  from '@/components/business/operatingScore'
+
+
+
+/**积分 */
+
+
+import rule from './modules/rule'
+import board from './modules/board'
+import dept from './modules/dept'
 
 Vue.use(Router)
 
@@ -185,6 +195,10 @@ new Router({
           path: '/system/partyUser',
           name: 'partyUser',
           component: PartyUser
+        }, {
+          path: '/system/dictionaries',
+          name: 'dictionaries',
+          component: Dictionaries
         },{
           path: '/system/partyUserTable',
           name: 'partyUserTable',
@@ -229,8 +243,11 @@ new Router({
           path:'/builder/doubleSign',
           name:'doubleSign',
           component:DoubleSign
-        }
+        },
+		rule,
+        board,
+        dept
       ]
     }
   ]
-})
+});

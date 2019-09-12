@@ -44,7 +44,6 @@
                 </Row>
             </Form>
         </Modal>
-
         <Modal  v-model="qrCodeModal" title="参会二维码" :footer-hide="true" :mask-closable="false" width="600px">
             <div style="text-align:center">
                 <img :src="qrCodePath" width="300" height="300"/>

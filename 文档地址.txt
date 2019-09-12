@@ -1,0 +1,10 @@
+http://120.24.51.37:8848/doc.html
+
+字典分类接口 添加 /biDictType   {
+ "dictCode": "6565",
+ "dictName": "sgdg",
+ "memo": "khkh",
+ "orderNo": 0,
+ "showType": "sdfsdfdf"
+}
+

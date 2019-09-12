@@ -17,6 +17,12 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 import BaiduMap from 'vue-baidu-map'
 
+
+import 'element-ui/lib/theme-chalk/index.css';
+import './assets/style/style.scss';
+import ElementUI from 'element-ui';
+Vue.use(ElementUI);
+
 Vue.use(BaiduMap,{
   ak:'UXTxGY2P3obB5GZ0IBEYBPui0NkUdG0o'
 });
@@ -105,4 +111,14 @@ new Vue({
   router,
   components: {App},
   template: '<app/>'
+})
+
+
+//全局过滤器
+Vue.filter('status', function (value) {
+  if(value==true) {
+    return '禁用'
+  }else {
+    return '启用'
+  }
 })

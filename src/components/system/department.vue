@@ -510,7 +510,6 @@
       width: 25px;
       height: 25px;
     }
-
   .userView{
     margin-left: 10px;
   }
