@@ -21,7 +21,10 @@ import PartyUserTable from "@/components/system/partyUserTable"
 import ApkEdition from "@/components/system/ApkEdition"
 import SysLogs from "@/components/system/sysLogs"
 import MailInfo from "@/components/system/mailInfo"
+<<<<<<< HEAD
 import Dictionaries from "@/components/system/dictionaries"
+=======
+>>>>>>> 577c7218d7429de0221ce89404b2a069c24c880c
 
 /**党讯管理 */
 import Catalog from '@/components/partyNews/catalog'
@@ -54,6 +57,7 @@ import MeetingNotice from '@/components/dailyJob/meetingNotice'
 /**乡村振兴 */
 import DeptMap from '@/components/map/deptMap'
 
+<<<<<<< HEAD
 
 
 /**积分 */
@@ -79,10 +83,28 @@ export default
       component: Home,
       children: [
 
+=======
+Vue.use(Router)
+
+export default
+new Router({
+  base: '/',
+  mode: 'hash',
+  routes: [{
+      path:'/',
+      name:'login',
+      component:Login
+    },{
+      path:'/home',
+      name:'home',
+      component:Home,
+      children:[
+>>>>>>> 577c7218d7429de0221ce89404b2a069c24c880c
         {
           path: '/partyIn',
           name: 'partyIn',
           component: PartyIn
+<<<<<<< HEAD
         }, {
           path: '/partyIn/partyInTable',
           name: 'partyInTable',
@@ -237,3 +259,150 @@ export default
     }
     ]
   })
+=======
+        },{
+          path:'/partyIn/partyInTable',
+          name:'partyInTable',
+          component:PartyInTable
+        },{
+          path: '/partyAm/partyAm',
+          name: 'partyAm',
+          component: PartyAm
+        },{
+          path: '/partyAm/partyAmList',
+          name: 'partyAmList',
+          component: PartyAmList
+        },{
+          path: '/partyAm/partySpecialResult',
+          name: 'PartySpecialResult',
+          component: PartySpecialResult
+        },{
+          path: '/partyAm/partySpecialResultDetail',
+          name: 'partySpecialResultDetail',
+          component: PartySpecialResultDetail
+        },{
+          path: '/system/menu',
+          name: 'menu',
+          component: Menu
+        },{
+          path: '/exam/examSubjectType',
+          name: 'examSubjectType',
+          component: ExamSubjectType
+        },{
+          path: '/exam/examSubject',
+          name: 'examSubject',
+          component: ExamSubject
+        },{
+          path: '/exam/examQuestion',
+          name: 'examQuestion',
+          component: ExamQuestion
+        },{
+          path: '/exam/courseContent',
+          name: 'courseContent',
+          component: CourseContent
+        },{
+          path: '/exam/studyCatalog',
+          name: 'studyCatalog',
+          component: StudyCatalog
+        },{
+          path: '/exam/studyContent',
+          name: 'studyContent',
+          component: StudyContent
+        },{
+          path: '/dailyJob/userSignRules',
+          name: 'userSignRules',
+          component: UserSignRules
+        },{
+          path: '/dailyJob/userSignManager',
+          name: 'userSignManager',
+          component: UserSignManager
+        },{
+          path: '/dailyJob/userSignSpecial',
+          name: 'userSignSpecial',
+          component: UserSignSpecial
+        },{
+          path: '/dailyJob/meetingNotice',
+          name: 'meetingNotice',
+          component: MeetingNotice
+        },{
+          path: '/map/deptMap',
+          name: 'deptMap',
+          component: DeptMap
+        },{
+          path: '/system/role',
+          name: 'role',
+          component: Role
+        },{
+          path: '/system/user',
+          name: 'user',
+          component: User
+        },{
+          path: '/system/dept',
+          name: 'dept',
+          component: Department
+        },{
+          path: '/system/apkEdition',
+          name: 'apkEdition',
+          component: ApkEdition
+        },{
+          path: '/system/sysLogs',
+          name: 'sysLogs',
+          component: SysLogs
+        },{
+          path: '/system/mailInfo',
+          name: 'mailInfo',
+          component: MailInfo
+        },{
+          path: '/system/partyUser',
+          name: 'partyUser',
+          component: PartyUser
+        },{
+          path: '/system/partyUserTable',
+          name: 'partyUserTable',
+          component: PartyUserTable
+        },{
+          path:'/partyNews/catalog',
+          name:'catalog',
+          component:Catalog
+        },{
+          path:'/partyNews/newsContent',
+          name:'newsContent',
+          component:NewsContent
+        },{
+          path:'/builder/poorVillage',
+          name:'poorVillage',
+          component:Village
+        },{
+          path:'/builder/teamMember',
+          name:'teamMember',
+          component:TeamMember
+        },{
+          path:'/builder/leaderMember',
+          name:'leaderMember',
+          component:LeaderMember
+        },{
+          path:'/builder/firstSecretary',
+          name:'firstSecretary',
+          component:FirstSecretary
+        },{
+          path:'/builder/teamMemberLogs',
+          name:'teamMemberLogs',
+          component:TeamMemberLogs
+        },{
+          path:'/builder/leaderMemberLogs',
+          name:'leaderMemberLogs',
+          component:LeaderMemberLogs
+        },{
+          path:'/builder/firstSecretaryLogs',
+          name:'firstSecretaryLogs',
+          component:FirstSecretaryLogs
+        },{
+          path:'/builder/doubleSign',
+          name:'doubleSign',
+          component:DoubleSign
+        }
+      ]
+    }
+  ]
+})
+>>>>>>> 577c7218d7429de0221ce89404b2a069c24c880c
