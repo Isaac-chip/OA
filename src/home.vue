@@ -118,10 +118,7 @@ import DashBorad from "@/components/home/dashboard";
               if(response.status ==200){
                   var data = response.data;
                   self.menuList = data.data;
-<<<<<<< HEAD
                   console.log(self.menuList)
-=======
->>>>>>> 577c7218d7429de0221ce89404b2a069c24c880c
               }
           })
       }
