@@ -31,7 +31,7 @@
         :is-fold="props.isFold"
         :expand-type="props.expandType"
         :selection-type="props.selectionType">
-        <template scope="scope" slot="action">
+        <template slot-scope="scope" slot="action">
             <Button  size="small" style="margin-right: 5px" @click="updateVillage(scope.row)">修改</Button>
             <Button  size="small" style="margin-right: 5px" @click="deleteVillage(scope.row)">删除</Button>
         </template>

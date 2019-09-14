@@ -63,6 +63,10 @@ import rule from './modules/rule'
 import board from './modules/board'
 import dept from './modules/dept'
 
+
+/* 党群服务 */
+import volunteer from '@/components/partyService/volunteer'
+
 Vue.use(Router)
 
 export default
@@ -228,6 +232,10 @@ export default
           path: '/builder/doubleSign',
           name: 'doubleSign',
           component: DoubleSign
+        },{
+          path: '/partyService/volunteer',
+          name: 'volunteer',
+          component: volunteer
         },
         rule,
         board,
