@@ -49,7 +49,9 @@
       v-model="showQrcodeModal"
       title="二维码"
       >
-      <img :src="qrSrc" />
+      <div style="height:100%;width:100%;text-align:center;">
+        <img :src="qrSrc" />
+      </div>
     </Modal>
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/">首页</BreadcrumbItem>
@@ -390,7 +392,7 @@ export default {
     },
     showQrcode (qrurl) {
       
-      this.qrSrc = `${this.$constants.BIURL + '/' + qrurl}.jpg`
+      this.qrSrc = `${this.$constants.PREPATH + qrurl}`
       console.log('qrSrc',this.qrSrc,qrurl);
       
       this.showQrcodeModal = true
