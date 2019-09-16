@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: volunteer,
+  // name: volunteer,
   data () {
     return {
       

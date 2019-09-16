@@ -49,30 +49,22 @@
                         <p slot="title" style="color:rgb(107, 107, 107);">分类选项</p>
                         <div class="left_content" style="display:flex;">
                             <div style="display:flex;width:200px;">
-                                <span class="i-icon i-icon-add" @click="add_diag()"></span>
+                                <span class="i-icon i-icon-add" @click="add_diag2()"></span>
                                 <span class="i-icon i-icon-edit" @click="edit_diag()"></span>
                                 <span class="i-icon i-icon-delete" @click="del_diag()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
                             <div class="search" style="position: relative;left: 27%;">
-                                <Input v-model="queryStr" search enter-button @on-search="search" placeholder="请输入分类名称" />
+                                <Input v-model="queryStr2" search enter-button @on-search="search2" placeholder="请输入分类代码查询" />
                             </div>
                         </div>
                         <!-- 表格部分 -->
                         <div id="table">
-                            <Table highlight-row border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas" @on-current-change="get_line_value">
-                                <template slot-scope="{ row, index }" slot="disabled">
-                                    {{ row.disabled | status }}
-                                </template>
-                                <template slot-scope="{row}" slot="action">
-                                    <div>
+                            <Table highlight-row border ref="selection" :columns="partyUserCloumns2" :data="partyUserDatas2" @on-current-change="get_line_value2">
 
-                                        <Button :type="row.disabled?'primary':'error'" @click="is_didabled(row)">{{row.disabled?"启用":"禁用"}}</Button>
-                                    </div>
-                                </template>
                             </Table>
                             <div class="mt-10 d-flex jc-end">
-                                <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages.total" :current="pages.current" :page-size="pages.size" />
+                                <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages2.total" :current="pages2.current" :page-size="pages2.size" />
                             </div>
                         </div>
                     </Card>
@@ -204,6 +196,58 @@
 
             </Form>
         </Modal>
+        <!-- 分类选项 新增模态框 -->
+        <Modal v-model="deptFormModal2" title="修改分类选项" :footer-hide="true" :mask-closable="false" style="width:600px">
+            <Form ref="deptForm2" :model="deptForm2" :rules="deptRuleValidate2" :label-width="80">
+                <Row>
+                    <Col span="12">
+                    <FormItem label="父类名称" prop="dictName">
+                        <Input disabled v-model="deptForm2.dictName" placeholder="请输入父类名称" />
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <FormItem label="序号" prop="orderNo">
+                        <!-- <InputNumber  v-model="deptForm2.orderNo" placeholder="请输入序号" /></InputNumber > -->
+                        <InputNumber :max="10000" :min="1" v-model="deptForm2.orderNo" style="width:100%;"></InputNumber>
+                    </FormItem>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col span="12">
+                    <FormItem label="值域" prop="subKey">
+                        <Input v-model="deptForm2.subKey" placeholder="请输入值域" />
+                    </FormItem>
+                    </Col>
+                    <Col span="12">
+                    <!-- <FormItem label="状态" prop="partyType">
+                        <Select v-model="deptForm.partyType" placeholder="请选择状态">
+                            <Option value='0'>启用</Option>
+                            <Option value='1'>禁用</Option>
+                           
+                        </Select>
+                    </FormItem> -->
+                    <FormItem label="显示值" prop="subVal">
+                        <Input v-model="deptForm2.subVal" placeholder="请输入显示值" />
+                    </FormItem>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <FormItem label="备注" prop="memo">
+                        <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
+                        <textarea name="" id="" cols="65" rows="5" v-model="deptForm2.memo" placeholder=""></textarea>
+                    </FormItem>
+                </Row>
+                <Row>
+                    <div style="text-align:center">
+                        <Button type="primary" @click="add_commit2()">提交</Button>
+                        <Button style="margin-left: 8px" @click="deptFormModal2=false">关闭</Button>
+                    </div>
+                </Row>
+
+            </Form>
+        </Modal>
 
     </div>
 </template>
@@ -217,7 +261,9 @@ export default {
             // 模态框的
             deptQueryStr: "",
             dictCode: "--",
+            queryStr2:"",
             deptFormModal: false,
+            deptFormModal2: false,
             edit_deptFormModal: false,
             table_line_value: "", //选中表格的单元行数据
             deptForm: {
@@ -226,6 +272,17 @@ export default {
                 orderNo: "",
                 memo: ""
                 // tenantId: ""
+            },
+            deptForm2: {
+                //修改分类选项的表单
+
+                dictCode: "656dfg5",
+                dictId: 22,
+
+                orderNo: 0,
+
+                subVal: "656dfg5",
+                subKey: "656dfg5"
             },
             edit_deptForm: {
                 dictName: "",
@@ -263,6 +320,31 @@ export default {
                         message: "状态不能为空",
                         trigger: "change"
                     }
+                ]
+            },
+            deptRuleValidate2: {
+                subVal: [
+                    {
+                        required: true,
+                        message: "显示值不能为空",
+                        trigger: "blur"
+                    }
+                ],
+                subKey: [
+                    {
+                        required: true,
+                        message: "值域不能为空",
+                        trigger: "blur"
+                    }
+                ],
+
+                orderNo: [
+                    // {
+                    //     required: true,
+                    //     // type: "string",
+                    //     message: "序号不能为空",
+                    //     trigger: "change"
+                    // }
                 ]
             },
             deptRuleValidate: {
@@ -304,6 +386,12 @@ export default {
             pageSize: 15,
             deptId: null,
             pages: {
+                current: 1,
+                pages: 1,
+                total: 0,
+                size: 10
+            },
+            pages2: {
                 current: 1,
                 pages: 1,
                 total: 0,
@@ -368,89 +456,68 @@ export default {
                     align: "center"
                 }
             ],
-            partyUserDatas: [],
-            columns6: [
+            partyUserCloumns2: [
                 {
-                    title: "Date",
-                    key: "date"
+                    type: "index",
+                    // width: 50,
+                    title: "序号",
+                    align: "center"
                 },
                 {
-                    title: "Name",
-                    key: "name"
+                    title: "值域",
+                    key: "subKey"
+                    // width: "50"
                 },
                 {
-                    title: "Age",
-                    key: "age",
-                    filters: [
-                        {
-                            label: "Greater than 25",
-                            value: 1
-                        },
-                        {
-                            label: "Less than 25",
-                            value: 2
-                        }
-                    ],
-                    filterMultiple: false,
-                    filterMethod(value, row) {
-                        if (value === 1) {
-                            return row.age > 25;
-                        } else if (value === 2) {
-                            return row.age < 25;
-                        }
-                    }
+                    title: "显示值",
+                    key: "subVal"
+                    // width: "50"
                 },
+
                 {
-                    title: "Address",
-                    key: "address",
-                    filters: [
-                        {
-                            label: "New York",
-                            value: "New York"
-                        },
-                        {
-                            label: "London",
-                            value: "London"
-                        },
-                        {
-                            label: "Sydney",
-                            value: "Sydney"
-                        }
-                    ],
-                    filterMethod(value, row) {
-                        return row.address.indexOf(value) > -1;
-                    }
+                    title: "备注",
+                    key: "memo"
+                    // width: "50",
                 }
             ],
-            data5: [
-                {
-                    name: "John Brown",
-                    age: 18,
-                    address: "New York No. 1 Lake Park",
-                    date: "2016-10-03"
-                },
-                {
-                    name: "Jim Green",
-                    age: 24,
-                    address: "London No. 1 Lake Park",
-                    date: "2016-10-01"
-                },
-                {
-                    name: "Joe Black",
-                    age: 30,
-                    address: "Sydney No. 1 Lake Park",
-                    date: "2016-10-02"
-                },
-                {
-                    name: "Jon Snow",
-                    age: 26,
-                    address: "Ottawa No. 2 Lake Park",
-                    date: "2016-10-04"
-                }
-            ]
+            partyUserDatas: [],
+            partyUserDatas2: []
         };
     },
     methods: {
+        // 分类选项的表格部分
+        add_diag2() {
+             if (!this.flag) {
+                this.$Message.error("请点击选择一条记录后操作");
+                return
+            }
+            this.deptFormModal2 = true;
+        },
+        add_commit2() {
+            console.log(this.deptForm2);
+            this.$http({
+                url: this.$constants.BIURL + `/biDictValue`,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: this.deptForm2
+            })
+                .then(res => {
+                    console.log(res);
+                    this.deptFormModal2 = false
+                    this.load_list();
+                    if (res.data.code == 0) {
+                        this.$Message.success(res.data.msg);
+                    } else {
+                        this.$Message.error(res.data.msg || "请求规则列表错误");
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        // ----------------------------------------------------
         is_didabled(row) {
             console.log(row);
             if (!row.disabled) {
@@ -487,6 +554,38 @@ export default {
                     }
                 });
             } else {
+                this.$Modal.confirm({
+                    title: "系统提示",
+                    content: "确定要继续此操作吗?",
+                    okText: "确定",
+                    cancelText: "取消",
+                    onOk: () => {
+                        this.$http({
+                            url:
+                                this.$constants.BIURL +
+                                `/biDictType/enable/${row.id}`,
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                            // data: this.edit_deptForm.id
+                        })
+                            .then(res => {
+                                console.log(res);
+                                this.load_list();
+                                if (res.data.code == 0) {
+                                    this.$Message.success(res.data.msg);
+                                } else {
+                                    this.$Message.error(
+                                        res.data.msg || "请求规则列表错误"
+                                    );
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                    }
+                });
             }
         },
         del_diag() {
@@ -679,6 +778,46 @@ export default {
                     });
                     console.log(error);
                 });
+
+            // 字典值列表
+            self
+                .$http({
+                    url: self.$constants.BIURL + "/biDictValue/list",
+                    method: "GET",
+                    dataType: "json",
+                    params: {
+                        pageNo: self.pages2.current,
+                        pageSize: self.pages2.size
+                    }
+                })
+                .then(res => {
+                    console.log(res);
+            
+                    if (res.data.code == 0) {
+                        const {
+                            records,
+                            current,
+                            pages,
+                            size,
+                            total
+                        } = res.data.data;
+                        self.partyUserDatas2 = records;
+                        self.pages2.current = current;
+                        self.pages2.pages = pages;
+                        self.pages2.size = size;
+                        self.pages2.total = total;
+                        // debugger
+                    } else {
+                        this.$Message.error(res.data.msg || "请求列表失败");
+                    }
+                })
+                .catch(function(error) {
+                    self.$Message.error({
+                        content: error.message,
+                        duration: 2
+                    });
+                    console.log(error);
+                });
         },
         changePage(current) {
             this.pages.current = current;
@@ -690,8 +829,20 @@ export default {
         },
         get_line_value(value, old_value) {
             this.flag = true;
-            console.log(value);
+            // console.log(value);
             this.table_line_value = value;
+            this.deptForm2.dictCode = value.dictCode;
+            this.deptForm2.dictId = value.id;
+            this.deptForm2.orderNo = value.orderNo;
+           this.deptForm2.subVal=""
+            this.deptForm2.subKey=""
+            this.deptForm2.dictName=value.dictName
+         
+        },
+        //分类选项 点击高亮获取当前行的数据
+        get_line_value2(value, old_value) {
+            console.log(value);
+          
         },
         show(index) {
             this.$Modal.info({
