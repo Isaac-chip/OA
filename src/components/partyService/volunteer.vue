@@ -2,57 +2,79 @@
   <div class="volunteer">
     <Modal
       v-model="showModal"
-      title="新增志愿服务"
+      title="填写志愿服务"
       @on-ok="editForm"
       @on-cancel="showModal = false"
       @on-visible-change="changeVisible"
-      >
-        <Form :model="formLeft" label-position="left" :label-width="100">
-            <FormItem label="主题服务">
-                <Input v-model="formLeft.serviceTitle" />
-            </FormItem>
-            <FormItem label="服务时间">
-                <DatePicker v-model="formLeft.serviceTime" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="选择服务时间" style="width: 100%" @on-ok="checkStatus"/>
-            </FormItem>
-            <FormItem label="服务地点">
-                <Input v-model="formLeft.servicePlace" />
-            </FormItem>
-            <FormItem label="服务内容">
-                <Input v-model="formLeft.serviceContent" type="textarea" />
-            </FormItem>
-            <FormItem label="携带物品">
-                <Input v-model="formLeft.serviceAticle" />
-            </FormItem>
-            <Divider size="small">召集人</Divider>
-            <FormItem label="召集人职务">
-                <Input v-model="formLeft.creatorPost" />
-            </FormItem>
-            <FormItem label="召集人电话">
-                <Input v-model="formLeft.creatorPhone" />
-            </FormItem>
-            <FormItem label="报名时限">
-                <DatePicker v-model="formLeft.registEndtime" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="选择报名时限" style="width: 100%" @on-ok="checkStatus"/>
-            </FormItem>
-            <FormItem label="活动人数">
-                <Input v-model="formLeft.totalUser" />
-            </FormItem>
-            <!-- <Divider size="small">评分规则</Divider>
+    >
+      <Form ref="formLeft" :model="formLeft" :label-width="100" :rules="ruleValidate" label-position="left">
+        <FormItem label="主题服务" >
+          <Input v-model="formLeft.serviceTitle" />
+        </FormItem>
+        <FormItem label="服务时间">
+          <DatePicker v-model="formLeft.serviceTime" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="选择服务时间" style="width: 100%" @on-ok="checkStatus"/>
+        </FormItem>
+        <FormItem label="服务地点">
+          <Input v-model="formLeft.servicePlace" />
+        </FormItem>
+        <FormItem label="服务内容">
+          <Input v-model="formLeft.serviceContent" type="textarea" />
+        </FormItem>
+        <FormItem label="携带物品">
+          <Input v-model="formLeft.serviceAticle" />
+        </FormItem>
+        <Divider size="small">召集人</Divider>
+        <FormItem label="召集人职务">
+          <Input v-model="formLeft.creatorPost" />
+        </FormItem>
+        <FormItem label="召集人电话">
+          <Input v-model="formLeft.creatorPhone" />
+        </FormItem>
+        <FormItem label="报名时限">
+          <DatePicker v-model="formLeft.registEndtime" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="选择报名时限" style="width: 100%" @on-ok="checkStatus"/>
+        </FormItem>
+        <FormItem label="活动人数">
+          <Input v-model="formLeft.totalUser" />
+        </FormItem>
+        <!-- <Divider size="small">评分规则</Divider>
             状态：
             <RadioGroup v-model="formLeft.auditStatus" @on-change="checkStatus">
                 <Radio label="0">停用</Radio>
                 <Radio label="1">启用</Radio>
                 <Radio label="2">结束</Radio>
             </RadioGroup> -->
-        </Form>
+      </Form>
     </Modal>
     <Modal
       v-model="showQrcodeModal"
       title="二维码"
-      >
+    >
       <div style="height:100%;width:100%;text-align:center;">
-        <img :src="qrSrc" />
+        <img :src="qrSrc" >
       </div>
     </Modal>
+    <Modal
+      v-model="showGradeModal"
+      title="志愿服务评分"
+    >
+      <p>当前打分规则:分数在1～10之间 不能超过这个分数区间</p>
+      <br/>
+      <Form ref="gradeForm" :model="gradeForm" :label-width="100" label-position="left">
+        <FormItem
+          v-for="(item,index) in gradeForm"
+          :key="index"
+          :label="item.userName"
+        >
+          <InputNumber :max="10" :min="1" v-model="item.userScore" />
+        </FormItem>
+      </Form>
+      <!-- <RadioGroup v-model="formLeft.auditStatus" @on-change="checkStatus">
+        <Radio label="0">停用</Radio>
+        <Radio label="1">启用</Radio>
+        <Radio label="2">结束</Radio>
+      </RadioGroup> -->
+    </Modal>
+
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/">首页</BreadcrumbItem>
       <BreadcrumbItem>党群服务</BreadcrumbItem>
@@ -66,8 +88,8 @@
       </div>
     </div>
     <div class="bi-container">
-      <Table highlight-row ref="table" :columns="tableColumns" :data="tableData"></Table>
-      <Page style="float:right;margin-top:20px;" :total="totalPage" @on-change="changePage"/>
+      <Table ref="table" :columns="tableColumns" :data="tableData" highlight-row/>
+      <Page :total="totalPage" style="float:right;margin-top:20px;" @on-change="changePage"/>
     </div>
   </div>
 </template>
@@ -76,7 +98,7 @@
 import dayjs from 'dayjs';
 
 export default {
-  name: "volunteer",
+  name: "Volunteer",
   data() {
     return {
       searchVal: "",
@@ -89,7 +111,7 @@ export default {
         },
         {
           title: "服务主题",
-          key: "serviceTitle",
+          key: "serviceTitle"
         },
         {
           title: "服务时间",
@@ -114,7 +136,11 @@ export default {
         },
         {
           title: "报名时限",
-          key: "registEndtime"
+          key: "registEndtime",
+          render: (h,params) => {
+            return h('p',
+            params.row.registEndtime == null? '':dayjs(params.row.registEndtime).format("YYYY-MM-DD HH:MM"))
+          }
         },
         {
           title: "活动总人数",
@@ -130,9 +156,9 @@ export default {
           render: (h,params) => {
             // console.log('params',params);
             return h('p',
-              params.row.auditStatus == 0? '未审核':
-              params.row.auditStatus == 1? '通过':
-              params.row.auditStatus == 2? '拒绝': '未审核'
+              params.row.auditStatus == 0? '未审核'
+              :params.row.auditStatus == 1? '通过'
+              :params.row.auditStatus == 2? '拒绝': '未审核'
             )
           }
         },
@@ -142,7 +168,7 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-              return h('div', 
+              return h('div',
                 {
                   style: {
                     display: 'flex'
@@ -164,7 +190,7 @@ export default {
                           }
                       }
                     }, '审核'),
-                  h('Dropdown', 
+                  h('Dropdown',
                     {
                       props: {
                         placement: 'bottom-end',
@@ -177,18 +203,17 @@ export default {
                             'on-click': (value) => {
                               // console.log('value',value);
                               if (value == 'edit') {
-                                this.openEdit(params)  
+                                this.openEdit(params)
                               }
                               if (value == 'delete') {
                                 this.delRecords(params)
                               }
                               if (value == 'grade') {
-                                this.checkStatus(params.row.id)
+                                this.showGrade(params.row.id)
                               }
                               if (value == 'qrcode') {
                                 this.showQrcode(params.row.qrurl)
                               }
-                              
                             }
                         }
                     },
@@ -197,7 +222,7 @@ export default {
                         props: {
                             type: 'primary',
                             size: 'small'
-                        },
+                        }
                       },[
                         h('span','更多'),
                         h('Icon', {
@@ -214,23 +239,23 @@ export default {
                       }, [
                         h('DropdownItem',{
                           props: {
-                              name: 'edit',
-                          },
+                              name: 'edit'
+                          }
                         },'修改'),
                         h('DropdownItem',{
                           props: {
-                              name: 'delete',
-                          },
+                              name: 'delete'
+                          }
                         },'删除'),
                         h('DropdownItem',{
                           props: {
-                              name: 'grade',
-                          },
+                              name: 'grade'
+                          }
                         },'评分'),
                         h('DropdownItem',{
                           props: {
-                              name: 'qrcode',
-                          },
+                              name: 'qrcode'
+                          }
                         },'二维码')
                       ])
                     ])
@@ -271,7 +296,41 @@ export default {
       showEdit: false,
       formLeft: new Object(),
       showQrcodeModal: false,
-      qrSrc: ''
+      qrSrc: '',
+      ruleValidate: {
+          name: [
+              { required: true, message: '该字段不能为空', trigger: 'blur' }
+          ],
+          number: [
+              { required: true, type: 'number', message: '请输入数字', trigger: 'change' }
+          ],
+          mail: [
+              { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
+              { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+          ],
+          city: [
+              { required: true, message: 'Please select the city', trigger: 'change' }
+          ],
+          gender: [
+              { required: true, message: 'Please select gender', trigger: 'change' }
+          ],
+          interest: [
+              { required: true, type: 'array', min: 1, message: 'Choose at least one hobby', trigger: 'change' },
+              { type: 'array', max: 2, message: 'Choose two hobbies at best', trigger: 'change' }
+          ],
+          date: [
+              { required: true, type: 'date', message: 'Please select the date', trigger: 'change' }
+          ],
+          time: [
+              { required: true, type: 'string', message: 'Please select time', trigger: 'change' }
+          ],
+          desc: [
+              { required: true, message: 'Please enter a personal introduction', trigger: 'blur' },
+              { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
+          ]
+      },
+      showGradeModal: false,
+      gradeForm: new Object(),
     };
   },
   created() {
@@ -293,8 +352,8 @@ export default {
         this.tableData = res.data.data.records
         this.totalPage = res.data.data.total
         // console.log('totalPage',this.totalPage);
-        
-        // this.tableColumns = 
+
+        // this.tableColumns =
       }).catch(err => {
 
       })
@@ -310,20 +369,19 @@ export default {
         dayjs(time).format()
       }
     },
-    checkStatus (id) {
+    checkStatus () {
       // console.log(this.formLeft.auditStatus);
        // console.log(dayjs(this.formLeft.serviceTime[0]).format("YYYY-MM-DD HH:MM"));
-      //  
-      this.$http({
-        // url:self.$constants.BIURL+'/volunteer/service/list',
-        url: `${this.$constants.BIURL}/volunteer/service/members/${id}`,
-        method:'GET',
-      }).then(res => {
-        console.log('/volunteer/score/${id}',res);
-        
-      }).catch(err => {
+      //
+      // this.$http({
+      //   // url:self.$constants.BIURL+'/volunteer/service/list',
+      //   url: `${this.$constants.BIURL}/volunteer/service/members/${id}`,
+      //   method:'GET'
+      // }).then(res => {
+      //   console.log('/volunteer/score/${id}',res);
+      // }).catch(err => {
 
-      })
+      // })
     },
     changePage (currentPage) {
       // console.log('this.currentPage',currentPage);
@@ -339,15 +397,31 @@ export default {
     },
     openEdit (params) {
       console.log('openEdit',params.row);
-      this.formLeft = JSON.parse(JSON.stringify(params.row))
+      this.formLeft.serviceTime = params.row.serviceTime
+      this.formLeft.registEndtime = params.row.registEndtime
+      this.formLeft.serviceTitle = params.row.serviceTitle
+      this.formLeft.servicePlace = params.row.servicePlace
+      this.formLeft.serviceContent = params.row.serviceContent
+      this.formLeft.serviceAticle = params.row.serviceAticle
+      this.formLeft.creatorPost = params.row.creatorPost
+      this.formLeft.creatorPhone = params.row.creatorPhone
+      this.formLeft.totalUser = params.row.totalUser
+      // this.formLeft = JSON.parse(JSON.stringify(params.row))
       this.formLeft.serviceTime = dayjs(this.formLeft.serviceTime).format()
       this.formLeft.registEndtime = dayjs(this.formLeft.registEndtime).format()
       console.log('this.formLeft',this.formLeft);
-      
+
       this.showModal = true
     },
     editForm () {
-      let queryParams = JSON.parse(JSON.stringify(this.formLeft))
+      const queryParams = JSON.parse(JSON.stringify(this.formLeft))
+      // let queryParams = new Object()
+      // queryParams.id = 
+      if (this.formLeft.id) {
+        queryParams.id = this.formLeft.id
+      }
+
+
       queryParams.serviceTime = dayjs(queryParams.serviceTime).valueOf()
       queryParams.registEndtime = dayjs(queryParams.registEndtime).valueOf()
 
@@ -366,8 +440,8 @@ export default {
       }).catch(err => {
 
       })
-      
-      
+
+
       // let queryParams = this.
     },
     changeVisible (visible) {
@@ -381,7 +455,7 @@ export default {
       this.$http({
         // url:self.$constants.BIURL+'/volunteer/service/list',
         url: `${this.$constants.BIURL}/volunteer/service/${params.row.id}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }).then(res => {
         // console.log('/volunteer/service/${params.row.id}',res);
         this.$Message.success('删除成功');
@@ -391,13 +465,26 @@ export default {
       })
     },
     showQrcode (qrurl) {
-      
       this.qrSrc = `${this.$constants.PREPATH + qrurl}`
       console.log('qrSrc',this.qrSrc,qrurl);
-      
+
       this.showQrcodeModal = true
+    },
+    showGrade (id) {
+
+      this.showGradeModal = true
+      this.$http({
+        // url:self.$constants.BIURL+'/volunteer/service/list',
+        url: `${this.$constants.BIURL}/volunteer/service/members/${id}`,
+        method:'GET'
+      }).then(res => {
+        this.gradeForm = res.data.data
+        console.log('/volunteer/score/${id}',this.gradeForm);
+      }).catch(err => {
+
+      })
     }
-  },
+  }
 };
 </script>
 

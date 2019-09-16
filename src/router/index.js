@@ -66,7 +66,8 @@ import dept from './modules/dept'
 
 /* 党群服务 */
 import volunteer from '@/components/partyService/volunteer'
-
+import blog from "@/components/partyService/blog";
+import voice from "@/components/partyService/voice";
 Vue.use(Router)
 
 export default
@@ -236,7 +237,15 @@ export default
           path: '/partyService/volunteer',
           name: 'volunteer',
           component: volunteer
-        },
+        },{
+          path: '/partyService/blog',
+          name: 'blog',
+          component: blog
+        },{
+        path: '/partyService/voice',
+        name: 'voice',
+        component: voice
+      },
         rule,
         board,
         dept
