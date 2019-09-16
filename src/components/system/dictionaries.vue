@@ -51,7 +51,7 @@
                             <div style="display:flex;width:200px;">
                                 <span class="i-icon i-icon-add" @click="add_diag2()"></span>
                                 <span class="i-icon i-icon-edit" @click="edit_diag()"></span>
-                                <span class="i-icon i-icon-delete" @click="del_diag()"></span>
+                                <span class="i-icon i-icon-delete" @click="del_diag2()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
                             <div class="search" style="position: relative;left: 27%;">
@@ -61,7 +61,12 @@
                         <!-- 表格部分 -->
                         <div id="table">
                             <Table highlight-row border ref="selection" :columns="partyUserCloumns2" :data="partyUserDatas2" @on-current-change="get_line_value2">
+                                <template slot-scope="{row}" slot="action">
+                                    <div>
 
+                                        <Button :type="row.disabled?'primary':'error'" @click="is_didabled2(row)">{{row.disabled?"启用":"禁用"}}</Button>
+                                    </div>
+                                </template>
                             </Table>
                             <div class="mt-10 d-flex jc-end">
                                 <Page @on-page-size-change="changeSize" @on-change="changePage" show-sizer show-total :total="pages2.total" :current="pages2.current" :page-size="pages2.size" />
@@ -258,10 +263,12 @@ export default {
     data() {
         return {
             flag: false,
+            flag2: false,
             // 模态框的
             deptQueryStr: "",
             dictCode: "--",
-            queryStr2:"",
+            queryStr2: "",
+            cate_id: "",
             deptFormModal: false,
             deptFormModal2: false,
             edit_deptFormModal: false,
@@ -475,9 +482,10 @@ export default {
                 },
 
                 {
-                    title: "备注",
-                    key: "memo"
-                    // width: "50",
+                    title: "操作",
+                    slot: "action",
+                    width: 150,
+                    align: "center"
                 }
             ],
             partyUserDatas: [],
@@ -486,10 +494,92 @@ export default {
     },
     methods: {
         // 分类选项的表格部分
-        add_diag2() {
-             if (!this.flag) {
+        del_diag2() {
+            if (!this.flag2) {
                 this.$Message.error("请点击选择一条记录后操作");
-                return
+                return;
+            }
+            this.$Modal.confirm({
+                title: "系统提示",
+                content: "确定要继续此操作吗?",
+                okText: "确定",
+                cancelText: "取消",
+                onOk: () => {
+                    // alert('ok')
+                    this.$http({
+                        url:
+                            this.$constants.BIURL +
+                            `/biDictValue/${this.cate_id}`,
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                        // data: this.edit_deptForm.id
+                    })
+                        .then(res => {
+                            console.log(res);
+                            this.load_list();
+                            if (res.data.code == 0) {
+                                this.$Message.success(res.data.msg);
+                            } else {
+                                this.$Message.error(
+                                    res.data.msg || "请求规则列表错误"
+                                );
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                }
+            });
+        },
+        search2() {
+            // alert(this.queryStr2)
+            this.$http({
+                url: this.$constants.BIURL + `/biDictValue/list`,
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                params: {
+                    dictCode: this.queryStr2
+                }
+            })
+                .then(res => {
+                    console.log(res);
+                    if (res.data.code == 0) {
+                        const {
+                            records,
+                            current,
+                            pages,
+                            size,
+                            total
+                        } = res.data.data;
+                        this.partyUserDatas2 = records;
+                        this.pages2.current = current;
+                        this.pages2.pages = pages;
+                        this.pages2.size = size;
+                        this.pages2.total = total;
+                        // debugger
+                    } else {
+                        this.$Message.error(res.data.msg || "请求列表失败");
+                    }
+                    // this.deptFormModal2 = false;
+                    // this.load_list();
+                    // if (res.data.code == 0) {
+                    //     this.$Message.success(res.data.msg);
+                    // } else {
+                    //     this.$Message.error(res.data.msg || "请求规则列表错误");
+                    // }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        add_diag2() {
+            if (!this.flag) {
+                this.$Message.error("请点击选择一条记录后操作");
+                return;
             }
             this.deptFormModal2 = true;
         },
@@ -505,7 +595,7 @@ export default {
             })
                 .then(res => {
                     console.log(res);
-                    this.deptFormModal2 = false
+                    this.deptFormModal2 = false;
                     this.load_list();
                     if (res.data.code == 0) {
                         this.$Message.success(res.data.msg);
@@ -516,6 +606,76 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+             is_didabled2(row) {
+            console.log(row);
+            if (!row.disabled) {
+                this.$Modal.confirm({
+                    title: "系统提示",
+                    content: "确定要继续此操作吗?",
+                    okText: "确定",
+                    cancelText: "取消",
+                    onOk: () => {
+                        this.$http({
+                            url:
+                                this.$constants.BIURL +
+                                `/biDictValue/disabled/${row.id}`,
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                            // data: this.edit_deptForm.id
+                        })
+                            .then(res => {
+                                console.log(res);
+                                this.load_list();
+                                if (res.data.code == 0) {
+                                    this.$Message.success(res.data.msg);
+                                } else {
+                                    this.$Message.error(
+                                        res.data.msg || "请求规则列表错误"
+                                    );
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                    }
+                });
+            } else {
+                this.$Modal.confirm({
+                    title: "系统提示",
+                    content: "确定要继续此操作吗?",
+                    okText: "确定",
+                    cancelText: "取消",
+                    onOk: () => {
+                        this.$http({
+                            url:
+                                this.$constants.BIURL +
+                                `/biDictValue/enable/${row.id}`,
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                            // data: this.edit_deptForm.id
+                        })
+                            .then(res => {
+                                console.log(res);
+                                this.load_list();
+                                if (res.data.code == 0) {
+                                    this.$Message.success(res.data.msg);
+                                } else {
+                                    this.$Message.error(
+                                        res.data.msg || "请求规则列表错误"
+                                    );
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                    }
+                });
+            }
         },
         // ----------------------------------------------------
         is_didabled(row) {
@@ -792,7 +952,7 @@ export default {
                 })
                 .then(res => {
                     console.log(res);
-            
+
                     if (res.data.code == 0) {
                         const {
                             records,
@@ -829,20 +989,20 @@ export default {
         },
         get_line_value(value, old_value) {
             this.flag = true;
-            // console.log(value);
+            console.log(value);
             this.table_line_value = value;
             this.deptForm2.dictCode = value.dictCode;
             this.deptForm2.dictId = value.id;
             this.deptForm2.orderNo = value.orderNo;
-           this.deptForm2.subVal=""
-            this.deptForm2.subKey=""
-            this.deptForm2.dictName=value.dictName
-         
+            this.deptForm2.subVal = "";
+            this.deptForm2.subKey = "";
+            this.deptForm2.dictName = value.dictName;
         },
         //分类选项 点击高亮获取当前行的数据
         get_line_value2(value, old_value) {
             console.log(value);
-          
+            this.flag2 = true;
+            this.cate_id = value.id;
         },
         show(index) {
             this.$Modal.info({
