@@ -42,11 +42,11 @@
       :is-fold="props.isFold"
       :expand-type="props.expandType"
       :selection-type="props.selectionType">
-      <template slot="menuType" scope="scope">
+      <template slot="menuType" slot-scope="scope">
         <span v-if="scope.row.menuType == 0">PC端菜单</span>
         <span v-if="scope.row.menuType == 1">手机端菜单</span>
       </template>
-      <template scope="scope" slot="action">
+      <template slot-scope="scope" slot="action">
           <Button  size="small" style="margin-right: 5px" @click="updateMenu(scope.row)">修改</Button>
           <Button  size="small" style="margin-right: 5px" @click="deleteMenu(scope.row)">删除</Button>
       </template>

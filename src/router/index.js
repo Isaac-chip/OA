@@ -68,94 +68,100 @@ import rule from './modules/rule'
 import board from './modules/board'
 import dept from './modules/dept'
 
+
+/* 党群服务 */
+import volunteer from '@/components/partyService/volunteer'
+import blog from "@/components/partyService/blog";
+import voice from "@/components/partyService/voice";
 Vue.use(Router)
 
 export default
-new Router({
-  base: '/',
-  mode: 'hash',
-  routes: [{
-      path:'/',
-      name:'login',
-      component:Login
-    },{
-      path:'/home',
-      name:'home',
-      component:Home,
-      children:[
+  new Router({
+    base: '/',
+    mode: 'hash',
+    routes: [{
+      path: '/',
+      name: 'login',
+      component: Login
+    }, {
+      path: '/home',
+      name: 'home',
+      component: Home,
+      children: [
         {
           path: '/partyIn',
           name: 'partyIn',
           component: PartyIn
-        },{
-          path:'/partyIn/partyInTable',
-          name:'partyInTable',
-          component:PartyInTable
-        },{
+        }, {
+          path: '/partyIn/partyInTable',
+          name: 'partyInTable',
+          component: PartyInTable
+        }, {
           path: '/partyAm/partyAm',
           name: 'partyAm',
           component: PartyAm
-        },{
+        }, {
           path: '/partyAm/partyAmList',
           name: 'partyAmList',
           component: PartyAmList
-        },{
+        }, {
           path: '/partyAm/partySpecialResult',
           name: 'PartySpecialResult',
           component: PartySpecialResult
-        },{
+        }, {
           path: '/partyAm/partySpecialResultDetail',
           name: 'partySpecialResultDetail',
           component: PartySpecialResultDetail
-        },{
+        },
+        {
           path: '/system/menu',
           name: 'menu',
           component: Menu
-        },{
+        }, {
           path: '/exam/examSubjectType',
           name: 'examSubjectType',
           component: ExamSubjectType
-        },{
+        }, {
           path: '/exam/examSubject',
           name: 'examSubject',
           component: ExamSubject
-        },{
+        }, {
           path: '/exam/examQuestion',
           name: 'examQuestion',
           component: ExamQuestion
-        },{
+        }, {
           path: '/exam/courseContent',
           name: 'courseContent',
           component: CourseContent
-        },{
+        }, {
           path: '/exam/studyCatalog',
           name: 'studyCatalog',
           component: StudyCatalog
-        },{
+        }, {
           path: '/exam/studyContent',
           name: 'studyContent',
           component: StudyContent
-        },{
+        }, {
           path: '/dailyJob/userSignRules',
           name: 'userSignRules',
           component: UserSignRules
-        },{
+        }, {
           path: '/dailyJob/userSignManager',
           name: 'userSignManager',
           component: UserSignManager
-        },{
+        }, {
           path: '/dailyJob/userSignSpecial',
           name: 'userSignSpecial',
           component: UserSignSpecial
-        },{
+        }, {
           path: '/dailyJob/meetingNotice',
           name: 'meetingNotice',
           component: MeetingNotice
-        },{
+        }, {
           path: '/map/deptMap',
           name: 'deptMap',
           component: DeptMap
-        },{
+        }, {
           path: '/business/operatingWindow',
           name: 'operatingWindow',
           component: OperatingWindow
@@ -171,27 +177,27 @@ new Router({
           path: '/system/role',
           name: 'role',
           component: Role
-        },{
+        }, {
           path: '/system/user',
           name: 'user',
           component: User
-        },{
+        }, {
           path: '/system/dept',
           name: 'dept',
           component: Department
-        },{
+        }, {
           path: '/system/apkEdition',
           name: 'apkEdition',
           component: ApkEdition
-        },{
+        }, {
           path: '/system/sysLogs',
           name: 'sysLogs',
           component: SysLogs
-        },{
+        }, {
           path: '/system/mailInfo',
           name: 'mailInfo',
           component: MailInfo
-        },{
+        }, {
           path: '/system/partyUser',
           name: 'partyUser',
           component: PartyUser
@@ -203,51 +209,63 @@ new Router({
           path: '/system/partyUserTable',
           name: 'partyUserTable',
           component: PartyUserTable
+        }, {
+          path: '/partyNews/catalog',
+          name: 'catalog',
+          component: Catalog
+        }, {
+          path: '/partyNews/newsContent',
+          name: 'newsContent',
+          component: NewsContent
+        }, {
+          path: '/builder/poorVillage',
+          name: 'poorVillage',
+          component: Village
+        }, {
+          path: '/builder/teamMember',
+          name: 'teamMember',
+          component: TeamMember
+        }, {
+          path: '/builder/leaderMember',
+          name: 'leaderMember',
+          component: LeaderMember
+        }, {
+          path: '/builder/firstSecretary',
+          name: 'firstSecretary',
+          component: FirstSecretary
+        }, {
+          path: '/builder/teamMemberLogs',
+          name: 'teamMemberLogs',
+          component: TeamMemberLogs
+        }, {
+          path: '/builder/leaderMemberLogs',
+          name: 'leaderMemberLogs',
+          component: LeaderMemberLogs
+        }, {
+          path: '/builder/firstSecretaryLogs',
+          name: 'firstSecretaryLogs',
+          component: FirstSecretaryLogs
+        }, {
+          path: '/builder/doubleSign',
+          name: 'doubleSign',
+          component: DoubleSign
         },{
-          path:'/partyNews/catalog',
-          name:'catalog',
-          component:Catalog
+          path: '/partyService/volunteer',
+          name: 'volunteer',
+          component: volunteer
         },{
-          path:'/partyNews/newsContent',
-          name:'newsContent',
-          component:NewsContent
+          path: '/partyService/blog',
+          name: 'blog',
+          component: blog
         },{
-          path:'/builder/poorVillage',
-          name:'poorVillage',
-          component:Village
-        },{
-          path:'/builder/teamMember',
-          name:'teamMember',
-          component:TeamMember
-        },{
-          path:'/builder/leaderMember',
-          name:'leaderMember',
-          component:LeaderMember
-        },{
-          path:'/builder/firstSecretary',
-          name:'firstSecretary',
-          component:FirstSecretary
-        },{
-          path:'/builder/teamMemberLogs',
-          name:'teamMemberLogs',
-          component:TeamMemberLogs
-        },{
-          path:'/builder/leaderMemberLogs',
-          name:'leaderMemberLogs',
-          component:LeaderMemberLogs
-        },{
-          path:'/builder/firstSecretaryLogs',
-          name:'firstSecretaryLogs',
-          component:FirstSecretaryLogs
-        },{
-          path:'/builder/doubleSign',
-          name:'doubleSign',
-          component:DoubleSign
-        },
-		rule,
+        path: '/partyService/voice',
+        name: 'voice',
+        component: voice
+      },
+        rule,
         board,
         dept
       ]
     }
-  ]
-});
+    ]
+  })

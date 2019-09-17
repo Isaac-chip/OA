@@ -52,7 +52,7 @@
                             :expand-type="props.expandType"
                              @checkbox-click="resourceMenuClick"
                             :selection-type="props.selectionType">
-                            <template slot="menuType" scope="scope">
+                            <template slot="menuType" slot-scope="scope">
                                 <span v-if="scope.row.menuType == 1">PC端菜单</span>
                                 <span v-if="scope.row.menuType == 2">手机端菜单</span>
                             </template>
