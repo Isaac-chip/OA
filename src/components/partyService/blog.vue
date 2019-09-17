@@ -10,7 +10,7 @@
         <FormItem label="板块名称" >
           <Input v-model="Editform.plateName" />
         </FormItem>
-        <FormItem label="服务内容">
+        <FormItem label="备注">
           <Input v-model="Editform.memo" type="textarea" />
         </FormItem>
       </Form>
@@ -42,13 +42,13 @@
       <div class="operation-bar">
         <Button type="success" @click="openAddTopicModal">新增话题</Button>
         <div class="search-box">
-          <Input v-model="searchCatVal" placeholder="输入主题关键字查找" style="width: 150px" />
-          <Button type="success" @click="changeQuery">查询</Button>
+          <Input v-model="searchTopicVal" placeholder="输入主题关键字查找" style="width: 150px" />
+          <Button type="success" @click="changeTopicQuery">查询</Button>
         </div>
       </div>
       <div class="bi-container">
         <Table ref="catTableData" :columns="topicTableColumns" :data="topicTableData" highlight-row/>
-        <Page :total="topicCount" :page-size="pageTopicSize" style="float:right;margin-top:20px;" @on-change="changePage"/>
+        <Page :total="topicCount" :page-size="pageTopicSize" style="float:right;margin-top:20px;" @on-change="changeTopicPage"/>
       </div>
     </Modal>
 
@@ -61,12 +61,12 @@
       <Button type="success" @click="openAddModal">新建主题</Button>
       <div class="search-box">
         <Input v-model="searchCatVal" placeholder="输入主题关键字查找" style="width: 150px" />
-        <Button type="success" @click="changeQuery">查询</Button>
+        <Button type="success" @click="changeCatQuery">查询</Button>
       </div>
     </div>
     <div class="bi-container">
       <Table ref="catTableData" :columns="catTableColumns" :data="catTableData" highlight-row/>
-      <Page :total="totalCount" :page-size="pageCatSize" style="float:right;margin-top:20px;" @on-change="changePage"/>
+      <Page :total="totalCount" :page-size="pageCatSize" style="float:right;margin-top:20px;" @on-change="changeCatPage"/>
     </div>
   </div>
 </template>
@@ -196,7 +196,7 @@ export default {
                       },
                       on: {
                           click: () => {
-                              this.openTopicModal(params)
+                              this.openTopicModal(params.row.id,params.row.plateName)
                           }
                       }
                     }, '查看话题')
@@ -275,7 +275,7 @@ export default {
                     },
                     on: {
                         click: () => {
-                            this.openEditCat(params)
+                            this.openEditTopicModal(params)
                         }
                     }
                   }, '修改'),
@@ -290,7 +290,7 @@ export default {
                       },
                       on: {
                           click: () => {
-                              this.delCat(params.row.id)
+                              this.delTopic(params.row.id)
                           }
                       }
                     }, '删除'),
@@ -305,7 +305,7 @@ export default {
                       },
                       on: {
                           click: () => {
-                              this.openTopicModal(params)
+                              this.checkStatus(params.row.id)
                           }
                       }
                     }, '查看详情')
@@ -344,16 +344,27 @@ export default {
     openAddTopicModal () {
       this.addTopicModalVisible = true
     },
+    openEditTopicModal (params) {
+      // this.topicForm.catlogId = params.row.id
+      // this.topicForm.plateName = params.row.plateName
+      this.topicForm.topicId = params.row.id
+      this.topicForm.title = params.row.title
+      this.addTopicModalVisible = true
+    },
     changeCatQuery () {
       this.currentCatPage = 1
       this.initTable()
     },
     changeTopicQuery () {
       this.currentTopicPage = 1
-      this.initTable()
+      // this.initTable()
+      this.openTopicModal(this.topicForm.catlogId,this.topicForm.plateName)
     },
     checkStatus (id) {
-
+      this.$http({
+        url: `${this.$constants.BIURL}/blog/topic/${id}`,
+        method:'GET',
+      })
     },
     editCat () {
       let queryParams = {
@@ -382,21 +393,32 @@ export default {
         title: this.topicForm.title,
         plateId: this.topicForm.catlogId
       }
+      if (this.topicForm.topicId) {
+        queryParams.id = this.topicForm.topicId
+      }
       this.$http({
         url: `${this.$constants.BIURL}/blog/topic`,
-        method:this.topicForm.id? 'PUT' : 'POST',
+        method:this.topicForm.topicId? 'PUT' : 'POST',
         dataType: 'json',
         data: queryParams
       }).then(res => {
-        this.topicModalVisible = false
-        this.initCatlog()
+        // this.topicModalVisible = false
+        // this.addTopicModalVisible = false
+        // this.initCatlog()
+        console.log(queryParams.plateId);
+        
+        this.openTopicModal(queryParams.plateId,this.topicForm.plateName)
       }).catch(err => {
 
       })
     },
-    changePage (currentPage) {
+    changeCatPage (currentPage) {
       this.currentCatPage = currentPage
       this.initCatlog()
+    },
+    changeTopicPage (currentPage) {
+      this.currentTopicPage = currentPage
+      this.openTopicModal(this.topicForm.catlogId,this.topicForm.plateName)
     },
     openEditCat (params) {
       this.Editform.catlogId = params.row.id
@@ -422,7 +444,18 @@ export default {
 
       })
     },
-    openTopicModal (params) {
+    delTopic (id) {
+      this.$http({
+        url: `${this.$constants.BIURL}/blog/topic/${id}`,
+        method: 'DELETE',
+      }).then(res => {
+        this.$Message.success('删除成功');
+        this.openTopicModal(this.topicForm.catlogId,this.topicForm.plateName)
+      }).catch(err => {
+
+      })
+    },
+    openTopicModal (id,plateName) {
       this.topicModalVisible = true
       this.$http({
         url: `${this.$constants.BIURL}/blog/topic/list`,
@@ -431,12 +464,12 @@ export default {
           pageNo: this.currentTopicPage,
           pageSize: this.pageTopicSize,
           query: this.searchTopicVal,
-          catalogId: params.row.id
+          catalogId: id
         }
       }).then(res => {
         // console.log();
-        this.topicForm.catlogId = params.row.id
-        this.topicForm.plateName = params.row.plateName
+        this.topicForm.catlogId = id
+        this.topicForm.plateName = plateName
         this.topicCount = res.data.data.total
         this.topicTableData = res.data.data.records
         console.log('this.topicForm',this.topicForm);

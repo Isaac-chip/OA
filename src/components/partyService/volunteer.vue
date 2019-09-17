@@ -54,20 +54,36 @@
       </div>
     </Modal>
     <Modal
+      v-model="showCheckModal"
+      title="审核服务"
+      @on-ok="submitCheck"
+    >
+      <p>审核状态:</p>
+      <br/>
+      <RadioGroup v-model="checkForm.status" @on-change="checkStatus" style="margin-bottom:10px;">
+        <Radio label="1">通过</Radio>
+        <Radio label="2">拒绝</Radio>
+      </RadioGroup>
+      <br/>
+      <p>审核意见:</p>
+      <br/>
+      <Input v-model="checkForm.memo" type="textarea" />
+    </Modal>
+    <Modal
       v-model="showGradeModal"
       title="志愿服务评分"
+      @on-ok="submitGrade"
     >
       <p>当前打分规则:分数在1～10之间 不能超过这个分数区间</p>
       <br/>
-      <Form ref="gradeForm" :model="gradeForm" :label-width="100" label-position="left">
-        <FormItem
-          v-for="(item,index) in gradeForm"
-          :key="index"
-          :label="item.userName"
-        >
-          <InputNumber :max="10" :min="1" v-model="item.userScore" />
-        </FormItem>
-      </Form>
+
+      <div class="userScore" 
+        v-for="(item,index) in gradeForm"
+        :key="index"
+        style="margin-bottom:10px;"
+      >
+        {{item.userName}}：<InputNumber :max="10" :min="1" v-model="item.userScore" />
+      </div>
       <!-- <RadioGroup v-model="formLeft.auditStatus" @on-change="checkStatus">
         <Radio label="0">停用</Radio>
         <Radio label="1">启用</Radio>
@@ -186,7 +202,7 @@ export default {
                       },
                       on: {
                           click: () => {
-                              this.show(params.index)
+                              this.showCheck(params)
                           }
                       }
                     }, '审核'),
@@ -331,6 +347,8 @@ export default {
       },
       showGradeModal: false,
       gradeForm: new Object(),
+      checkForm: new Object(),
+      showCheckModal: false,
     };
   },
   created() {
@@ -370,18 +388,18 @@ export default {
       }
     },
     checkStatus () {
-      // console.log(this.formLeft.auditStatus);
-       // console.log(dayjs(this.formLeft.serviceTime[0]).format("YYYY-MM-DD HH:MM"));
-      //
-      // this.$http({
-      //   // url:self.$constants.BIURL+'/volunteer/service/list',
-      //   url: `${this.$constants.BIURL}/volunteer/service/members/${id}`,
-      //   method:'GET'
-      // }).then(res => {
-      //   console.log('/volunteer/score/${id}',res);
-      // }).catch(err => {
+    //   // console.log(this.formLeft.auditStatus);
+    //    // console.log(dayjs(this.formLeft.serviceTime[0]).format("YYYY-MM-DD HH:MM"));
+    //   //
+    //   // this.$http({
+    //   //   // url:self.$constants.BIURL+'/volunteer/service/list',
+    //   //   url: `${this.$constants.BIURL}/volunteer/service/members/${id}`,
+    //   //   method:'GET'
+    //   // }).then(res => {
+    //   //   console.log('/volunteer/score/${id}',res);
+    //   // }).catch(err => {
 
-      // })
+    //   // })
     },
     changePage (currentPage) {
       // console.log('this.currentPage',currentPage);
@@ -482,6 +500,47 @@ export default {
         console.log('/volunteer/score/${id}',this.gradeForm);
       }).catch(err => {
 
+      })
+    },
+    submitGrade () {
+      let queryParams = []
+
+      queryParams = this.gradeForm.map(
+        v => {
+          let scoreObj = {
+            score: v.userScore,
+            userId: v.id
+          }
+          return scoreObj
+        }
+      )
+      
+      this.$http({
+        // url:self.$constants.BIURL+'/volunteer/service/list',
+        url: `${this.$constants.BIURL}/volunteer/service/score/${this.gradeForm[0].serviceId}`,
+        method: 'POST',
+        dataType: 'json',
+        data: queryParams
+      }).then(res => {
+        this.initTable()
+      })
+    },
+    showCheck (params) {
+      this.checkForm.id = params.row.id
+      this.showCheckModal = true
+    },
+    submitCheck () {
+      this.$http({
+        // url:self.$constants.BIURL+'/volunteer/service/list',
+        url: `${this.$constants.BIURL}/volunteer/service/check/${this.checkForm.id}`,
+        method: 'POST',
+        dataType: 'json',
+        data: {
+          op: Number(this.checkForm.status),
+          memo: this.checkForm.memo
+        }
+      }).then(res => {
+        this.initTable()
       })
     }
   }
