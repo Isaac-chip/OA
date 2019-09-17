@@ -27,6 +27,7 @@
             </Col>
         </Row>
         <Card dis-hover class="middleView">
+            <Spin size="large" fix v-if="middleSpinShow"></Spin>
             <Row class="headerView">
                 <Col span="8" class="tabsView">
                     <div class="tabItem active" data-value="0">专项考核</div>
@@ -34,10 +35,12 @@
                     <div class="tabItem" data-value="2">一把手考核</div>
                 </Col>
                 <Col span="8" class="headerView-item date-range">
-                    <a class="active" href="#" data-value="0">今日</a>
+                    <a href="#" data-value="0">今日</a>
                     <a href="#" data-value="1">本周</a>
-                    <a href="#" data-value="2">本月</a>
-                    <a href="#" data-value="3">全年</a>
+                    <a class="active" href="#" data-value="2">本月</a>
+                    <a  href="#" data-value="3">季度</a>
+                    <a  href="#" data-value="4">半年</a>
+                    <a href="#" data-value="5">全年</a>
                 </Col>
                 <Col span="8">
                     <DatePicker :value="rangeData" type="daterange" show-week-numbers placement="bottom-end" placeholder="输入日期查询" style="width:100%" ></DatePicker>
@@ -312,6 +315,7 @@
 <script>
 import echarts from 'echarts'
 import countTo from 'vue-count-to';
+import DateUtils from '../../DateUtils.js'
 export default {
     name:'dash_borad',
     components:{countTo},
@@ -321,6 +325,7 @@ export default {
             partyScoreDatas:[],
             ruleLoading:false,
             rangeData:[],
+            middleSpinShow:false,
             partyColumn:[{
                 type: 'index',
                 width: 70,
@@ -328,7 +333,6 @@ export default {
                 align: 'center',
                 render: (h,params) => {
                     var index = params.index + (this.pages.current-1)*this.pages.size + 1 ;
-                    console.log(index);
                     return h('span',index)
                 }
             },{
@@ -398,6 +402,26 @@ export default {
             });
             myChart.resize();
             window.addEventListener('resize',function() {myChart.resize()});
+        },
+        initPartyUsers:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/political/user/getCountByPartyType',
+                method:'GET'
+            })
+            .then(function (response) {
+                var data = response.data;
+                if(response.status ==200){
+                    console.log(data);
+                    
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
         },
         initBusinessPre:function(){
             var self = this;
@@ -502,25 +526,41 @@ export default {
             self.rangeData = [];
             switch(type){
                 case 0:
-                    self.rangeData.push(new Date());
-                    self.rangeData.push(new Date());
+                    self.rangeData = [new Date(),new Date()];
                     break;
                 case 1:
-                    self.rangeData[0] ='2019-09-16 00:00:00';
-                    self.rangeData[1] ='2019-09-19 00:00:00';
+                    var datas = DateUtils.computTimeHorizon(new Date().getTime(),1);
+                    self.rangeData = datas;
                     break;
                 case 2:
+                    var datas = DateUtils.computTimeHorizon(new Date().getTime(),2);
+                    self.rangeData = datas;
                     break;
                 case 3:
+                    var datas = DateUtils.computTimeHorizon(new Date().getTime(),3);
+                    self.rangeData = datas;
+                    break;
+                case 4:
+                    var datas = DateUtils.computTimeHorizon(new Date().getTime(),4);
+                    self.rangeData = datas;
+                    break;
+                case 5:
+                    var datas = DateUtils.computTimeHorizon(new Date().getTime(),5);
+                    self.rangeData = datas;
                     break;
             }
         }
     },
     mounted:function(){
+        var self = this;
+        //初始化查询日期  默认查询一个月的数据
+        var datas = DateUtils.computTimeHorizon(new Date().getTime(),2);
+        self.rangeData = datas;
+        this.initPartyUsers();
         this.initChatView();
         this.initBusinessPre();
         this.fetchRuleList();
-        var self = this;
+        
         $(".tabsView").on('click',function(e){
             $(".tabsView").find(".tabItem").removeClass('active');
             var value = $(e.target).data('value');

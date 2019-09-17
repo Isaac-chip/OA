@@ -14,6 +14,8 @@ export default {
 		userId:1,
 		username:'admin',
 		name:'系统管理员',
+		avatar:'',
+		userType:-1,
 		deptId:1,
 		deptName:'xxxx',
 		deptCode:'10',

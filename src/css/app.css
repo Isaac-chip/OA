@@ -143,6 +143,7 @@ body {
 .wrapper-header-nav-search {
     float: left;
     margin-left: 60px;
+    width: 250px;
 }
 
 .wrapper-header-nav-list {

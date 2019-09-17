@@ -41,10 +41,31 @@
           </Dropdown>
         </div>
         <div class="wrapper-header-nav-search">
-          <Input suffix="ios-search" placeholder="输入内容查找" style="width: auto;border:none" class="mysearch" />
+           <Select
+                suffix="ios-search"
+                filterable
+                remote
+                :remote-method="seachMenuByQuery"
+                @on-change="menuChange"
+                placeholder="输入菜单名称查找"
+                :loading="loading1">
+                <Option v-for="(option, index) in searchList" :value="option.menuUrl" :key="index">{{option.menuName}}</Option>
+            </Select>
         </div>
         <div class="wrapper-header-nav-list ">
-          <div class="info-menu-sign-in"><span class="ivu-avatar ivu-avatar-circle ivu-avatar-default ivu-avatar-icon"><i class="ivu-icon ivu-icon-ios-person"></i></span> <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large"><!----> <!----> <span>登录</span></button></div>
+          <div class="info-menu-sign-in">
+            <span class="ivu-avatar ivu-avatar-circle ivu-avatar-default ivu-avatar-icon">
+              <i class="ivu-icon ivu-icon-ios-person"></i>
+            </span> 
+            <Dropdown>
+                <a href="javascript:void(0)">
+                  {{nickName}}
+                </a>
+                <DropdownMenu slot="list">
+                    <DropdownItem>退出登录</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
       </Header>
       <Layout class="wrapper-container">
@@ -102,8 +123,13 @@ import DashBorad from "@/components/home/dashboard";
       return {
         isShowDashBorad:true,
         menuHtml:'',
+        nickName:'',
+        searchList:[],
         menuList:[]
       }
+    },
+    created:function(){
+        this.nickName = this.$constants.userInfo.name;
     },
     watch: {
       $route: {
@@ -135,6 +161,27 @@ import DashBorad from "@/components/home/dashboard";
                   self.menuList = data.data;
               }
           })
+      },
+      seachMenuByQuery:function(value){
+        var self = this;
+          self.$http({
+              url:self.$constants.BIURL+'/menu/byUserMenuList',
+              method:'GET',
+              dataType:'json',
+              params:{
+                  query:value,
+                  userId:self.$constants.userInfo.userId
+              }
+          })
+          .then(function (response) {
+              if(response.status ==200){
+                  var data = response.data;
+                  self.searchList = data.data;
+              }
+          })
+      },
+      menuChange:function(value){
+        console.log(value);
       }
     },
     mounted:function(){
