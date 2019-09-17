@@ -32,7 +32,7 @@
             </Table>
             <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
 
-            <Modal  v-model="matterModal" title="考勤规则" :footer-hide="true" :mask-closable="false">
+            <Modal  v-model="matterModal" title="服务窗口" :footer-hide="true" :mask-closable="false">
                 <Form ref="matterForm" :model="matterForm" :rules="matterFormValidate" :label-width="110" >
                     <FormItem label="事项名称" prop="matterName">
                         <Input placeholder="请输入窗口事项名称" v-model="matterForm.matterName"/>

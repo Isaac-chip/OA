@@ -5,6 +5,7 @@ import iView from 'iview'
 import axios from 'axios'
 import qs from 'qs'
 import constants from './constants'
+import baResize from './jquery.ba-resize'
 import Utils from './utils';
 import 'iview/dist/styles/iview.css'
 import './css/login.css'

@@ -85,7 +85,7 @@
                     <Row>
                         <Col span="6">
                             <FormItem  label="是否置顶" >
-                                <RadioGroup v-model="courseForm.isTop">
+                                <RadioGroup v-model="contentForm.isTop">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
                                 </RadioGroup>
@@ -93,7 +93,7 @@
                         </Col>
                         <Col span="7">
                             <FormItem v-model="contentForm.isDailyPush" label="每日推送" >
-                                 <RadioGroup v-model="courseForm.isDailyPush">
+                                 <RadioGroup v-model="contentForm.isDailyPush">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
                                 </RadioGroup>

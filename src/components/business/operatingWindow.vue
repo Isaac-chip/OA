@@ -21,7 +21,7 @@
             </Table>
             <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
 
-            <Modal  v-model="windowModal" title="考勤规则" :footer-hide="true" :mask-closable="false">
+            <Modal  v-model="windowModal" title="办事事项" :footer-hide="true" :mask-closable="false">
                 <Form ref="windowForm" :model="windowForm" :rules="windowFormValidate" :label-width="110" >
                     <FormItem label="办事窗口名称" prop="winName">
                         <Input placeholder="请输入办事窗口名称" v-model="windowForm.winName"/>
@@ -122,7 +122,7 @@ export default {
                 },{
                     title: '操作',
                     slot: 'action',
-                    width: 150,
+                    width: 220,
                     align: 'center'
                 }
             ],
@@ -306,7 +306,7 @@ export default {
         },
         qRCode:function(index){
             var data = this.windowDatas[index];
-            this.qrCodePath = data.qrCode;
+            this.qrCodePath = this.$constants.PREPATH + data.qrCode;
             this.qrCodeModal = true;
         }
     },
