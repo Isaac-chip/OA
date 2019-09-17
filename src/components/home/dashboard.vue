@@ -4,25 +4,25 @@
             <Col span="6">
                 <Card dis-hover class="headerView">
                     <div class="title">机关事业单位</div>
-                    <div class="content"><countTo :startVal='5209' :endVal='5678' :duration='2000'></countTo></div>
+                    <div class="content"><countTo :startVal='0' :endVal='partyUserNumber.organsAndInstitutions' :duration='2000'></countTo></div>
                 </Card>
             </Col>
             <Col span="6">
                 <Card dis-hover class="headerView">
                     <div class="title">村社区</div>
-                    <div class="content"><countTo :startVal='23145' :endVal='24531' :duration='2000'></countTo></div>
+                    <div class="content"><countTo :startVal='0' :endVal='partyUserNumber.villageAndCommunity' :duration='2000'></countTo></div>
                 </Card>
             </Col>
             <Col span="6">
                 <Card dis-hover class="headerView">
                     <div class="title">国企</div>
-                    <div class="content"><countTo :startVal='678' :endVal='690' :duration='2000'></countTo></div>
+                    <div class="content"><countTo :startVal='0' :endVal='partyUserNumber.ownedAndEnterprise' :duration='2000'></countTo></div>
                 </Card>
             </Col>
             <Col span="6">
                 <Card dis-hover class="headerView">
                     <div class="title">非公有制经济和社会组织</div>
-                    <div class="content"><countTo :startVal='1100' :endVal='1232' :duration='2000'></countTo></div>
+                    <div class="content"><countTo :startVal='0' :endVal='partyUserNumber.privateAndSocial' :duration='2000'></countTo></div>
                 </Card>
             </Col>
         </Row>
@@ -35,11 +35,8 @@
                     <div class="tabItem" data-value="2">一把手考核</div>
                 </Col>
                 <Col span="8" class="headerView-item date-range">
-                    <a href="#" data-value="0">今日</a>
-                    <a href="#" data-value="1">本周</a>
                     <a class="active" href="#" data-value="2">本月</a>
                     <a  href="#" data-value="3">季度</a>
-                    <a  href="#" data-value="4">半年</a>
                     <a href="#" data-value="5">全年</a>
                 </Col>
                 <Col span="8">
@@ -322,10 +319,13 @@ export default {
     data(){
         return {
             firstChart:null,
+            rankingChart:null,
             partyScoreDatas:[],
             ruleLoading:false,
             rangeData:[],
+            preChart:null,
             middleSpinShow:false,
+            type:0,
             partyColumn:[{
                 type: 'index',
                 width: 70,
@@ -352,12 +352,26 @@ export default {
                 pages: 1,
                 total: 0,
                 size: 6
+            },
+            partyUserNumber:{
+                organsAndInstitutions:0,
+                villageAndCommunity:0,
+                ownedAndEnterprise:0,
+                privateAndSocial:0
             }
         }
     },
     updated:function(){
-        if(this.firstChart){
+        if(this.firstChart != null){
             this.firstChart.resize();
+        }
+
+        if(this.rankingChart != null){
+            this.rankingChart.resize();
+        }
+
+        if(this.preChart != null){
+            this.preChart.resize();
         }
     },
     methods:{
@@ -367,9 +381,9 @@ export default {
         },
         initChatView : function(){
             // 基于准备好的dom，初始化echarts实例
-            let myChart = echarts.init(document.getElementById('myChart'))
+            this.rankingChart = echarts.init(document.getElementById('myChart'))
             // 绘制图表
-            myChart.setOption({
+            this.rankingChart.setOption({
                 title:{
                     textVerticalAlign:'top',
                     textAlign :'left',
@@ -400,8 +414,8 @@ export default {
                     data: [5, 20, 36, 10, 10, 20]
                 }]
             });
-            myChart.resize();
-            window.addEventListener('resize',function() {myChart.resize()});
+            this.rankingChart.resize();
+            
         },
         initPartyUsers:function(){
             var self = this;
@@ -413,7 +427,7 @@ export default {
                 var data = response.data;
                 if(response.status ==200){
                     console.log(data);
-                    
+                    self.partyUserNumber = data.data;
                 }
             }) .catch(function (error) {
                     self.$Message.error({
@@ -433,7 +447,7 @@ export default {
                 var data = response.data;
                 if(response.status ==200){
                     console.log(data);
-                    let preChart = echarts.init(document.getElementById('preChart'));
+                    self.preChart = echarts.init(document.getElementById('preChart'));
                     var legendData = [];
                     var seriesData = [];
                     var selected = {};
@@ -448,7 +462,7 @@ export default {
                         legendData:legendData,
                         seriesData:seriesData
                     }
-                    self.initPreOption(preChart,preData);
+                    self.initPreOption(self.preChart,preData);
                 }
             }) .catch(function (error) {
                     self.$Message.error({
@@ -549,6 +563,92 @@ export default {
                     self.rangeData = datas;
                     break;
             }
+            this.switchType();
+        },
+        initPartyAm:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/partyAm/statistics/special',
+                method:'GET',
+                params:{
+                    current:1,
+                    size:8
+                }
+            })
+            .then(function (response) {
+                var data = response.data;
+                if(response.status ==200){
+                    console.log(data);
+                    
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+        initThreeOneUnit:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/partyAm/statistics/threeSessions/',
+                method:'GET',
+                params:{
+                    current:1,
+                    size:8
+                }
+            })
+            .then(function (response) {
+                var data = response.data;
+                if(response.status ==200){
+                    console.log(data);
+                    
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+        initFirstPeople:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/partyAm/statistics/leader',
+                method:'GET',
+                params:{
+                    current:1,
+                    size:8
+                }
+            })
+            .then(function (response) {
+                var data = response.data;
+                if(response.status ==200){
+                    console.log(data);
+                    
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+        switchType:function(){
+            switch(this.type){
+                case 0:  //专项考核
+                    this.initPartyAm();
+                    break;
+                case 1:  //三会一课
+                    this.initThreeOneUnit();
+                    break;
+                case 2:  //一把手
+                    this.initFirstPeople();
+                    break;
+            }
         }
     },
     mounted:function(){
@@ -561,11 +661,14 @@ export default {
         this.initBusinessPre();
         this.fetchRuleList();
         
+        //默认读取专项考核
+        this.initPartyAm();
+
         $(".tabsView").on('click',function(e){
             $(".tabsView").find(".tabItem").removeClass('active');
             var value = $(e.target).data('value');
-             $(e.target).addClass('active');
-            console.log(value);
+            $(e.target).addClass('active');
+            self.type = value;
         });
 
         $('.headerView-item').find('a').on('click',function(e){
@@ -573,6 +676,16 @@ export default {
              $(e.target).addClass('active');
              var type = $(e.target).data('value');
              self.changeData(type);
+        });
+
+        window.addEventListener('resize',function() {
+            if(self.rankingChart){
+                self.rankingChart.resize();
+            }
+
+            if(self.preChart){
+                self.preChart.resize();
+            }
         });
     }
 }

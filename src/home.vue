@@ -47,8 +47,7 @@
                 remote
                 :remote-method="seachMenuByQuery"
                 @on-change="menuChange"
-                placeholder="输入菜单名称查找"
-                :loading="loading1">
+                placeholder="输入菜单名称查找">
                 <Option v-for="(option, index) in searchList" :value="option.menuUrl" :key="index">{{option.menuName}}</Option>
             </Select>
         </div>
