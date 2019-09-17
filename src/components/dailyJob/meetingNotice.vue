@@ -14,6 +14,7 @@
             </Row>
              <Table border ref="selection" :columns="meetingCloumns" :data="meetingDatas">
                 <template slot-scope="{ row, index }" slot="action">
+                    <Button  size="small" style="margin-right: 5px" @click="showQRCode(index)">二维码</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteUserSign(index)">删除</Button>
                 </template>
             </Table>
@@ -32,7 +33,9 @@
                     <Input v-model="meetingForm.meetingContent" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="输入会议内容" />
                 </FormItem>
                 <Divider>参会者</Divider>
-                    <select-user></select-user>
+                    <select-user
+                    :resultSelectDatas="resultSelectDatas">
+                    </select-user>
                 <Row>
                     <div style="text-align:center">
                         <Button type="primary" @click="addMeeting('meetingForm')">提交</Button>
@@ -40,6 +43,11 @@
                     </div>
                 </Row>
             </Form>
+        </Modal>
+        <Modal  v-model="qrCodeModal" title="参会二维码" :footer-hide="true" :mask-closable="false" width="600px">
+            <div style="text-align:center">
+                <img :src="qrCodePath" width="300" height="300"/>
+            </div>
         </Modal>
     </div>
 </template>
@@ -70,6 +78,8 @@ export default {
                 current:1,
                 query:''
             },
+            qrCodePath:'',
+            qrCodeModal:false,
             meetingModal:false,
             meetingCloumns:[
                 {
@@ -202,7 +212,7 @@ export default {
         },
         deleteUserSign:function(index){
             var self = this;
-            const data = this.mettingDatas[index];
+            const data = this.meetingDatas[index];
             this.$Modal.confirm({
                 title:'系统提示',
                 content:'确定要删除该记录吗?',
@@ -225,7 +235,7 @@ export default {
                         content: '数据删除成功!',
                         duration: 2
                     });
-                    self.loadUserSign();
+                    self.loadMeetingNotice();
                 }
             }) .catch(function (error) {
                     self.$Message.error({
@@ -235,12 +245,85 @@ export default {
                 console.log(error);
             });
         },
-        addMeeting:function(name){
+        resultSelectDatas:function(data){
+            if(data && data.length >0){
+                let arr = data.map(it => {
+                    return it.userId
+                });
 
+               this.meetingForm.meetingActors = arr.join(',');
+            }else{
+                this.meetingForm.meetingActors = '';
+            }
+        },
+        addMeeting:function(name){
+            var self = this;
+            this.$refs[name].validate((valid) => {
+                if(valid){
+                    if(self.meetingForm.meetingActors == '' || self.meetingForm.meetingActors ==null) {
+                         this.$Message.error('请选择会议的参与者!');
+                         return;
+                    }
+                    self.meetingForm.meetingTime = self.$convertDate(self.meetingForm.meetingTime);
+                    self.meetingForm.tenantId = self.$constants.userInfo.tenantId;
+                    self.meetingForm.creator = self.$constants.userInfo.userId;
+                    var url = self.$constants.BIURL+'/meeting/notice';
+                    var method = 'POST';
+                    self.$http({
+                        url:url,
+                        method:method,
+                        dataType:'json',
+                        data:self.meetingForm
+                    })
+                    .then(function (response) {
+                        if(response.status ==200){
+                            var data = response.data;
+                            self.meetingForm.meetingActors == '';
+                            if(data.code == 1){
+                                self.$Message.error({
+                                    content: data.data,
+                                    duration: 2
+                                }); 
+                            }else{
+                                self.current = 1;
+                                self.hideMeetingModel(name);
+                                self.loadMeetingNotice();
+                                if(self.isUpdate){
+                                    self.$Message.success({
+                                        content: '数据修改成功!',
+                                        duration: 2
+                                    });
+                                }else{
+                                    self.$Message.success({
+                                        content: '数据添加成功!',
+                                        duration: 2
+                                    });
+                                }
+                            }
+                        
+                        }
+                    }) .catch(function (error) {
+                        self.$Message.error({
+                            content: error.message,
+                            duration: 2
+                        });
+                        console.log(error);
+                    });
+                }else{
+                    this.$Message.error('表单校验失败，请输入必填项!');
+                }
+                
+            });
         },
         hideMeetingModel:function(name){
             this.meetingModal = false;
             this.$refs[name].resetFields();
+        },
+        showQRCode:function(index){
+            const data = this.meetingDatas[index];
+            console.log(data);
+            this.qrCodePath = this.$constants.PREPATH+data.qrcode;
+            this.qrCodeModal = true;
         }
     },
     mounted:function(){

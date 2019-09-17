@@ -15,8 +15,8 @@
                 <div>党组织管理</div>
                 <div class="dept_icon_header">
                   <div class="i-icon i-icon-add" @click="showDeptModal" />
-                  <div class="i-icon i-icon-edit" />
-                  <div class="i-icon i-icon-delete" />
+                  <div class="i-icon i-icon-edit" @click="updateDept" />
+                  <div class="i-icon i-icon-delete" @click="deleteDept"/>
                   <div class="i-icon i-icon-refresh" @click="refreshDept" />
                 </div>
               </div>
@@ -40,8 +40,8 @@
       </Row>
     </div>
 
-    <Modal v-model="deptFormModal" title="新增组织" :footer-hide="true" :mask-closable="false" style="width:600px">
-      <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="80" >
+    <Modal v-model="deptFormModal" title="新增组织" :footer-hide="true" :mask-closable="false" width="600px">
+      <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="90" >
         <Row>
           <Col span="12">
             <FormItem label="组织名称" prop="deptName">
@@ -49,15 +49,21 @@
             </FormItem>
           </Col>
           <Col span="12">
-            <FormItem label="组织编号" prop="deptCode">
-              <Input v-model="deptForm.deptCode" placeholder="请输入组织编号" />
-            </FormItem>
+               <FormItem label="所属行政区域">
+                  <treeselect
+                          v-model="deptForm.villageId"
+                          :options="villageDatas"
+                          :max-height="200"
+                          noResultsText="没有找到匹配结果"
+                          placeholder="请选择行政区域" />
+              </FormItem>
           </Col>
         </Row>
 
         <Row>
           <FormItem label="所属组织">
             <treeselect
+              v-model="deptForm.parentId"
               :options="departmentDatas"
               :max-height="200"
               @select="orgSelect"
@@ -142,13 +148,16 @@
         queryStr:'',
         deptQueryStr:'',
         deptCode:'--',
+        villageDatas:[],
+        selectedDeptId:-1,
         deptFormModal:false,
         deptForm:{
           did:'',
+          villageId:null,
           deptName:'',
           deptCode:'',
           partyType:'',
-          parentId:-1,
+          parentId:null,
           deptType:'',
           memo:'',
           tenantId:'',
@@ -195,6 +204,7 @@
     methods:{
       showDeptModal:function(){
         this.deptFormModal = true;
+        this.loadVillage();
       },
       orgSelect:function(node){
         this.deptForm.parentId = node.did;
@@ -215,6 +225,7 @@
       treeNodeClick:function(obj,item){
         console.log(item);
         this.deptCode = item.deptCode;
+        this.selectedDeptId = item.did;
         this.loadUser();
 
       },
@@ -250,6 +261,71 @@
       deptSearch:function(value){
         this.loadDepartment();
       },
+      deleteDept:function(){
+        if(this.selectedDeptId == -1){
+            this.$Message.error('请先选择你要删除的部门!');
+            return ;
+        }
+        var self = this;
+        this.$Modal.confirm({
+            title:'系统提示',
+            content:'确定要删除该记录吗?',
+            okText:'确定',
+            cancelText:'取消',
+            onOk:function(){
+                self.handleDelete();
+            }
+        });
+      },
+      handleDelete:function(){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/political/department/'+this.selectedDeptId,
+                method:'DELETE'
+            })
+            .then(function (response) {
+                if(response.status ==200){
+                    self.$Message.success({
+                        content: '数据删除成功!',
+                        duration: 2
+                    });
+                    self.loadDepartment();
+                }
+            }) .catch(function (error) {
+                    self.$Message.error({
+                    content: error.message,
+                    duration: 2
+                });
+                console.log(error);
+            });
+        },
+      updateDept:function(){
+         if(this.selectedDeptId == -1){
+            this.$Message.error('请先选择你要修改的部门!');
+            return ;
+          }
+          this.loadDeptById();
+          this.loadVillage();
+          this.deptFormModal = true;
+      },
+      loadDeptById:function(){
+        var self = this;
+        self.$http({
+          url:self.$constants.BIURL+'/political/department/'+self.selectedDeptId,
+          method:'GET'
+        })
+          .then(function (response) {
+            if(response.status ==200){
+              var data = response.data;
+              self.deptForm = data.data;
+            }
+          }).catch(function (error) {
+          self.$Message.error({
+            content: error.message,
+            duration: 2
+          });
+        });
+      },
       loadDepartment:function(){
         var self = this;
         self.$http({
@@ -280,6 +356,40 @@
           });
           console.log(error);
         });
+      },
+      loadVillage:function(){
+          var self = this;
+          self.$http({
+            url:self.$constants.BIURL+'/political/village/list',
+            method:'GET',
+            params:{
+                queryStr:self.queryStr
+            }
+          }) .then(function (response) {
+              if(response.status ==200){
+                var data = response.data;
+                const arrChange = function(datas){
+                        for(var i =0; i<datas.length;i++){
+                            var item = datas[i];
+                            if(item.children && item.children.length == 0){
+                                delete item.children ;
+                            }else{
+                                if(item.children !=null){
+                                    arrChange(item.children);
+                                }
+                            }
+                        }
+                    };
+                arrChange(data.data);
+                self.villageDatas = data.data;
+              }
+          }).catch(function (error) {
+          self.$Message.error({
+              content: error.message,
+              duration: 2
+          });
+          console.log(error);
+          });
       },
       refreshDept:function(){
         this.loadDepartment();
@@ -396,6 +506,10 @@
     cursor: pointer;
   }
 
+    .dept_icon_header div:hover{
+      width: 25px;
+      height: 25px;
+    }
   .userView{
     margin-left: 10px;
   }
