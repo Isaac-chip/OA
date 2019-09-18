@@ -40,7 +40,7 @@
       </Row>
     </div>
 
-    <Modal v-model="deptFormModal" title="新增组织" :footer-hide="true" :mask-closable="false" width="600px">
+    <Modal v-model="deptFormModal" :title="modalTitle" :footer-hide="true" :mask-closable="false" width="600px">
       <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="90" >
         <Row>
           <Col span="12">
@@ -151,6 +151,8 @@
         villageDatas:[],
         selectedDeptId:-1,
         deptFormModal:false,
+        isUpdate:false,
+        modalTitle:'新增组织',
         deptForm:{
           did:'',
           villageId:null,
@@ -204,7 +206,7 @@
     methods:{
       showDeptModal:function(){
         this.deptFormModal = true;
-        this.loadVillage();
+        
       },
       orgSelect:function(node){
         this.deptForm.parentId = node.did;
@@ -305,8 +307,8 @@
             return ;
           }
           this.loadDeptById();
-          this.loadVillage();
           this.deptFormModal = true;
+          this.isUpdate = true;
       },
       loadDeptById:function(){
         var self = this;
@@ -318,6 +320,8 @@
             if(response.status ==200){
               var data = response.data;
               self.deptForm = data.data;
+              console.log(self.deptForm.parentId);
+              self.deptForm.parentId = self.deptForm.parentId+'';
             }
           }).catch(function (error) {
           self.$Message.error({
@@ -403,16 +407,24 @@
               return;
             }
             self.deptForm.tenantId = self.$constants.userInfo.tenantId;
+            var method = "POST";
+            if(self.isUpdate){
+                self.modalTitle = '更新组织';
+                method = "PUT";
+            }else{
+               self.modalTitle = '新增组织';
+            }
             self.$http({
               url:self.$constants.BIURL+'/political/department',
-              method:'POST',
+              method:method,
               dataType:'json',
               data:self.deptForm
             })
               .then(function (response) {
                 if(response.status ==200){
                   var data = response.data;
-                  self.deptForm.parentId = -1;
+                  self.deptForm.parentId = null;
+                  self.deptForm.villageId = null;
                   if(data.code == 1){
                     self.$Message.error({
                       content: data.data,
@@ -457,8 +469,8 @@
 
     },
     mounted:function(){
-      // console.log('...');
       this.loadDepartment();
+      this.loadVillage();
     }
   }
 </script>

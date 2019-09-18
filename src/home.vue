@@ -42,13 +42,13 @@
         </div>
         <div class="wrapper-header-nav-search">
            <Select
-                suffix="ios-search"
+                prefix="ios-search"
                 filterable
                 remote
                 :remote-method="seachMenuByQuery"
                 @on-change="menuChange"
                 placeholder="输入菜单名称查找">
-                <Option v-for="(option, index) in searchList" :value="option.menuUrl" :key="index">{{option.menuName}}</Option>
+                <Option v-for="(item, index) in searchList" :value="item.menuUrl" :key="index">{{item.menuName}}</Option>
             </Select>
         </div>
         <div class="wrapper-header-nav-list ">
@@ -176,11 +176,16 @@ import DashBorad from "@/components/home/dashboard";
               if(response.status ==200){
                   var data = response.data;
                   self.searchList = data.data;
+                  console.log(data);
               }
           })
       },
       menuChange:function(value){
-        console.log(value);
+        if(value !='' && value !=null){
+           this.$router.push({
+            'path': value
+          })
+        }
       }
     },
     mounted:function(){
