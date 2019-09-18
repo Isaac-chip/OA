@@ -18,7 +18,7 @@
                                 <span class="i-icon i-icon-delete" @click="del_diag()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
-                            <div class="search" style="position: relative;left: 27%;">
+                            <div class="search" style="position: relative;left: 6%;">
                                 <Input v-model="queryStr" search enter-button @on-search="search" placeholder="请输入分类名称" />
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                                 <span class="i-icon i-icon-delete" @click="del_diag2()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
-                            <div class="search" style="position: relative;left: 27%;">
+                            <div class="search" style="position: relative;left: 6%;">
                                 <Input v-model="queryStr2" search enter-button @on-search="search2" placeholder="请输入分类代码查询" />
                             </div>
                         </div>
