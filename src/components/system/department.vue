@@ -206,7 +206,7 @@
     methods:{
       showDeptModal:function(){
         this.deptFormModal = true;
-        
+        this.modalTitle = '新增组织';
       },
       orgSelect:function(node){
         this.deptForm.parentId = node.did;
@@ -308,6 +308,7 @@
           }
           this.loadDeptById();
           this.deptFormModal = true;
+          this.modalTitle = '更新组织';
           this.isUpdate = true;
       },
       loadDeptById:function(){
@@ -409,10 +410,7 @@
             self.deptForm.tenantId = self.$constants.userInfo.tenantId;
             var method = "POST";
             if(self.isUpdate){
-                self.modalTitle = '更新组织';
                 method = "PUT";
-            }else{
-               self.modalTitle = '新增组织';
             }
             self.$http({
               url:self.$constants.BIURL+'/political/department',
