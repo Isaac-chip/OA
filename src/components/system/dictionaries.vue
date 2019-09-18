@@ -18,20 +18,20 @@
                                 <span class="i-icon i-icon-delete" @click="del_diag()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
-                            <div class="search" style="position: relative;left: 27%;">
+                            <div class="search" style="position: relative;left: 6%;">
                                 <Input v-model="queryStr" search enter-button @on-search="search" placeholder="请输入分类名称" />
                             </div>
                         </div>
                         <!-- 表格部分 -->
                         <div id="table">
-                            <Table highlight-row border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas" @on-current-change="get_line_value">
+                            <Table size ="small" highlight-row border ref="selection" :columns="partyUserCloumns" :data="partyUserDatas" @on-current-change="get_line_value">
                                 <template slot-scope="{ row, index }" slot="disabled">
                                     {{ row.disabled | status }}
                                 </template>
                                 <template slot-scope="{row}" slot="action">
                                     <div>
 
-                                        <Button :type="row.disabled?'primary':'error'" @click="is_didabled(row)">{{row.disabled?"启用":"禁用"}}</Button>
+                                        <Button size ="small" :type="row.disabled?'primary':'error'" @click="is_didabled(row)">{{row.disabled?"启用":"禁用"}}</Button>
                                     </div>
                                 </template>
                             </Table>
@@ -54,17 +54,17 @@
                                 <span class="i-icon i-icon-delete" @click="del_diag2()"></span>
                                 <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                             </div>
-                            <div class="search" style="position: relative;left: 27%;">
+                            <div class="search" style="position: relative;left: 6%;">
                                 <Input v-model="queryStr2" search enter-button @on-search="search2" placeholder="请输入分类代码查询" />
                             </div>
                         </div>
                         <!-- 表格部分 -->
                         <div id="table">
-                            <Table highlight-row border ref="selection" :columns="partyUserCloumns2" :data="partyUserDatas2" @on-current-change="get_line_value2">
+                            <Table size ="small" highlight-row border ref="selection" :columns="partyUserCloumns2" :data="partyUserDatas2" @on-current-change="get_line_value2">
                                 <template slot-scope="{row}" slot="action">
                                     <div>
 
-                                        <Button :type="row.disabled?'primary':'error'" @click="is_didabled2(row)">{{row.disabled?"启用":"禁用"}}</Button>
+                                        <Button size ="small" :type="row.disabled?'primary':'error'" @click="is_didabled2(row)">{{row.disabled?"启用":"禁用"}}</Button>
                                     </div>
                                 </template>
                             </Table>
@@ -1025,9 +1025,19 @@ export default {
 /* .ivu-card-body {
     display: flex!important;
 } */
+.breadcrumb {
+    position: fixed;
+    top: 69px;
+    z-index: 100;
+    background: #fff;
+}
 </style>
 
 <style scoped>
+.dictionaries_main {
+    /* position: fixed; */
+  
+}
 .dictionaries_main .layout {
     padding: 20px;
     margin-top: 20px;

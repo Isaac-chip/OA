@@ -1,10 +1,10 @@
 <template>
   <div class="rule-wrap h-100 d-flex flex-column">
     <div class="bread pl-20 d-flex mt-10">
-      <Breadcrumb>
+       <Breadcrumb class="breadcrumb">
         <BreadcrumbItem to="/">首页</BreadcrumbItem>
         <BreadcrumbItem>积分管理</BreadcrumbItem>
-        <BreadcrumbItem>积分规则</BreadcrumbItem>
+        <BreadcrumbItem>党员积分管理</BreadcrumbItem>
       </Breadcrumb>
     </div>
 
@@ -241,6 +241,21 @@ this.$refs.importModal.init()
   }
 };
 </script>
+<style>
+.ivu-breadcrumb {
+    position: fixed;
+    top: 60px!important;
+    z-index: 100;
+    background: #fff;
+    padding-top: 10px;
+        left: 14%;
+}
+.p-15 {
+  margin-top: 20px;
+}
+
+
+</style>
 
 <style lang="less" scoped>
 .rule-wrap {
