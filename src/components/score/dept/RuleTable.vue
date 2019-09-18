@@ -65,7 +65,7 @@ volServiceScore: 23
       columns: [
         {
           title: "序号",
-          key: "id",
+          key: "deptId",
           maxWidth: 70
         },
 
