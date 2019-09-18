@@ -38,12 +38,13 @@ body {
 }
 
 .breadcrumb{
+    background-color: #fff;
     color: #999;
     font-size: 14px;
     height: 40px;
     line-height: 40px;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 66px;
     z-index: 999;
     width: 100%;
     padding-left: 20px;
@@ -157,6 +158,10 @@ body {
     height: 100%;
     margin: 0px auto;
     background: #fff;
+<<<<<<< HEAD
+    /* overflow: hidden; */
+=======
+>>>>>>> b957f64265d4cbd81448dd13d115d517f39b6e6a
     box-sizing: border-box;
 }
 

@@ -52,6 +52,14 @@
       </div>
     </Modal>
 
+    <Modal
+      v-model="detailModalVisible"
+      width="60%"
+      title="查看详情"
+    >
+      <Table ref="catTableData" :columns="detailTableColumns" :data="detailTableData" highlight-row/>
+    </Modal>
+
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/">首页</BreadcrumbItem>
       <BreadcrumbItem>党群服务</BreadcrumbItem>
@@ -205,6 +213,7 @@ export default {
           }
         }
       ],
+      
 
       topicTableData: [
         {
@@ -314,6 +323,54 @@ export default {
           }
         }
       ],
+
+      detailModalVisible: false,
+      detailTableData: [],
+      detailTableColumns: [
+        {
+          type: "index",
+          width: 60,
+          align: "center",
+          title: "序号"
+        },
+        {
+          title: "标题",
+          key: "title"
+        },
+        {
+          title: "创建人",
+          key: "creatorName"
+        },
+        {
+          title: "创建时间",
+          key: "createdDate",
+          render: (h,params) => {
+            return h('p',
+            params.row.createdDate == null? '':dayjs(params.row.createdDate).format("YYYY-MM-DD HH:MM"))
+          }
+        },
+        {
+          title: "描述",
+          key: "description"
+        },
+        {
+          title: "备注",
+          key: "memo"
+        },
+        {
+          title: "点赞数量",
+          key: "likeNum"
+        },
+        {
+          title: "阅读数量",
+          key: "readNum"
+        },
+        {
+          title: "回复数量",
+          key: "replyNum"
+        }
+      ],
+      
     }
   },
   created () {
@@ -361,9 +418,12 @@ export default {
       this.openTopicModal(this.topicForm.catlogId,this.topicForm.plateName)
     },
     checkStatus (id) {
+      this.detailModalVisible = true
       this.$http({
         url: `${this.$constants.BIURL}/blog/topic/${id}`,
         method:'GET',
+      }).then(res => {
+        this.detailTableData = res.data.data.records
       })
     },
     editCat () {
@@ -483,6 +543,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../css/app.css';
+
 .blog {
   position: relative;
   padding-top: 40px;
