@@ -47,7 +47,8 @@ export default {
       columns: [
         {
           title: "序号",
-          key: "id",
+          // key: "id",
+           type:"index",
           maxWidth: 70
         },
 

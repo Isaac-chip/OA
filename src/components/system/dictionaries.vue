@@ -1028,6 +1028,9 @@ export default {
 </style>
 
 <style scoped>
+.dictionaries_main {
+    position: fixed;
+}
 .dictionaries_main .layout {
     padding: 20px;
     margin-top: 20px;
