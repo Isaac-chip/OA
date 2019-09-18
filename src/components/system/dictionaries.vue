@@ -1025,11 +1025,18 @@ export default {
 /* .ivu-card-body {
     display: flex!important;
 } */
+.breadcrumb {
+    position: fixed;
+    top: 69px;
+    z-index: 100;
+    background: #fff;
+}
 </style>
 
 <style scoped>
 .dictionaries_main {
-    position: fixed;
+    /* position: fixed; */
+  
 }
 .dictionaries_main .layout {
     padding: 20px;
