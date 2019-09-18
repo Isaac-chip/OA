@@ -535,10 +535,10 @@ export default {
         url: `${this.$constants.BIURL}/volunteer/service/check/${this.checkForm.id}`,
         method: 'POST',
         dataType: 'json',
-        data: {
+        data:  this.$qs.stringify( {
           op: Number(this.checkForm.status),
           memo: this.checkForm.memo
-        }
+        })
       }).then(res => {
         this.initTable()
       })
