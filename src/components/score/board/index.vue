@@ -72,7 +72,7 @@ export default {
                 params: {
                     current: this.pages.current,
                     size: this.pages.size,
-                    query: this.queryStr
+                    query: this.queryStr.trim()
                 }
             })
                 .then(res => {
@@ -163,7 +163,7 @@ export default {
                 responseType: "blob",
                 // dataType: "json",
                 params: {
-                    query: this.queryStr
+                    query: this.queryStr.trim()
                 }
             }).then(res => {
                 let blob = new Blob([res.data], {
@@ -176,7 +176,7 @@ export default {
 
                 aLink.setAttribute(
                     "download",
-                    `boardExcel${new Date().getTime()}.xls`
+                    `党员积分表格.xls`
                 );
                 document.body.appendChild(aLink);
                 aLink.click();

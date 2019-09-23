@@ -96,7 +96,7 @@ export default {
         params: {
           current: this.pages.current,
           size: this.pages.size,
-          query: this.queryStr
+          query: this.queryStr.trim()
         }
       })
         .then(res => {
@@ -184,7 +184,7 @@ export default {
         responseType: "blob",
         method: "GET",
         params: {
-            query:this.queryStr
+            query:this.queryStr.trim()
         }
       }).then(res=>{
          let blob = new Blob([res.data], {type: 'application/vnd.ms-excel;charset=utf-8'})
@@ -193,7 +193,7 @@ export default {
             aLink.style.display = "none";
             aLink.href = url;
 
-            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
+            aLink.setAttribute("download", `党组织积分表格.xls`);
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);

@@ -66,38 +66,42 @@ volServiceScore: 23
         {
           title: "序号",
           // key: "deptId",
-          maxWidth: 70,
+           width: 80,
           type:"index"
         },
 
         {
           title: "部门名称",
           key: "deptName",
-          minWidth: 100
+            minWidth: 150,
+             sortable: true
+           
         },
 
          {
           title: "活跃度",
           key: "liveness",
-          maxWidth: 110
+         width: 100
         },
 
 
         {
           title: "个人积分排名",
           key: "scoreRank",
+           width: 120
 
         },
         {
           title: "星级",
           slot: "starLevel",
-          minWidth:100
+          width:180,
 
         },
 
         {
           title: "个人学习积分",
           key: "studyScore",
+           width:120,
 
         },
 

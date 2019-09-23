@@ -47,51 +47,58 @@ export default {
                     title: "序号",
                     // key: "id",
                      type:"index",
-                    maxWidth: 80
+                    width: 80
                 },
 
                 {
                     title: "栏目名称",
-                    key: "catalogName"
+                    key: "catalogName",
+                    width: 120
                 },
                 {
                     title: "规则名称",
-                    key: "ruleName"
+                    key: "ruleName",
+                     sortable: true,
+                      width: 160
                 },
                 {
                     title: "默认分值",
                     key: "defScore",
-                    maxWidth: 90
+                    maxWidth: 90,
+                    width: 120
                 },
                 {
                     title: "最低分",
                     key: "minScore",
-                    maxWidth: 80
+                    maxWidth: 80,
+                    width: 120
                 },
                 {
                     title: "最高分",
                     key: "maxScore",
-                    maxWidth: 80
+                    maxWidth: 80,
+                    width: 120
                 },
 
                 {
                     title: "创建人名称",
                     key: "creatorName",
-                    maxWidth: 120
+                    maxWidth: 120,
+                    width: 120
                 },
 
                 {
                     title: "状态",
                     slot: "disabled",
-                    maxWidth: 80
+                    maxWidth: 80,
+                    width: 120
                 },
 
                 {
                     title: "操作",
                     slot: "action",
                     fixed: "right",
-                    minWidth: 80,
-                    maxWidth: 190
+                    width: 180
                 }
             ]
         };

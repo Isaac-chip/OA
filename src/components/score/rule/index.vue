@@ -102,7 +102,7 @@ export default {
         params: {
           current: this.pages.current,
           size: this.pages.size,
-          query: this.queryStr
+          query: this.queryStr.trim()
         }
       })
         .then(res => {
@@ -187,7 +187,7 @@ export default {
             aLink.style.display = "none";
             aLink.href = url;
 
-            aLink.setAttribute("download", `积分模板${new Date().getTime()}.xls`);
+            aLink.setAttribute("download", `积分模板.xls`);
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);
@@ -204,7 +204,7 @@ export default {
         // dataType: "json",
         params: {
          
-          query: this.queryStr
+          query: this.queryStr.trim()
         }
       }).then(res => {
 
@@ -214,7 +214,7 @@ export default {
             aLink.style.display = "none";
             aLink.href = url;
 
-            aLink.setAttribute("download", `excel${new Date().getTime()}.xls`);
+            aLink.setAttribute("download", `积分规则.xls`);
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);
