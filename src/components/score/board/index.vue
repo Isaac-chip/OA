@@ -72,7 +72,7 @@ export default {
                 params: {
                     current: this.pages.current,
                     size: this.pages.size,
-                    query: this.queryStr
+                    query: this.queryStr.trim()
                 }
             })
                 .then(res => {
@@ -85,9 +85,13 @@ export default {
                             total,
                             size
                         } = res.data.data;
-                        records.forEach(item => {
+                        records.forEach((item,index) => {
                             item.starLevel = +item.starLevel;
+                             item["index"]=index + (current -1)*  size +1
                         });
+
+
+               
 
                         this.records = records;
                         this.pages = {
@@ -163,7 +167,7 @@ export default {
                 responseType: "blob",
                 // dataType: "json",
                 params: {
-                    query: this.queryStr
+                    query: this.queryStr.trim()
                 }
             }).then(res => {
                 let blob = new Blob([res.data], {
@@ -176,7 +180,7 @@ export default {
 
                 aLink.setAttribute(
                     "download",
-                    `boardExcel${new Date().getTime()}.xls`
+                    `党员积分表格.xls`
                 );
                 document.body.appendChild(aLink);
                 aLink.click();
