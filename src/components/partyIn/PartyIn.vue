@@ -1,18 +1,18 @@
 <template>
   <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建业务</BreadcrumbItem>
       <BreadcrumbItem to="/partyIn/partyInTable">发展党员</BreadcrumbItem>
       <BreadcrumbItem>新增、修改</BreadcrumbItem>
     </Breadcrumb>
     <div class="bi-container">
       <Steps :current="currentIndex">
-        <Step title="进行中" content="申请入党"></Step>
-        <Step title="待进行" content="入党积极分子的确定和培养教育"></Step>
-        <Step title="待进行" content="发展对象的确定和考察"></Step>
-        <Step title="待进行" content="预备党员的接收阶段"></Step>
-        <Step title="待进行" content="预备党员的转正"></Step>
+        <Step :title="step1Title" content="申请入党"></Step>
+        <Step :title="step2Title" content="入党积极分子的确定和培养教育"></Step>
+        <Step :title="step3Title" content="发展对象的确定和考察"></Step>
+        <Step :title="step4Title" content="预备党员的接收阶段"></Step>
+        <Step :title="step5Title" content="预备党员的转正"></Step>
       </Steps>
       <div class="partyInOne" v-show="partyInOneShow">
           <Form class="partyForm" ref="partInOneForm" :model="partInOneForm" :rules="partInOneFormruleValidate" :label-width="120">
@@ -229,6 +229,11 @@ import minoritys from '@/minority.js'
         firstDay:'',
         partyDay:'',
         meetingDay:'',
+        step1Title:'进行中',
+        step2Title:'未开始',
+        step3Title:'未开始',
+        step4Title:'未开始',
+        step5Title:'未开始',
         minoritys:minoritys,
         partyOneDisabled:false,
         partyTwoDisabled:true,
@@ -390,6 +395,7 @@ import minoritys from '@/minority.js'
         this.partyInOneShow = false;
         this.partyInTwoViewShow = true;
         this.currentIndex = 1;
+        this.step1Title = '已完成';
         if(this.mainId > 0 && this.partInOneForm.currentState >= 1){
           if(oneForm.checkAll !=''){
               var _checkAll = oneForm.checkAll.split(',');
@@ -397,6 +403,7 @@ import minoritys from '@/minority.js'
                 this.currentState = this.partInOneForm.currentState;
                 this.firstDay =  this.$convertDate(this.partInOneForm.firstDay);
                 this.partyTwoDisabled = false;
+                this.step2Title = '进行中';
               }
           }
         }
@@ -412,6 +419,9 @@ import minoritys from '@/minority.js'
                 this.currentState = this.partInOneForm.currentState;
                 this.partyThreeDisabled = false;
                 this.partyDay = twoForm.partyDay; 
+                this.step1Title = '已完成';
+                this.step2Title = '已完成';
+                this.step3Title = '进行中';
               }
           }
          }
@@ -420,13 +430,17 @@ import minoritys from '@/minority.js'
         this.partyInThreeViewShow = false;
         this.partyInFourViewShow = true;
         this.currentIndex = 3;
+        
         if(this.mainId > 0 && this.partInOneForm.currentState >= 3){
            if(threeForm.checkAll !=''){
               var _checkAll = threeForm.checkAll.split(',');
               if(_checkAll.length == 12){
                 this.currentState = this.partInOneForm.currentState;
                 this.partyFourDisabled = false;
-                
+                this.step1Title = '已完成';
+                this.step2Title = '已完成';
+                this.step3Title = '已完成';
+                this.step4Title = '进行中';
               }
           }
         }
@@ -435,6 +449,7 @@ import minoritys from '@/minority.js'
         this.partyInFourViewShow = false;
         this.partyInFiveViewShow = true;
         this.currentIndex = 4;
+       
         if(this.mainId > 0 && this.partInOneForm.currentState >= 4){
           console.log(fourForm.checkAll);
            if(fourForm.checkAll !=''){
@@ -443,6 +458,11 @@ import minoritys from '@/minority.js'
                 this.currentState = this.partInOneForm.currentState;
                 this.partyFiveDisabled = false;
                 this.meetingDay =fourForm.meetingDay; 
+                this.step1Title = '已完成';
+                this.step2Title = '已完成';
+                this.step3Title = '已完成';
+                this.step4Title = '已完成';
+                this.step5Title = '进行中';
               }
           }
         }
@@ -483,13 +503,13 @@ import minoritys from '@/minority.js'
                               duration: 2
                           }); 
                       }else{
+                          self.backUp();
                           if(self.mainId > 0){
                               self.$Message.success({
                                   content: '数据修改成功!',
                                   duration: 2
                               });
                           }else{
-                             self.$refs[name].resetFields();
                               self.$Message.success({
                                   content: '数据添加成功!',
                                   duration: 2
@@ -537,10 +557,41 @@ import minoritys from '@/minority.js'
                   self.indeterminate = false;
                 }
              }
+              //当前所处阶段
+              self.setStepTitle(self.partInOneForm.currentState);
             }
         }).catch(function (error) {
           console.log(error)
         })
+      },
+      setStepTitle:function(currentState){
+        switch(currentState){
+            case 1:
+              this.step1Title = '已完成';
+              break;
+            case 2:
+              this.step1Title = '已完成';
+              this.step2Title = '已完成';
+              break;
+            case 3:
+              this.step1Title = '已完成';
+              this.step2Title = '已完成';
+              this.step3Title = '已完成';
+              break;
+            case 4:
+              this.step1Title = '已完成';
+              this.step2Title = '已完成';
+              this.step3Title = '已完成';
+              this.step4Title = '已完成';
+              break;
+            case 5:
+              this.step1Title = '已完成';
+              this.step2Title = '已完成';
+              this.step3Title = '已完成';
+              this.step4Title = '已完成';
+              this.step5Title = '已完成';
+              break;
+        }
       }
     },
     mounted:function(){

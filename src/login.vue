@@ -16,7 +16,7 @@
                 <Row>
                     <Col span="10">
                       <FormItem prop="code">
-                        <Input class="login-code " v-model="loginForm.code" prefix="ios-key" placeholder="输入密码" />
+                        <Input class="login-code " @on-enter="doLogin" v-model="loginForm.code" prefix="ios-key" placeholder="输入密码" />
                       </FormItem>
                    </Col>
                    <Col span="11">
@@ -34,7 +34,10 @@
         </div>
       </div>
     </div>
-    <div class="copyRight">© 2010-2019 毕思达信息科技有限 版权所有 ICP证：粤B2-20080101</div>
+    <div class="copyRight">
+        <div>中共合浦县委组织部</div>
+        <div style="font-size:14px;font-weight:300;color:#FFF;">技术支持 : 广州毕思达信息科技有限公司</div>
+    </div>
     <router-view/>
   </div>
 </template>
@@ -137,7 +140,7 @@ import CryptoJS from "crypto-js/crypto-js.js";
           self.loginForm.scope = self.$constants.scope;
           var auth = self.makeBasicAuth(self.$constants.client_id,self.$constants.client_secret);
           self.loginForm.grant_type = self.$constants.grant_type;
-          self.loginForm.password = this.getAesString(self.loginForm.password,'welcome,bestinfo');
+          self.loginForm.password = this.getAesString(self.loginForm.password,self.$constants.decryptAESCode);
           this.$http({
              url:self.$constants.BASEPATH+'/auth/oauth/token',
               method:'POST',

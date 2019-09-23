@@ -3,7 +3,7 @@
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建考核</BreadcrumbItem>
-      <BreadcrumbItem>专项考核结果</BreadcrumbItem>
+      <BreadcrumbItem>三会一课考核结果</BreadcrumbItem>
     </Breadcrumb>
 
     <div class="bi-container">
@@ -73,20 +73,16 @@
             key: 'deptName'
           },
           {
-            title: '考核责任项',
-            key: 'amTitle'
-          },
-          {
             title: '考核清单',
             key: 'topicTitle'
           },
           {
             title: '填报标题',
-            key: 'reportTitle'
+            key: 'object'
           },
           {
             title: '考核得分',
-            key: 'score'
+            key: 'totalScore'
           },
           {
             title: '上报时间',
@@ -168,7 +164,7 @@
         var self = this
         this.$Loading.start()
         self.$http({
-          url: self.$constants.BIURL + '/partySpecialResult/findPartySpecialResultByRole',
+          url: self.$constants.BIURL + '/threeAndOne/searchDetailByMonthAndUserId',
           method: 'get',
           dataType: 'json',
           params: {

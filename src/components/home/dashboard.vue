@@ -150,9 +150,9 @@
 }
 
 .tabsView{
-    position: relative;
-    display: flex;
-    flex-wrap: nowrap;
+    position: relative !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
     justify-content: start;
 }
 
@@ -212,21 +212,21 @@
 .charView{
     position: relative;
     width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: start;
-    height: 350px;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: start !important;
+    height: 350px !important;
 }
 
 .charView .leftchart{
     position: relative;
-    width: 70%;
+    width: 70% !important;
     height: 100%;
 }
 
 .bs-table{
     position: relative;
-    width: 30% ;
+    width: 30% !important;
     height: 100%;
     overflow: hidden;
 }
@@ -372,6 +372,9 @@ export default {
             this.switchType();
         },
         initChatView : function(data){
+            if(data == null){
+                return;
+            }
             let axisDatas = [];
             let seriesDatas = [];
             let title = '';
@@ -398,9 +401,7 @@ export default {
                     title = '一把手考核排名';
                     break;
             }
-            
-            console.log(axisDatas);
-            console.log(seriesDatas);
+
             // 基于准备好的dom，初始化echarts实例
             this.rankingChart = echarts.init(document.getElementById('myChart'))
             // 绘制图表
@@ -490,8 +491,7 @@ export default {
             })
             .then(function (response) {
                 var data = response.data;
-                if(response.status ==200){
-                    console.log(data);
+                if(data.code == 0){
                     self.partyUserNumber = data.data;
                 }
             }) .catch(function (error) {
@@ -499,7 +499,6 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
             });
         },
         initBusinessPre:function(){
@@ -510,8 +509,7 @@ export default {
             })
             .then(function (response) {
                 var data = response.data;
-                if(response.status ==200){
-                    console.log(data);
+                if(data.code == 0){
                     self.preChart = echarts.init(document.getElementById('preChart'));
                     var legendData = [];
                     var seriesData = [];
@@ -534,7 +532,6 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
             });
         },
         initPreOption:function(pre,data){
@@ -644,7 +641,7 @@ export default {
             })
             .then(function (response) {
                 var data = response.data;
-                if(response.status ==200){
+                if(data.code == 0){
                     var records = data.data.records;
                     self.partyAmDatas = records;
                     self.initChatView(records);
@@ -655,7 +652,6 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
             });
         },
         initThreeOneUnit:function(){
@@ -672,7 +668,7 @@ export default {
             })
             .then(function (response) {
                 var data = response.data;
-                if(response.status ==200){
+                if(data.code ==0){
                     var records = data.data.records;
                     self.threeOneUnitDatas = records;
                     self.initChatView(records);
@@ -683,7 +679,6 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
             });
         },
         initFirstPeople:function(){
@@ -700,7 +695,7 @@ export default {
             })
             .then(function (response) {
                 var data = response.data;
-                if(response.status ==200){
+                if(data.code ==0){
                     var records = data.data.records;
                     self.firstPeopleDatas = records;
                     self.initChatView(records);
@@ -710,7 +705,6 @@ export default {
                     content: error.message,
                     duration: 2
                 });
-                console.log(error);
             });
         },
         switchType:function(){

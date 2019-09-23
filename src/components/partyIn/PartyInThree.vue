@@ -130,7 +130,7 @@
       </CheckboxGroup>
     </Row>
     <FormItem class="btn">
-      <Button @click="prevToTwo" >下一步</Button>
+      <Button @click="prevToTwo" >上一步</Button>
       <Button :disabled="partyThreeDisabled" type="primary" @click="handleSubmit('partInThreeForm')" style="margin-left:8px;"> 提交</Button>
       <Button :disabled="partyThreeDisabled" @click="handleReset('partInThreeForm')" style="margin-left: 8px">重置</Button>
       <Button @click="threeNextToFour(partInThreeForm)" style="margin-left:8px;">下一步</Button>

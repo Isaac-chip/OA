@@ -1,7 +1,7 @@
 <template>
   <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem >党务信息</BreadcrumbItem>
       <BreadcrumbItem to="/system/dept">党组织管理</BreadcrumbItem>
     </Breadcrumb>
@@ -34,13 +34,13 @@
             </Row>
             <Table border :columns="usersCloumns" :data="usersDatas" :min-height="200">
             </Table>
-            <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
+            <Page :total="dataCount" :page-size="pageSize" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
           </div>
         </Col>
       </Row>
     </div>
 
-    <Modal v-model="deptFormModal" :title="modalTitle" :footer-hide="true" :mask-closable="false" width="600px">
+    <Modal v-model="deptFormModal" @on-cancel="hidedeptModel('deptForm')" :title="modalTitle" :footer-hide="true" :mask-closable="false" width="600px">
       <Form ref="deptForm" :model="deptForm" :rules="deptRuleValidate" :label-width="90" >
         <Row>
           <Col span="12">
@@ -98,12 +98,12 @@
         <Row>
           <Col span="12">
             <FormItem label="(位置)经度" prop="lat">
-              <Input v-model="deptForm.lat" placeholder="请输入经度" />
+              <Input type="number" v-model="deptForm.lat" placeholder="请输入经度" />
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="(位置)纬度" prop="lng">
-              <Input v-model="deptForm.lng" placeholder="请输入纬度" />
+              <Input  type="number" v-model="deptForm.lng" placeholder="请输入纬度" />
             </FormItem>
           </Col>
         </Row>
@@ -461,8 +461,9 @@
       },
       hidedeptModel:function(name){
         this.$refs[name].resetFields();
+        this.selectedDeptId = -1;
         this.deptFormModal = false;
-        this.deptForm.parentId = -1;
+        this.deptForm.parentId = null;
       }
 
     },

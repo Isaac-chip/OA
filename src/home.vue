@@ -8,7 +8,7 @@
           <span>合浦党建E网通</span>
 
         </div>
-        <div class="apps">
+        <!-- <div class="apps">
           <Dropdown  trigger="click" >
             <a href="javascript:void(0)">
               <img src="https://file.iviewui.com/icon/application.png" class="apps-menu">
@@ -39,16 +39,17 @@
               </div>
             </DropdownMenu>
           </Dropdown>
-        </div>
-        <div class="wrapper-header-nav-search">
+        </div> -->
+       <div class="wrapper-header-nav-search">
            <Select
                 prefix="ios-search"
                 filterable
                 remote
+                clearable
                 :remote-method="seachMenuByQuery"
                 @on-change="menuChange"
                 placeholder="输入菜单名称查找">
-                <Option v-for="(item, index) in searchList" :value="item.menuUrl" :key="index">{{item.menuName}}</Option>
+                <Option v-for="(item, index) in searchList" :disabled="item.menuUrl == '#'" :value="item.menuUrl" :key="index">{{item.menuName}}</Option>
             </Select>
         </div>
         <div class="wrapper-header-nav-list ">
@@ -56,8 +57,8 @@
             <span class="ivu-avatar ivu-avatar-circle ivu-avatar-default ivu-avatar-icon">
               <i class="ivu-icon ivu-icon-ios-person"></i>
             </span> 
-            <Dropdown>
-                <a href="javascript:void(0)">
+            <Dropdown @on-click="logout">
+                <a href="javascript:void(0)" >
                   {{nickName}}
                 </a>
                 <DropdownMenu slot="list">
@@ -101,8 +102,7 @@
         </Sider>
         <Layout >
           <Content class="router-view-content">
-            <router-view v-show="!isShowDashBorad"/>
-            <dash-borad v-show="isShowDashBorad"></dash-borad>
+            <router-view />
           </Content>
         </Layout>
       </Layout>
@@ -112,15 +112,10 @@
 </template>
 
 <script>
-import DashBorad from "@/components/home/dashboard";
   export default {
     name:"home",
-    components:{
-      DashBorad
-    },
     data(){
       return {
-        isShowDashBorad:true,
         menuHtml:'',
         nickName:'',
         searchList:[],
@@ -133,11 +128,7 @@ import DashBorad from "@/components/home/dashboard";
     watch: {
       $route: {
         handler: function(val, oldVal){
-          if(val.name == 'home'){
-            this.isShowDashBorad = true;
-          }else{
-            this.isShowDashBorad = false;
-          }
+          
         },
         // 深度观察监听
         deep: true
@@ -155,7 +146,7 @@ import DashBorad from "@/components/home/dashboard";
               }
           })
           .then(function (response) {
-              if(response.status ==200){
+              if(response.data.code == 0){
                   var data = response.data;
                   self.menuList = data.data;
               }
@@ -173,7 +164,7 @@ import DashBorad from "@/components/home/dashboard";
               }
           })
           .then(function (response) {
-              if(response.status ==200){
+              if(response.data.code == 0){
                   var data = response.data;
                   self.searchList = data.data;
                   console.log(data);
@@ -186,6 +177,34 @@ import DashBorad from "@/components/home/dashboard";
             'path': value
           })
         }
+      },
+      logout:function(){
+        const self = this;
+         this.$Modal.confirm({
+              title:'系统提示',
+              content:'确定退出当前登录吗?',
+              okText:'确定',
+              cancelText:'取消',
+              onOk:function(){
+                  self.handleLogOut();
+              }
+          });
+      },
+      handleLogOut:function(){
+        var self = this;
+        this.$http({
+          url:self.$constants.BASEPATH+'/auth/logout',
+          method:'DElETE',
+        }).then(function(response){
+            var data = response.data;
+            if(data.code == 0){
+                self.$router.push({
+                  path:'/'
+                });
+            }else{
+              self.$message.error(data.msg);
+            }
+        });
       }
     },
     mounted:function(){

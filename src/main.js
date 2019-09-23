@@ -66,8 +66,8 @@ Vue.use(iView)
 Vue.use(ZkTable)
 
 router.beforeEach((to, from, next) => {
-  iView.LoadingBar.start()
-  next()
+  iView.LoadingBar.start();
+  next();
 })
 
 router.afterEach(route => {
@@ -101,6 +101,14 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(response => {
   iView.LoadingBar.finish();
+  var data = response.data;
+  if(data){
+    if(data.code == 401 || data.code == 428){
+      router.replace({ 
+          path: '/'
+      }) 
+    }
+  }
   return response
 }, error => {
   iView.LoadingBar.finish()

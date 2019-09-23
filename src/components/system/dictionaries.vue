@@ -1,7 +1,7 @@
 <template>
     <div class="dictionaries_main">
         <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem>系统管理</BreadcrumbItem>
             <BreadcrumbItem to="/system/dictionaries">数据字典</BreadcrumbItem>
         </Breadcrumb>

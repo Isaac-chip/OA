@@ -69,6 +69,9 @@
 }
 
 .img-wrap {
+    width: 100px;
+    height: 100px;
+    padding: 10px;
     display: inline-block;
 }
 
@@ -96,7 +99,7 @@ export default {
             // 每页显示多少条
             pageSize:10,
             current:1,
-            size:15,
+            size:18,
             uploadHeaders:{},
             imageViewShow:false,
             fileServer:'',

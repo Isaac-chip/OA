@@ -4,14 +4,19 @@ import Router from 'vue-router'
 
 import Login from '@/login';
 import Home from '@/home';
+import Dashboard from '@/components/home/dashboard';
 
 import PartyIn from '@/components/partyIn/PartyIn'
 import PartyInTable from '@/components/partyIn/partyInTable'
 
+/**党建考核 */
 import PartyAm from '@/components/partyAm/partyAm'
 import PartyAmList from "@/components/partyAm/PartyAmList"
 import PartySpecialResult from "@/components/partyAm/partySpecialResult"
 import PartySpecialResultDetail from "@/components/partyAm/partySpecialResultDetail";
+import PartyThreeAndOneResult from "@/components/partyAm/partyThreeAndOneResult";
+import PartyLeaderResult from "@/components/partyAm/partyLeaderResult";
+
 import Menu from "@/components/system/menu"
 import Role from "@/components/system/role"
 import User from "@/components/system/user"
@@ -89,6 +94,11 @@ export default
       component: Home,
       children: [
         {
+          path: '/',
+          name: 'dashboard',
+          component: Dashboard
+        },
+        {
           path: '/partyIn',
           name: 'partyIn',
           component: PartyIn
@@ -112,6 +122,14 @@ export default
           path: '/partyAm/partySpecialResultDetail',
           name: 'partySpecialResultDetail',
           component: PartySpecialResultDetail
+        },{
+          path: '/partyAm/partyThreeAndOneResult',
+          name: 'partyThreeAndOneResult',
+          component: PartyThreeAndOneResult
+        },{
+          path: '/partyAm/partyLeaderResult',
+          name: 'partyLeaderResult',
+          component: PartyLeaderResult
         },
         {
           path: '/system/menu',

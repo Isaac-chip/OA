@@ -3,7 +3,7 @@
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建考核</BreadcrumbItem>
-      <BreadcrumbItem>专项考核结果</BreadcrumbItem>
+      <BreadcrumbItem>一把手考核结果</BreadcrumbItem>
     </Breadcrumb>
 
     <div class="bi-container">
@@ -168,7 +168,7 @@
         var self = this
         this.$Loading.start()
         self.$http({
-          url: self.$constants.BIURL + '/partySpecialResult/findPartySpecialResultByRole',
+          url: self.$constants.BIURL + '/leaderAm/searchALeadertDetailByMonthAndUserId',
           method: 'get',
           dataType: 'json',
           params: {

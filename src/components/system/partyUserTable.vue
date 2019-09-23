@@ -1,7 +1,7 @@
 <template>
     <div class="bi-main-container">
         <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem >党务信息</BreadcrumbItem>
             <BreadcrumbItem to="/system/dept">党员管理</BreadcrumbItem>
         </Breadcrumb>
@@ -30,9 +30,21 @@
                             </Col>
                      </Row>
                      <Row style="text-align:right;margin-bottom:10px;">
+                        <a href="javascrpit:;;" @click="downLoadTemplate">下载用户导入模板</a>
+                        <Divider type="vertical"/>
                         <Button @click="addPartyUser"  icon="ios-cloud-download">新增</Button>
                         <Divider type="vertical"/>
-                        <Button @click="importPartyUser"  icon="ios-cloud-upload">导入</Button>
+                        <Upload 
+                            :action="fileServer"
+                            :on-success="handleSuccess"
+                            :format="['xlsx','xls','XLSX','XLS']"
+                            :on-format-error="formatError"
+                            :headers="uploadHeaders"
+                            :show-upload-list="false"
+                            style="display: inline"
+                            >
+                            <Button icon="ios-cloud-upload">导入</Button>
+                        </Upload>
                         <Divider type="vertical"/>
                         <Button @click="exportPartyUser"  icon="ios-cloud-download">导出</Button>
                      </Row>
@@ -43,6 +55,10 @@
                     <Button  size="small" style="margin-right: 5px" @click="updatePartyUser(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="resetPwd(index)">重置密码</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deletePartyUser(index)">删除</Button>
+                </template>
+
+                <template slot-scope="{row}" slot="politicsTpl">
+                    <span v-if="row.politics >=0">{{politicsDatas[row.politics-1]}}</span>
                 </template>
             </Table>
             <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
@@ -60,6 +76,7 @@
 
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import exportUtils from '@/vendor/export.js'
 
 export default {
     components: { Treeselect },
@@ -69,12 +86,18 @@ export default {
             // 每页显示多少条
             pageSize:15,
             deptId:null,
+            politicsDatas:['中共党员','中共预备党员','入党积极分子'
+                            ,'共青团员','民革党员','民盟盟员','民建会员',
+                            '民进会员','农工党党员','致公党党员','九三学社社员',
+                            '台盟盟员','无党派人士','群众','其他'],
             params:{
                 size:15,
                 current:1,
                 deptCode:'',
                 query:''
             },
+            uploadHeaders:{},
+            fileServer:'',
             partyUserCloumns:[
                 {
                     type: 'index',
@@ -94,8 +117,9 @@ export default {
                     key: 'deptName'
                 },{
                     title: '政治面貌',
-                    key: 'deptName',
-                     width:'220'
+                    key: 'politics',
+                    slot: "politicsTpl",
+                    width:'220'
                 },{
                     title: '性别',
                     key: 'sex',
@@ -121,6 +145,20 @@ export default {
             partyUserDatas:[],
             departments:[]
         }
+    },
+    created:function(){
+        var access_token = this.$constants.access_token;
+        if(access_token == null || access_token ==''){
+            var userInfo =window.localStorage.getItem('userInfo');
+            if(userInfo !=null && userInfo!=''){
+                access_token = JSON.parse(userInfo).access_token;
+            }
+            this.uploadHeaders = {
+                'Authorization': "bearer " + access_token
+            };
+            console.log(this.uploadHeaders);
+        }
+        this.fileServer = this.$constants.BIURL +'/political/user/excel/import';
     },
     methods:{
         changepage:function(value){
@@ -149,8 +187,27 @@ export default {
         importPartyUser:function(){
 
         },
+        downLoadTemplate:function(){
+            exportUtils.exportExcel(this.$constants.BIURL+'/political/user/excel/template');
+        },
         exportPartyUser:function(){
-
+            var params = {
+                deptId:this.$constants.userInfo.deptId,
+                query:''
+            }
+            //按部门导出
+            exportUtils.exportExcel(this.$constants.BIURL+'/political/user/excel/export',params);
+        },
+        formatError:function(file, fileList){
+            this.$Message.error('上传文件格式错误，请选择Excel文件上传!');
+        },
+        handleSuccess:function(response, file, fileList){
+            var self = this;
+            var data = response.data;
+            if(data){
+                this.loadPartyUsers();
+                this.$Message.success('数据导入成功!');
+            }
         },
         loadPartyUsers:function(){
             var self = this;
@@ -175,12 +232,12 @@ export default {
             });
         },
         updatePartyUser:function(index){
-            var uId = this.partyUserDatas[index].uId;
+            var uId = this.partyUserDatas[index].uid;
             this.$router.push({
                 'name': 'partyUser',
                 'path': '/system/partyUser',
                 query:{
-                    uId:uId
+                    id:uId
                 }
             })
         },
