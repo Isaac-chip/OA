@@ -85,9 +85,13 @@ export default {
                             total,
                             size
                         } = res.data.data;
-                        records.forEach(item => {
+                        records.forEach((item,index) => {
                             item.starLevel = +item.starLevel;
+                             item["index"]=index + (current -1)*  size +1
                         });
+
+
+               
 
                         this.records = records;
                         this.pages = {

@@ -106,7 +106,9 @@ export default {
             records.forEach(item => {
               item.starLevel = +item.starLevel;
             });
-
+             records.forEach((item,index)=>{
+              item["index"]=index + (current -1)*  size +1
+            })
             this.records = records;
             this.pages = {
               current,

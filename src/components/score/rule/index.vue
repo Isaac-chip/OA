@@ -109,6 +109,11 @@ export default {
           this.ruleLoading = false;
           if (res.data.code == 0) {
             const { records, current, pages, total, size } = res.data.data;
+            
+            records.forEach((item,index)=>{
+              item["index"]=index + (current -1)*  size +1
+            })
+            console.log(records)
             this.records = records;
             this.pages = {
               current,

@@ -67,7 +67,7 @@ volServiceScore: 23
           title: "序号",
           // key: "deptId",
            width: 80,
-          type:"index"
+          key:"index"
         },
 
         {
@@ -108,24 +108,24 @@ volServiceScore: 23
         {
           title: "总评分",
           key: "totalScore",
-
+           width: 160
         },
 
         {
           title: "个人志愿服务积分",
           key: "volServiceScore",
-
+ width: 160
         },
 
         {
           title: "状态",
           slot: "disabled",
-
+ width: 160
         },
          {
           title: "备注",
           key: "memo",
-
+ width: 160
         },
 
         // {

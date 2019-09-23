@@ -48,7 +48,7 @@ export default {
         {
           title: "序号",
           // key: "id",
-           type:"index",
+           key:"index",
           width: 80
         },
 
