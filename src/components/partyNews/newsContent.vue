@@ -1,9 +1,9 @@
 <template>
     <div class="bi-main-container">
          <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem>党讯管理</BreadcrumbItem>
-            <BreadcrumbItem>信息发布</BreadcrumbItem>
+            <BreadcrumbItem>内容发布</BreadcrumbItem>
         </Breadcrumb>
 
         <div class="bi-container">
@@ -45,7 +45,7 @@
                     </FormItem>
                     <FormItem label="标题图片" >
                         <div class="demo-upload-list" :key="item.url" v-for="item in uploadList">
-                            <img :src="'http://120.24.51.37/group1/'+item.url">
+                            <img :src="preImagePath+item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -72,7 +72,7 @@
                         </Upload>
 
                         <Modal title="图片预览" v-model="visible">
-                            <img :src="'http://120.24.51.37/group1/' + imgName + ''" v-if="visible" style="width: 100%">
+                            <img :src="preImagePath + imgName" v-if="visible" style="width: 100%">
                         </Modal>
                     </FormItem>
                     <FormItem label="发布状态" >
@@ -154,6 +154,7 @@ export default {
             isUpdate:false,
             queryStr:'',
             catalogId:-1,
+            preImagePath:'',
             editorOption:{
                 height:'400px'
             },
@@ -243,6 +244,7 @@ export default {
     created:function(){
         this.contentFilePath = this.$constants.BIURL + '/political/content/upload';
         this.setHeaders();
+        this.preImagePath = this.$constants.PREPATH;
     },
     methods:{
         setHeaders:function(){

@@ -1,7 +1,7 @@
 <template>
     <div class="bi-main-container">
          <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem>村社区管理</BreadcrumbItem>
             <BreadcrumbItem>第一书记</BreadcrumbItem>
             <BreadcrumbItem>双签到</BreadcrumbItem>

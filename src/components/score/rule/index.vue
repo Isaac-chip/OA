@@ -2,7 +2,7 @@
   <div class="rule-wrap h-100 d-flex flex-column">
     <div class="bread pl-20 d-flex mt-10">
        <Breadcrumb class="breadcrumb">
-        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem to="/home">首页</BreadcrumbItem>
         <BreadcrumbItem>积分管理</BreadcrumbItem>
         <BreadcrumbItem>党员积分管理</BreadcrumbItem>
       </Breadcrumb>

@@ -10,7 +10,7 @@
       <Input v-model="checkForm.memo" type="textarea" />
     </Modal>
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党群服务</BreadcrumbItem>
       <BreadcrumbItem>党群心声</BreadcrumbItem>
     </Breadcrumb>

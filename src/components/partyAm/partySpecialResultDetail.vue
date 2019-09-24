@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建考核</BreadcrumbItem>
       <BreadcrumbItem to="/partyAm/partySpecialResult">专项考核</BreadcrumbItem>
     </Breadcrumb>
@@ -94,9 +94,7 @@
             <Card dis-hover>
               <p slot="title">相关附件</p>
               <div class="attView">
-                <img src="http://img2.imgtn.bdimg.com/it/u=1739576259,71252231&fm=26&gp=0.jpg"/>
-                <img src="http://img2.imgtn.bdimg.com/it/u=1739576259,71252231&fm=26&gp=0.jpg"/>
-                <img src="http://img2.imgtn.bdimg.com/it/u=1739576259,71252231&fm=26&gp=0.jpg"/>
+                <img v-for="(item,index) in resultDetail.images" :key="index"  :src="fileServer + item.filePath"/>
               </div>
             </Card>
           </Col>
@@ -133,7 +131,7 @@
   .amback {
     position: absolute;
     right: 25px;
-    top: 60px;
+    top: 30px;
   }
 
   .bi_custom_title {
@@ -142,9 +140,9 @@
     line-height: 44px;
     font-size: 16px;
     font-weight: 500;
-    color: #2d8cf0;
+    color: #ff6a00;
     padding-left: 8px;
-    border-bottom: 1px solid #2d8cf0
+    border-bottom: 1px solid #ff6a00
   }
 
   .bi_custom_table {
@@ -157,7 +155,7 @@
     text-align: right;
     font-size: 14px;
     padding-right: 10px;
-    color: #2d8cf0;
+    color: #333;
   }
 
   .table_content {
@@ -184,9 +182,13 @@
           topicTitle: '',
           totalScore: '',
           reportTime: '',
-          reportTitle: ''
+          reportTitle: '',
+          images:[]
         }
       }
+    },
+    created:function(){
+        this.fileServer = this.$constants.PREPATH;
     },
     methods: {
       loadDetail: function () {

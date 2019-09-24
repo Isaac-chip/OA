@@ -22,13 +22,20 @@ body {
 
 .wrapper-header{
     position: fixed;
+    display: flex;
     width: 100%;
     top: 0;
     right: 0;
     z-index: 1000;
+    justify-content: flex-start;
     background: #fff;
+    background: url(../assets/banner_bg.jpg);
+    background-size: 100% 100%;
+    background-position: top bottom;
+    background-repeat: no-repeat 10px 10px;
     box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 }
+
 
 .bi-main-container{
     height: 100%;
@@ -49,6 +56,7 @@ body {
     width: 100%;
     padding-left: 20px;
     margin-top: -2px;
+
 }
 
 
@@ -118,6 +126,7 @@ body {
     line-height: 50px;
     margin-left: -34px;
     color: #ff6a00;
+    width: 250px;
 }
 
 .wrapper-header-nav-logo span{
@@ -144,12 +153,18 @@ body {
 .wrapper-header-nav-search {
     float: left;
     margin-left: 60px;
-    width: 250px;
+    width: 342px;
 }
+.wrapper-header-middle{
+    width: 100%;
+    height: 100%;
+ 
 
+}
 .wrapper-header-nav-list {
     height: inherit;
-    float: right;
+    width: 100%;
+    text-align: right;
 }
 
 .router-view-content{
@@ -158,10 +173,7 @@ body {
     height: 100%;
     margin: 0px auto;
     background: #fff;
-<<<<<<< HEAD
     /* overflow: hidden; */
-=======
->>>>>>> b957f64265d4cbd81448dd13d115d517f39b6e6a
     box-sizing: border-box;
 }
 
@@ -191,7 +203,7 @@ body {
 }
 
 .back-view span{
-    color: #2d8cf0;
+    color: #ff6a00;
     font-size: 13px;
     padding-left: 3px;
     margin-top: 3px;

@@ -61,7 +61,7 @@ export default {
         ruleName: [
           {
             required: true,
-            message: "The ruleName cannot be empty",
+            message: "积分规则名称不能为空",
             trigger: "blur"
           }
         ]

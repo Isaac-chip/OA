@@ -1,18 +1,19 @@
 <template>
   <div class="bi-main-container">
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党务管理</BreadcrumbItem>
       <BreadcrumbItem to="/partyIn/partyInTable">党员管理</BreadcrumbItem>
-      <BreadcrumbItem>新增、修改</BreadcrumbItem>
+      <BreadcrumbItem>{{partyUserTitle}}</BreadcrumbItem>
     </Breadcrumb>
     <div class="bi-container">
+        <Spin size="large" fix v-if="spinShow"></Spin>
         <Form class="partyUserForm" ref="partyUserForm" :model="partyUserForm" :rules="partyUserFormValidate" :label-width="120">
             <Divider orientation="left">基本信息</Divider>
             <Row>
                 <Col span="8">
                     <FormItem label="用户名" prop="loginName">
-                        <Input v-model="partyUserForm.loginName" placeholder="请输入用户名" />
+                        <Input :disabled="isUpdate" v-model="partyUserForm.loginName" placeholder="请输入用户名" />
                     </FormItem>
                 </Col>
                 <Col span="8">
@@ -22,7 +23,7 @@
                 </Col>
                 <Col span="8">
                     <FormItem label="登录密码"  prop="loginPwd">
-                        <Input type="password" v-model="partyUserForm.loginPwd" placeholder="请输入登录密码" />
+                        <Input type="password" :disabled="isUpdate" v-model="partyUserForm.loginPwd" placeholder="请输入登录密码" />
                     </FormItem>
                 </Col>
             </Row>
@@ -44,7 +45,7 @@
                     </FormItem>
                 </Col>
                 <Col span="8">
-                    <FormItem label="手机号码" >
+                    <FormItem label="手机号码" prop="mobilePhone" >
                         <Input v-model="partyUserForm.mobilePhone" placeholder="请输入手机号码" />
                     </FormItem>
                 </Col>
@@ -175,7 +176,7 @@
                 <Col span="8">
                     <FormItem label="职务级别" prop="zwjb">
                         <Select v-model="partyUserForm.zwjb" placeholder="请选择职务级别"  >
-							<Option value="-999"></Option>
+							<Option value="-999">请选择职务级别</Option>
                             <Option value="1">正市</Option>
                             <Option value="2">副市</Option>
                             <Option value="3">正区</Option>
@@ -244,7 +245,7 @@
                 </Col>
                 <Col span="8">
                     <FormItem label="电子邮箱" >
-                        <Input v-model="partyUserForm.mail" placeholder="请输入电子邮箱" />
+                        <Input v-model="partyUserForm.email" placeholder="请输入电子邮箱" />
                     </FormItem>
                 </Col>
                 <Col span="8">
@@ -280,6 +281,10 @@
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 import minoritys from '@/minority.js'
+
+import Base64  from "js-base64/base64.js";
+import CryptoJS from "crypto-js/crypto-js.js";
+
 export default {
     components: { Treeselect },
     data () {
@@ -287,6 +292,8 @@ export default {
             isUpdate:false,
             minoritys:minoritys,
             departments:[],
+            partyUserTitle:'新增党员',
+            spinShow:false,
             partyUserForm:{
                 loginName:'',
                 loginPwd:'',
@@ -311,7 +318,7 @@ export default {
                 workTime:'',
                 partyTime:'',
                 cardNo:'',
-                mail:'',
+                email:'',
                 state:'0',
                 address:''
             },
@@ -324,6 +331,10 @@ export default {
                 ],
                 userName:[
                     {required: true, message: '姓名不能为空', trigger: 'blur' }
+                ],
+                mobilePhone:[
+                    {required: true, message: '手机号码不能为空', trigger: 'blur' },
+                    {pattern: /^1[3456789]\d{9}$/, message: '电话格式不正确', trigger: 'blur'}
                 ],
                 politics:[
                     {required: true, message: '政治面貌不能为空', trigger: 'change' }
@@ -347,6 +358,7 @@ export default {
                     {required: true,type:'date', message: '参加工作时间不能为空', trigger: 'change' }
                 ],
                 cardNo:[
+                     {pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '身份证号码格式不正确', trigger: 'blur'},
                     {required: true, message: '身份证号码不能为空', trigger: 'blur' }
                 ],
                 state:[
@@ -356,6 +368,13 @@ export default {
         }
     },
     methods:{
+        getAesString:function(word,_key){//加密
+            var key = CryptoJS.enc.Utf8.parse(_key);  //十六位十六进制数作为密钥
+            var iv = CryptoJS.enc.Utf8.parse(_key); 
+            let srcs = CryptoJS.enc.Utf8.parse(word);
+            let encrypted = CryptoJS.AES.encrypt(srcs, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.ZeroPadding });
+            return encrypted.toString();//返回的是base64格式的密文
+        },
          orgSelect:function(node){
             this.partyUserForm.deptId = node.did;
             this.partyUserForm.deptName = node.title;
@@ -394,18 +413,36 @@ export default {
                 console.log(error);
             });
         },
+        loadPartyUserById:function(id){
+            this.isUpdate = true;
+            var self = this;
+            self.spinShow = true;
+            this.$http({
+                url:this.$constants.BIURL+'/political/user/'+id,
+                method:"GET",
+                dataType:'json'
+            }).then(function (response) {
+                self.spinShow = false;
+                self.partyUserForm = response.data.data;
+                self.partyUserForm.sex = self.partyUserForm.sex +'';
+                console.log(self.partyUserForm);
+            });
+        },
         handleSubmit:function(name){
+            var self = this;
             this.$refs[name].validate((valid) => {
-                var self = this;
                 if (valid) {
                     self.partyUserForm.tenantId = self.$constants.userInfo.tenantId;
                     self.partyUserForm.birthday = self.$convertDate(self.partyUserForm.birthday);
                     self.partyUserForm.partyTime = self.$convertDate(self.partyUserForm.partyTime);
                     self.partyUserForm.workTime = self.$convertDate(self.partyUserForm.workTime);
-                
+                    //加密密码
+                    if(!self.isUpdate){
+                        self.partyUserForm.loginPwd = self.getAesString(self.partyUserForm.loginPwd,self.$constants.decryptAESCode);
+                    }
                     var url = self.$constants.BIURL+'/political/user';
                     var method = 'POST';
-                    if(self.partyUserForm.uId > 0){
+                    if(self.partyUserForm.uid > 0){
                         method='PUT';
                     }
                     self.$http({
@@ -423,8 +460,7 @@ export default {
                                     duration: 2
                                 }); 
                             }else{
-                                self.backUp();
-                                if(self.partInFiveForm.id > 0){
+                                if(self.isUpdate){
                                     self.$Message.success({
                                         content: '数据修改成功!',
                                         duration: 2
@@ -436,6 +472,7 @@ export default {
                                         duration: 2
                                     });
                                 }
+                                self.backUp();
                             }
                         
                         }
@@ -460,6 +497,14 @@ export default {
         }
     },
     mounted:function(){
+        var id = this.$route.query.id;
+        console.log("党员："+id);
+        if(id && id>0){
+            this.partyUserForm.uId = id;
+            console.log(this.partyUserForm.uId );
+            this.partyUserTitle = '修改党员';
+            this.loadPartyUserById(id);
+        }
         this.loadDepartment();
     }
 }

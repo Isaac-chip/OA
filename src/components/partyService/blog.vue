@@ -61,7 +61,7 @@
     </Modal>
 
     <Breadcrumb class="breadcrumb">
-      <BreadcrumbItem to="/">首页</BreadcrumbItem>
+      <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党群服务</BreadcrumbItem>
       <BreadcrumbItem>互动交流</BreadcrumbItem>
     </Breadcrumb>

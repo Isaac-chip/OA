@@ -1,7 +1,7 @@
 export default {
 	devEnv: "dev", // 开发环境配置，dev开发模式，prod生产模式
-	//BIURL: "http://192.168.1.102:9010/admin",
-	//BIURL: "http://172.16.1.198:8082/mobile
+	//BIURL: "http://127.0.0.1:9010/admin",
+	//BASEPATH: "http://127.0.0.1:9010",
 	PREPATH:'http://120.24.51.37/group1/',
 	BASEPATH:"http://120.24.51.37:9010",
 	BIURL: "http://120.24.51.37:9010/admin",
@@ -10,6 +10,7 @@ export default {
 	grant_type:'password',
 	scope:'server',
 	access_token:'',
+	decryptAESCode:'welcome,bestinfo',
 	userInfo:{
 		userId:1,
 		username:'admin',

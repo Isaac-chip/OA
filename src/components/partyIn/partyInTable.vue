@@ -1,7 +1,7 @@
 <template>
     <div class="bi-main-container">
          <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem>党建阵地</BreadcrumbItem>
             <BreadcrumbItem>党员发展</BreadcrumbItem>
         </Breadcrumb>
@@ -35,7 +35,7 @@
                    <Row>
                         <Col span="8">
                             <FormItem label="所处阶段:">
-                                <Select  style="width:200px" v-model="signParams.currentState">
+                                <Select  v-model="signParams.currentState">
                                     <Option value="-1">全部</Option>
                                     <Option value="1">申请入党</Option>
                                     <Option value="2">入党积极分子的确定和培养</Option>
@@ -47,7 +47,7 @@
                         </Col>
                         <Col span="8">
                             <FormItem label="状态:">
-                                <Select  style="width:200px" v-model="signParams.state">
+                                <Select  v-model="signParams.state">
                                     <Option value="-1">全部</Option>
                                     <Option value="1">
                                         <img class="stateImg" src="@/assets/images/cr2.png">正常</Option>
@@ -61,7 +61,7 @@
                                 </Select>
                             </FormItem>
                         </Col>
-                        <Col span="8" >
+                        <Col span="8" style="padding-left:20px;">
                             <Button @click="searchByQuery"  icon="ios-search">搜索</Button>
                             <Divider type="vertical"/>
                             <Button @click="addPartIn"  icon="ios-cloud-download">新增</Button>
@@ -85,6 +85,12 @@
                 <template slot-scope="{ row, index }" slot="action">
                     <Button  size="small" style="margin-right: 5px" @click="detailDoubleSign(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteDoubleSign(index)">删除</Button>
+                </template>
+
+                <template slot-scope="{row}" slot="minority">
+                    <div v-for="(option,index) in minoritys" :key="index">
+                        <span v-show="option.value == row.minority">{{option.name}}</span>
+                    </div>
                 </template>
             </Table>
             <Row>
@@ -134,6 +140,7 @@ import cr3Img from '@/assets/images/cr3.png'
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 import exportUtils from '@/vendor/export.js'
+import minoritys from '@/minority.js'
 
 export default {
     components: { Treeselect },
@@ -148,6 +155,7 @@ export default {
             villageId:null,
             type:2,
             userModal:false,
+            minoritys:minoritys,
             isUpdate:false,
             queryStr:'',
             isDetail:false,
@@ -233,9 +241,10 @@ export default {
                     }
                  }
             },{
-                 title: '民族',
+                title: '民族',
                 key: 'minority',
-                 width:'100'
+                width:'100',
+                slot:'minority'
             },{
                  title: '出生日期',
                 key: 'birthday',
@@ -316,7 +325,7 @@ export default {
             signParams:{
                 current:1,
                 size:10,
-                tenantId:'cddkjfdkdeeeiruei8888',
+                tenantId:'',
                 startTime:null,
                 endTime:null,
                 userName:'',
@@ -403,6 +412,7 @@ export default {
             if(!self.signParams.deptId || self.signParams.deptId == null){
                 self.signParams.deptCode = '';
             }
+            self.signParams.tenantId = self.$constants.userInfo.tenantId;
             self.$http({
                 url:self.$constants.BIURL+'/political/employee/apply/one/list',
                 method:'GET',

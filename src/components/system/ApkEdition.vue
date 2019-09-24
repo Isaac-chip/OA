@@ -1,7 +1,7 @@
 <template>
     <div class="bi-main-container">
         <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem >系统管理</BreadcrumbItem>
             <BreadcrumbItem to="/system/apkEdition">APK版本管理</BreadcrumbItem>
         </Breadcrumb>
@@ -17,7 +17,7 @@
             <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
 
             <Modal  v-model="apkModal" title="新增APK版本" :footer-hide="true" :mask-closable="false">
-                <Form ref="apkForm" :model="apkForm" :rules="apkFormRuleValidate" :label-width="80" >
+                <Form ref="apkForm" :model="apkForm" :rules="apkFormRuleValidate" :label-width="90" >
                     <FormItem label="版本信息" prop="apkVersion">
                         <Input v-model="apkForm.apkVersion" placeholder="请输入安装包版本信息" />
                     </FormItem>
@@ -30,6 +30,9 @@
                                 :headers="uploadHeaders" >
                             <Button icon="ios-cloud-upload-outline">上传APK文件</Button>
                         </Upload>
+                    </FormItem>
+                    <FormItem label="版本信描述" prop="memo">
+                        <Input v-model="apkForm.memo"  type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入升级功能描述" />
                     </FormItem>
                      <Row>
                         <div style="text-align:center">
@@ -72,11 +75,15 @@ export default {
                 apkName:'',
                 apkVersion:'',
                 apkUrl:'',
+                memo : '',
                 apkSize:''
             },
             apkFormRuleValidate:{
-                apkViersion:[
+                apkVersion:[
                    { required: true, message: 'apk版本信息不能为空', trigger: 'blur' }
+                ],
+                memo:[
+                    { required: true, message: '版本升级描述不能为空', trigger: 'blur' }
                 ]
             },
             apkCloumns:[

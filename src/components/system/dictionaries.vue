@@ -468,7 +468,7 @@ export default {
       },
       partyUserCloumns: [
         {
-          key: "index",
+          type: "index",
           // width: 50,
           title: "序号",
           align: "center"
@@ -527,7 +527,7 @@ export default {
       ],
       partyUserCloumns2: [
         {
-          key: "index",
+          type: "index",
           // width: 50,
           title: "序号",
           align: "center"
@@ -612,6 +612,7 @@ export default {
             this.pages2.pages = pages;
             this.pages2.size = size;
             this.pages2.total = total;
+            // debugger
           } else {
             this.$Message.error(res.data.msg || "请求列表失败");
           }
@@ -705,6 +706,7 @@ export default {
               // data: this.edit_deptForm.id
             })
               .then(res => {
+                console.log(res);
                 this.load_list();
                 if (res.data.code == 0) {
                   this.$Message.success(res.data.msg);
@@ -908,12 +910,12 @@ export default {
         data: this.deptForm
       })
         .then(res => {
-       
+          // this.deptFormModal = false;
           console.log(res);
           this.load_list();
           if (res.data.code == 0) {
             this.$Message.success(res.data.msg);
-               this.deptFormModal = false;
+             this.deptFormModal = false;
                this.deptForm.dictName = ""
                this.deptForm.dictCode = ""
                this.deptForm.orderNo = ""
@@ -947,11 +949,6 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             const { records, current, pages, size, total } = res.data.data;
-
-            records.forEach((item, index) => {
-              item["index"] = index + (current - 1) * size + 1;
-            });
-            this.records = records;
             self.partyUserDatas = records;
             self.pages.current = current;
             self.pages.pages = pages;
@@ -985,10 +982,6 @@ export default {
 
           if (res.data.code == 0) {
             const { records, current, pages, size, total } = res.data.data;
-            records.forEach((item, index) => {
-              item["index"] = index + (current - 1) * size + 1;
-            });
-            self.records = records;
             self.partyUserDatas2 = records;
             self.pages2.current = current;
             self.pages2.pages = pages;
@@ -1015,7 +1008,7 @@ export default {
       this.pages.size = size;
       this.load_list();
     },
-    changePage2(current) {
+       changePage2(current) {
       // alert(current)
       this.pages2.current = current;
       if (this.flag) {
@@ -1053,6 +1046,7 @@ export default {
       this.deptForm2.dictName = value.dictName;
 
       this.click_get_table_value(this.deptForm2.dictCode);
+
     },
     click_get_table_value(code, pageNo = "1", pageSize = "10") {
       this.$http({
@@ -1071,7 +1065,7 @@ export default {
           console.log(res);
           if (res.data.code == 0) {
             const { records, current, pages, size, total } = res.data.data;
-              records.forEach((item, index) => {
+            records.forEach((item, index) => {
               item["index"] = index + (current - 1) * size + 1;
             });
             this.records = records;
@@ -1122,7 +1116,7 @@ export default {
 </style>
 
 <style scoped>
-`` .dictionaries_main {
+.dictionaries_main {
   /* position: fixed; */
 }
 .dictionaries_main .layout {

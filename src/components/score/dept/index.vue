@@ -7,7 +7,7 @@
         <BreadcrumbItem>党员积分管理</BreadcrumbItem>
       </Breadcrumb> -->
         <Breadcrumb class="breadcrumb">
-        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem to="/home">首页</BreadcrumbItem>
         <BreadcrumbItem>积分管理</BreadcrumbItem>
         <BreadcrumbItem>党组织积分管理</BreadcrumbItem>
       </Breadcrumb>

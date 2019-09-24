@@ -1,7 +1,7 @@
 <template>
     <div class="bi-main-container">
         <Breadcrumb class="breadcrumb">
-            <BreadcrumbItem to="/">首页</BreadcrumbItem>
+            <BreadcrumbItem to="/home">首页</BreadcrumbItem>
             <BreadcrumbItem >日常工作</BreadcrumbItem>
             <BreadcrumbItem >考勤管理</BreadcrumbItem>
         </Breadcrumb>
