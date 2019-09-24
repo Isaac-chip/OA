@@ -3,7 +3,8 @@
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建考核</BreadcrumbItem>
-      <BreadcrumbItem to="/partyAm/partySpecialResult">专项考核</BreadcrumbItem>
+      <BreadcrumbItem to="/partyAm/partyLeaderResult">一把手考核</BreadcrumbItem>
+      <BreadcrumbItem >考核明细</BreadcrumbItem>
     </Breadcrumb>
 
     <div class="bi-container">
@@ -87,7 +88,7 @@
             </Row>
             <Row style="margin-left:250px;margin-top:20px;">
               <Button type="primary" style="margin-right: 5px">退回</Button>
-              <Button type="error" to="/partyAm/partySpecialResult">关闭</Button>
+              <Button type="error" to="/partyAm/partyLeaderResult">关闭</Button>
             </Row>
           </Col>
           <Col span="8">
@@ -200,22 +201,15 @@
         var id = this.$route.query.id
         var self = this
         self.$http({
-          url: self.$constants.BIURL + '/partySpecialResult/fetchPartySpecialResultById?id=' + id,
+          url: self.$constants.BIURL + '/leaderAm/findById/' + id,
           method: 'GET'
-        })
-          .then(function (response) {
+        }).then(function (response) {
             if (response.status == 200) {
-              var data = response.data.data
-              console.log(data)
-              self.resultDetail = data
+              var data = response.data.data;
+              console.log(data);
+              self.resultDetail = data;
             }
-          }).catch(function (error) {
-          self.$Message.error({
-            content: error.message,
-            duration: 2
           })
-          console.log(error)
-        })
       }
 
     },

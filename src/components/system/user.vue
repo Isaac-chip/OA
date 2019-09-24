@@ -28,7 +28,7 @@
                     <Row>
                         <Col span="12">
                             <FormItem label="用户名" prop="username">
-                                <Input v-model="userForm.username" placeholder="请输入用户名" />
+                                <Input :disabled="isUpdate" v-model="userForm.username" placeholder="请输入用户名" />
                             </FormItem>
                         </Col>
                         <Col span="12">
