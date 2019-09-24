@@ -9,7 +9,7 @@
     </div>
 
     <div class="p-15">
-      <Row type="flex" justify="end">
+      <Row type="flex" >
         <Col :span="2">
           <Button @click="addRule()" class="mt-1">添加</Button>
         </Col>
