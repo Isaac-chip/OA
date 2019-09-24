@@ -9,9 +9,9 @@
 
     <div class="bi-container">
       <div class="back-view amback">
-        <router-link to="/partyAm/partySpecialResult">
+        <router-link to="/partyAm/partyLeaderResult">
           <img src="@/assets/images/back.png"/>
-          <span>返回专项考核</span>
+          <span>返回一把手考核</span>
         </router-link>
       </div>
       <div class="bi_custom_title">考核上报内容</div>
@@ -96,11 +96,11 @@
               <p slot="title">相关附件</p>
               <div class="attView">
                 <div v-for="(item,index) in resultDetail.enclosures" :key="index">
-                    <img v-if="item.attType == 1"  :src="fileServer + item.filePath"/>
+                    <img v-if="item.attType == 1"  :src="fileServer + item.attPath"/>
                 </div>
               </div>
               <Row v-for="(item,index) in resultDetail.enclosures" :key="index">
-                  <a :href="fileServer + item.attPath">{{item.attName}}</a>
+                  <a v-if="item.attType != 1" :href="fileServer + item.attPath">{{item.attName}}</a>
               </Row>
             </Card>
           </Col>
@@ -201,8 +201,11 @@
         var id = this.$route.query.id
         var self = this
         self.$http({
-          url: self.$constants.BIURL + '/leaderAm/findById/' + id,
-          method: 'GET'
+          url: self.$constants.BIURL + '/leaderAm/findById',
+          method: 'GET',
+          params:{
+            id:id
+          }
         }).then(function (response) {
             if (response.status == 200) {
               var data = response.data.data;

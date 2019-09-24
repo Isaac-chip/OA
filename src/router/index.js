@@ -16,6 +16,8 @@ import PartySpecialResult from "@/components/partyAm/partySpecialResult"
 import PartySpecialResultDetail from "@/components/partyAm/partySpecialResultDetail";
 import PartyThreeAndOneResult from "@/components/partyAm/partyThreeAndOneResult";
 import PartyLeaderResult from "@/components/partyAm/partyLeaderResult";
+import PartyleaderResultDetail from "@/components/partyAm/partyleaderResultDetail"
+import PartyThreeAndOneResultDetail from "@/components/partyAm/partyThreeAndOneResultDetail"
 
 import Menu from "@/components/system/menu"
 import Role from "@/components/system/role"
@@ -83,7 +85,7 @@ Vue.use(Router)
 export default
   new Router({
     base: '/',
-    mode: 'hash',
+    mode: 'history',
     routes: [{
       path: '/',
       name: 'login',
@@ -127,9 +129,17 @@ export default
           name: 'partyThreeAndOneResult',
           component: PartyThreeAndOneResult
         },{
+          path: '/partyAm/partyThreeAndOneResultDetail',
+          name: 'partyThreeAndOneResultDetail',
+          component: PartyThreeAndOneResultDetail
+        },{
           path: '/partyAm/partyLeaderResult',
           name: 'partyLeaderResult',
           component: PartyLeaderResult
+        },{
+          name: 'partyleaderResultDetail',
+          path: '/partyAm/partyleaderResultDetail',
+          component: PartyleaderResultDetail
         },
         {
           path: '/system/menu',

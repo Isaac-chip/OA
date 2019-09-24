@@ -134,8 +134,8 @@ import exportUtils from '@/vendor/export.js'
       showDetail: function (index) {
         var data = this.partyAmDatas[index]
         this.$router.push({
-          'name': 'partySpecialResultDetail',
-          'path': '/partyAm/partySpecialResultDetail',
+          'name': 'partyleaderResultDetail',
+          'path': '/partyAm/partyleaderResultDetail',
           query: {'id': data.id}
         })
       },
