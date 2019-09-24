@@ -10,7 +10,7 @@ export default{
         })
         .then(function (response) {
            var blob = new Blob([response.data], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'}); //application/vnd.openxmlformats-officedocument.wordprocessingml.document这里表示doc类型
-            var contentDisposition = response.headers['content-disposition'];  //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
+           var contentDisposition = response.headers['content-disposition'];  //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
             var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
             var result = patt.exec(contentDisposition);
             var filename = result[1];

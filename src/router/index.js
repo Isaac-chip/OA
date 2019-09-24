@@ -85,7 +85,7 @@ Vue.use(Router)
 export default
   new Router({
     base: '/',
-    mode: 'history',
+    mode: 'hash',
     routes: [{
       path: '/',
       name: 'login',

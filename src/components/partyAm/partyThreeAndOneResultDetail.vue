@@ -40,7 +40,7 @@
                   </tr>
                   <tr>
                     <td class="left">列席:</td>
-                    <td colspan="3">{{resultDetail.cloumns}}</td>
+                    <td colspan="3">{{resultDetail.participantIds}}</td>
                   </tr>
                   <tr>
                     <td class="left">缺席:</td>
@@ -77,11 +77,11 @@
               <p slot="title">相关附件</p>
               <div class="attView">
                 <div v-for="(item,index) in resultDetail.enclosures" :key="index">
-                    <img v-if="item.attType == 1"  :src="fileServer + item.filePath"/>
+                    <img v-if="item.attType == 1"  :src="fileServer + item.attPath"/>
                 </div>
               </div>
               <Row v-for="(item,index) in resultDetail.enclosures" :key="index">
-                  <a :href="fileServer + item.attPath">{{item.attName}}</a>
+                  <a  v-if ="item.attType !=1" :href="fileServer + item.attPath">{{item.attName}}</a>
               </Row>
             </Card>
           </Col>

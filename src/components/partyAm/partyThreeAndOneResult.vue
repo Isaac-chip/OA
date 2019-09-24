@@ -17,6 +17,8 @@
         </Col>
         <Col span="6" style="text-align:right">
           <Button @click="exportExcel">导出到Excel</Button>
+          <Divider type="vertical"/>
+          <Button @click="exportDoc">导出到Word</Button>
         </Col>
       </Row>
 
@@ -188,7 +190,10 @@ import exportUtils from '@/vendor/export.js'
         })
       },
       exportExcel:function(){
-         exportUtils.exportExcel(this.$constants.BIURL+'/threeAndOne/exportExcel',self.params);
+        exportUtils.exportExcel(this.$constants.BIURL+'/threeAndOne/exportExcel',self.params);
+      },
+      exportDoc:function(){
+        exportUtils.exportExcel(this.$constants.BIURL+'/threeAndOne/exportWord',self.params);
       }
     },
     mounted: function () {
