@@ -178,7 +178,7 @@
         <Row>
           <FormItem label="备注" prop="memo">
             <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
-            <textarea name id cols="65" rows="5" v-model="deptForm.memo" placeholder></textarea>
+            <textarea name id cols="65" rows="5" v-model="deptForm.memo" placeholder style="width:90%;"></textarea>
           </FormItem>
         </Row>
         <Row>
@@ -612,7 +612,6 @@ export default {
             this.pages2.pages = pages;
             this.pages2.size = size;
             this.pages2.total = total;
-            // debugger
           } else {
             this.$Message.error(res.data.msg || "请求列表失败");
           }
@@ -706,7 +705,6 @@ export default {
               // data: this.edit_deptForm.id
             })
               .then(res => {
-                console.log(res);
                 this.load_list();
                 if (res.data.code == 0) {
                   this.$Message.success(res.data.msg);
@@ -910,11 +908,17 @@ export default {
         data: this.deptForm
       })
         .then(res => {
-          this.deptFormModal = false;
+       
           console.log(res);
           this.load_list();
           if (res.data.code == 0) {
             this.$Message.success(res.data.msg);
+               this.deptFormModal = false;
+               this.deptForm.dictName = ""
+               this.deptForm.dictCode = ""
+               this.deptForm.orderNo = ""
+               this.deptForm.memo = ""
+               this.deptForm.showType = ""
           } else {
             this.$Message.error(res.data.msg || "请求规则列表错误");
           }
@@ -1012,13 +1016,29 @@ export default {
       this.load_list();
     },
     changePage2(current) {
-        // alert(current)
+      // alert(current)
       this.pages2.current = current;
+      if (this.flag) {
+        this.click_get_table_value(
+          this.deptForm2.dictCode,
+          this.pages2.current,
+          this.pages2.size
+        );
+        return;
+      }
       this.load_list();
+    
     },
     changeSize2(size) {
-        // alert(size)
       this.pages2.size = size;
+      if (this.flag) {
+        this.click_get_table_value(
+          this.deptForm2.dictCode,
+          this.pages2.current,
+          this.pages2.size
+        );
+        return;
+      }
       this.load_list();
     },
     get_line_value(value, old_value) {
@@ -1031,6 +1051,42 @@ export default {
       this.deptForm2.subVal = "";
       this.deptForm2.subKey = "";
       this.deptForm2.dictName = value.dictName;
+
+      this.click_get_table_value(this.deptForm2.dictCode);
+    },
+    click_get_table_value(code, pageNo = "1", pageSize = "10") {
+      this.$http({
+        url: this.$constants.BIURL + `/biDictValue/list`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        params: {
+          dictCode: code,
+          pageNo: pageNo,
+          pageSize: pageSize
+        }
+      })
+        .then(res => {
+          console.log(res);
+          if (res.data.code == 0) {
+            const { records, current, pages, size, total } = res.data.data;
+              records.forEach((item, index) => {
+              item["index"] = index + (current - 1) * size + 1;
+            });
+            this.records = records;
+            this.partyUserDatas2 = records;
+            this.pages2.current = current;
+            this.pages2.pages = pages;
+            this.pages2.size = size;
+            this.pages2.total = total;
+          } else {
+            this.$Message.error(res.data.msg || "请求列表失败");
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     //分类选项 点击高亮获取当前行的数据
     get_line_value2(value, old_value) {
@@ -1066,7 +1122,7 @@ export default {
 </style>
 
 <style scoped>
-.dictionaries_main {
+`` .dictionaries_main {
   /* position: fixed; */
 }
 .dictionaries_main .layout {
