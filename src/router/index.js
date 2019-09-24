@@ -73,6 +73,10 @@ import rule from './modules/rule'
 import board from './modules/board'
 import dept from './modules/dept'
 
+//阵地建设
+import position from './modules/position'
+
+
 
 /* 党群服务 */
 import volunteer from '@/components/partyService/volunteer'
@@ -282,7 +286,8 @@ export default
       },
         rule,
         board,
-        dept
+        dept,
+        position.building
       ]
     }
     ]
