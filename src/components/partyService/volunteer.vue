@@ -8,16 +8,16 @@
       @on-visible-change="changeVisible"
     >
       <Form ref="formLeft" :model="formLeft" :label-width="100" :rules="ruleValidate" label-position="left">
-        <FormItem label="主题服务" >
+        <FormItem label="主题服务" prop="serviceTitle">
           <Input v-model="formLeft.serviceTitle" />
         </FormItem>
-        <FormItem label="服务时间">
+        <FormItem label="服务时间" prop="serviceTime">
           <DatePicker v-model="formLeft.serviceTime" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="选择服务时间" style="width: 100%" @on-ok="checkStatus"/>
         </FormItem>
-        <FormItem label="服务地点">
+        <FormItem label="服务地点" prop="servicePlace">
           <Input v-model="formLeft.servicePlace" />
         </FormItem>
-        <FormItem label="服务内容">
+        <FormItem label="服务内容" prop="serviceContent">
           <Input v-model="formLeft.serviceContent" type="textarea" />
         </FormItem>
         <FormItem label="携带物品">
@@ -97,10 +97,10 @@
       <BreadcrumbItem>志愿服务</BreadcrumbItem>
     </Breadcrumb>
     <div class="operation-bar">
-      <Button type="success" @click="openModal">新增服务</Button>
+      <Button @click="openModal">新增服务</Button>
       <div class="search-box">
-        <Input v-model="searchVal" placeholder="输入主题关键字查找" style="width: 150px" />
-        <Button type="success" @click="changeQuery">查询</Button>
+        <Input v-model="searchVal" placeholder="输入主题关键字查找" style="width: 250px" />
+        <Button @click="changeQuery">查询</Button>
       </div>
     </div>
     <div class="bi-container">
@@ -194,7 +194,6 @@ export default {
                   h('Button',
                     {
                       props: {
-                          type: 'success',
                           size: 'small'
                       },
                       style: {
@@ -236,7 +235,6 @@ export default {
                     [
                       h('Button', {
                         props: {
-                            type: 'primary',
                             size: 'small'
                         }
                       },[
@@ -279,32 +277,7 @@ export default {
           }
         }
       ],
-      tableData: [
-        {
-          name: "John Brown",
-          age: 18,
-          address: "New York No. 1 Lake Park",
-          date: "2016-10-03"
-        },
-        {
-          name: "Jim Green",
-          age: 24,
-          address: "London No. 1 Lake Park",
-          date: "2016-10-01"
-        },
-        {
-          name: "Joe Black",
-          age: 30,
-          address: "Sydney No. 1 Lake Park",
-          date: "2016-10-02"
-        },
-        {
-          name: "Jon Snow",
-          age: 26,
-          address: "Ottawa No. 2 Lake Park",
-          date: "2016-10-04"
-        }
-      ],
+      tableData: [],
       currentPage: 1,
       totalPage: 1,
       pageSize: 10,
@@ -314,35 +287,17 @@ export default {
       showQrcodeModal: false,
       qrSrc: '',
       ruleValidate: {
-          name: [
-              { required: true, message: '该字段不能为空', trigger: 'blur' }
+          serviceTitle: [
+              { required: true, message: '服务主题不能为空', trigger: 'blur' }
           ],
-          number: [
-              { required: true, type: 'number', message: '请输入数字', trigger: 'change' }
+          serviceTime: [
+              { required: true, type: 'date', message: '服务时间不能为空', trigger: 'change' }
           ],
-          mail: [
-              { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
-              { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+          servicePlace: [
+              { required: true, message: '服务地点不能为空', trigger: 'blur' }
           ],
-          city: [
-              { required: true, message: 'Please select the city', trigger: 'change' }
-          ],
-          gender: [
-              { required: true, message: 'Please select gender', trigger: 'change' }
-          ],
-          interest: [
-              { required: true, type: 'array', min: 1, message: 'Choose at least one hobby', trigger: 'change' },
-              { type: 'array', max: 2, message: 'Choose two hobbies at best', trigger: 'change' }
-          ],
-          date: [
-              { required: true, type: 'date', message: 'Please select the date', trigger: 'change' }
-          ],
-          time: [
-              { required: true, type: 'string', message: 'Please select time', trigger: 'change' }
-          ],
-          desc: [
-              { required: true, message: 'Please enter a personal introduction', trigger: 'blur' },
-              { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
+          serviceContent:[
+            { required: true, message: '服务内容不能为空', trigger: 'blur' }
           ]
       },
       showGradeModal: false,
@@ -369,11 +324,6 @@ export default {
         console.log(res);
         this.tableData = res.data.data.records
         this.totalPage = res.data.data.total
-        // console.log('totalPage',this.totalPage);
-
-        // this.tableColumns =
-      }).catch(err => {
-
       })
     },
     timeFormat (time, to) {
@@ -540,6 +490,8 @@ export default {
           memo: this.checkForm.memo
         })
       }).then(res => {
+        this.checkForm.status = 0;
+        this.checkForm.memo = '';
         this.initTable()
       })
     }

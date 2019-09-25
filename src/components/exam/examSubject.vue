@@ -16,6 +16,7 @@
                    <Col span="8">
                         <FormItem label="分类:">
                             <Select v-model="subjectTypeId">
+                                <Option value="">全部分类</Option>
                                 <Option  v-for="item in examTypes" :value="item.id" :key="item.id">{{ item.subjectTypeName }}</Option>
                             </Select>
                         </FormItem>
@@ -45,9 +46,9 @@
             <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
 
-        <Modal v-model="examSubjectModal" title="新增试卷" :footer-hide="true" :mask-closable="false" class="userFrom">
+        <Modal v-model="examSubjectModal" :title="modalTitle" :footer-hide="true" :mask-closable="false" class="userFrom">
                 <Form ref="examSubjectForm" :model="examSubjectForm" :rules="examRuleValidate" :label-width="110"  >
-                    <FormItem label="所属分类">
+                    <FormItem label="所属分类" prop="subjectTypeId">
                         <Select v-model="examSubjectForm.subjectTypeId" @on-change="typeSearchSelect">
                             <Option  v-for="(item,index) in examTypes" :value="item.id" :key="index">{{ item.subjectTypeName }}</Option>
                         </Select>
@@ -64,7 +65,7 @@
                      <FormItem label="考试截止时间" prop="endTime">
                         <DatePicker v-model="examSubjectForm.endTime" type="datetime" placeholder="选择考试截止时间" />
                     </FormItem>
-                     <FormItem label="备注">
+                     <FormItem label="备注" prop="memo">
                          <Input v-model="examSubjectForm.memo" type="textarea" :autosize="{minRows: 2,maxRows: 4}" placeholder=""></Input>
                     </FormItem>
                     <Row>
@@ -123,6 +124,7 @@ export default {
             examObjectActorModal:false,
             isUpdate:false,
             queryStr:'',
+            modalTitle:'新增试卷',
             subjectTypeId:'',
             page:1,
             userDataCount:0,
@@ -172,11 +174,14 @@ export default {
                 totalScore:0,
                 startTime:'',
                 endTime:'',
-                subjectTypeId:'',
+                subjectTypeId:-1,
                 subjectTypeName:'',
                 memo:''
             },
             examRuleValidate:{
+                subjectTypeId:[
+                    {required: true, type:'integer', message: '所属分类不能为空', trigger: 'change'}
+                ],
                 subject:[
                     { required: true, message: '试卷名称不能为空', trigger: 'blur' }
                 ],
@@ -208,6 +213,7 @@ export default {
         showUserModal:function(){
             this.clearData();
             this.examSubjectModal = true;
+            this.modalTitle = '新增试卷';
             this.isUpdate = false;
         },
         clearData:function(){
@@ -317,9 +323,11 @@ export default {
         },
         updateExam:function(data){
             this.examSubjectForm = Object.assign({}, data);
-            this.examSubjectForm.subjectTypeId =this.examSubjectForm.subjectTypeId+"";
+            this.examSubjectForm.subjectTypeId = data.subjectTypeId;
+
             console.log(this.examSubjectForm);
             this.isUpdate = true;
+            this.modalTitle = '修改试卷';
             this.examSubjectModal = true;
         },
         typeSearchSelect:function(node){
@@ -349,12 +357,7 @@ export default {
                     self.examSubjectDatas = data.data.records;
                     self.dataCount = data.data.total;
                 }
-            }).catch(function (error) {
-                self.$Message.error({
-                    content: error.message,
-                    duration: 2
-                });
-            });
+            })
         },
         loadAllExamType:function(){
             var self = this
@@ -367,12 +370,9 @@ export default {
                 }
             }).then(function (response) {
                 var data = response.data;
-                 self.examTypes = data.data.records;
-            }).catch(function (error) {
-                self.$Message.error({
-                    content: error.message,
-                    duration: 2
-                })
+                if(data.data.records){
+                    self.examTypes = data.data.records;
+                }
             })
         },
         saveExamSubject:function(name){
