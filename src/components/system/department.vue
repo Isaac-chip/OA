@@ -61,7 +61,7 @@
         </Row>
 
         <Row>
-          <FormItem label="所属组织">
+          <FormItem label="所属组织" prop="parentId">
             <treeselect
               v-model="deptForm.parentId"
               :options="departmentDatas"
@@ -168,6 +168,9 @@
           address:''
         },
         deptRuleValidate:{
+          parentId:[
+            { required: true, message: '所属组织不能为空', trigger: 'blur' }
+          ],
           deptName: [
             { required: true, message: '部门名称不能为空', trigger: 'blur' }
           ],

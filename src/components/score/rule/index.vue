@@ -4,7 +4,7 @@
        <Breadcrumb class="breadcrumb">
         <BreadcrumbItem to="/home">首页</BreadcrumbItem>
         <BreadcrumbItem>积分管理</BreadcrumbItem>
-        <BreadcrumbItem>党员积分管理</BreadcrumbItem>
+        <BreadcrumbItem>积分规则</BreadcrumbItem>
       </Breadcrumb>
     </div>
 

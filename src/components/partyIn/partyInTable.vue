@@ -456,7 +456,7 @@ export default {
                         content: '数据删除成功!',
                         duration: 2
                     });
-                    self.loadVillagePeople();
+                    self.loadPartyInData();
                 }
             }) .catch(function (error) {
                     self.$Message.error({
