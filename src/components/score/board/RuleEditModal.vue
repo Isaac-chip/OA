@@ -6,7 +6,7 @@
     width="50%"
     @close="cancel"
   >
-    <Form v-loading="loading" ref="formValidate" :model="model" :label-width="100">
+    <Form v-loading="loading" ref="formValidate" :model="model" :label-width="100" :rules="RuleValidate">
       <FormItem label="所属组织" prop="deptId">
         <treeselect
           v-model="model.deptId"
@@ -102,6 +102,24 @@ export default {
         userId: 0,
         // userName: "",
         // volServiceScore: 0
+      },
+            RuleValidate: {
+        deptId: [
+          {
+            required: true,
+            message: "所属组织不能为空",
+            trigger: "blur"
+          }
+        ],
+        userName: [
+          {
+            required: true,
+            message: "用户名称不能为空",
+            trigger: "blur"
+          }
+        ],
+
+      
       },
       loading: false,
       departments:[],
