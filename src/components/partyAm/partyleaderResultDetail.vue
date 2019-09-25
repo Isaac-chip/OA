@@ -3,14 +3,15 @@
     <Breadcrumb class="breadcrumb">
       <BreadcrumbItem to="/home">首页</BreadcrumbItem>
       <BreadcrumbItem>党建考核</BreadcrumbItem>
-      <BreadcrumbItem to="/partyAm/partySpecialResult">专项考核</BreadcrumbItem>
+      <BreadcrumbItem to="/partyAm/partyLeaderResult">一把手考核</BreadcrumbItem>
+      <BreadcrumbItem >考核明细</BreadcrumbItem>
     </Breadcrumb>
 
     <div class="bi-container">
       <div class="back-view amback">
-        <router-link to="/partyAm/partySpecialResult">
+        <router-link to="/partyAm/partyLeaderResult">
           <img src="@/assets/images/back.png"/>
-          <span>返回专项考核</span>
+          <span>返回一把手考核</span>
         </router-link>
       </div>
       <div class="bi_custom_title">考核上报内容</div>
@@ -87,7 +88,7 @@
             </Row>
             <Row style="margin-left:250px;margin-top:20px;">
               <Button type="primary" style="margin-right: 5px">退回</Button>
-              <Button type="error" to="/partyAm/partySpecialResult">关闭</Button>
+              <Button type="error" to="/partyAm/partyLeaderResult">关闭</Button>
             </Row>
           </Col>
           <Col span="8">
@@ -95,11 +96,11 @@
               <p slot="title">相关附件</p>
               <div class="attView">
                 <div v-for="(item,index) in resultDetail.enclosures" :key="index">
-                    <img v-if="item.attType == 1"  :src="fileServer + item.filePath"/>
+                    <img v-if="item.attType == 1"  :src="fileServer + item.attPath"/>
                 </div>
               </div>
               <Row v-for="(item,index) in resultDetail.enclosures" :key="index">
-                  <a :href="fileServer + item.attPath">{{item.attName}}</a>
+                  <a v-if="item.attType != 1" :href="fileServer + item.attPath">{{item.attName}}</a>
               </Row>
             </Card>
           </Col>
@@ -200,22 +201,18 @@
         var id = this.$route.query.id
         var self = this
         self.$http({
-          url: self.$constants.BIURL + '/partySpecialResult/fetchPartySpecialResultById?id=' + id,
-          method: 'GET'
-        })
-          .then(function (response) {
+          url: self.$constants.BIURL + '/leaderAm/findById',
+          method: 'GET',
+          params:{
+            id:id
+          }
+        }).then(function (response) {
             if (response.status == 200) {
-              var data = response.data.data
-              console.log(data)
-              self.resultDetail = data
+              var data = response.data.data;
+              console.log(data);
+              self.resultDetail = data;
             }
-          }).catch(function (error) {
-          self.$Message.error({
-            content: error.message,
-            duration: 2
           })
-          console.log(error)
-        })
       }
 
     },

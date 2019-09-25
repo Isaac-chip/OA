@@ -223,7 +223,7 @@ export default {
                 params:{
                     current:self.current,
                     size:self.pageSize,
-                    query:self.queryStr,
+                    catalogName:self.queryStr,
                     tenantId:self.$constants.userInfo.tenantId
                 }
             })

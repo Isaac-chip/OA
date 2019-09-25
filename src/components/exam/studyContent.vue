@@ -314,6 +314,7 @@ export default {
         showContentModal:function(){
             this.contentModal = true;
             this.isUpdate = false;
+            this.uploadList = [];
             this.clearForm();
         },
         addConent:function(name){

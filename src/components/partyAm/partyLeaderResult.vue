@@ -10,24 +10,24 @@
       <Row class="header">
         <Col span="9">
           上报时间：
-          <DatePicker type="daterange" placeholder="上报时间" style="width: 250px"></DatePicker>
+          <DatePicker type="daterange" @on-clear="dateClearSearch" @on-change="onDateSearch" placeholder="上报时间" style="width: 250px"></DatePicker>
         </Col>
         <Col span="9">
-          <Input v-model="query.title" search enter-button @on-search="onSeach" placeholder="输入需要查找的内容"/>
+          <Input v-model="params.query" search enter-button @on-search="onSeach" placeholder="输入需要查找的内容"/>
         </Col>
         <Col span="6" style="text-align:right">
-          <Button>导出到Excel</Button>
+          <Button @click="exportExcel">导出到Excel</Button>
         </Col>
       </Row>
 
       <Table border ref="selection" :columns="partyAmCloumns" :data="partyAmDatas" :min-height="200">
         <template slot-scope="{ row, index }" slot="action">
-          <Button type="primary" size="small" style="margin-right: 5px" @click="showDetail(index)">查看</Button>
-          <Button type="error" size="small" @click="remove(index)">删除</Button>
+          <Button size="small" style="margin-right: 5px" @click="showDetail(index)">查看</Button>
+          <Button size="small" @click="remove(index)">删除</Button>
         </template>
 
       </Table>
-      <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage"
+      <Page :total="dataCount" :page-size="params.size" show-total show-sizer @on-change="changepage"
             @on-page-size-change="onChangePageSize" class="pageView"></Page>
     </div>
   </div>
@@ -45,6 +45,7 @@
 </style>
 
 <script>
+import exportUtils from '@/vendor/export.js'
   export default {
     data () {
       return {
@@ -98,31 +99,43 @@
             align: 'center'
           }
         ],
+        params:{
+          current :1,
+          size:10,
+          startDate:'',
+          endDate:'',
+          query:''
+        },
         partyAmDatas: [],
         isUpdate: false,
       }
     },
     methods: {
       onSeach: function () {
-        this.current = 1
+        this.params.current = 1
         this.loadPartyAmDatas()
       },
       changepage: function (value) {
-        this.current = value
+        this.params.current = value
         this.loadPartyAmDatas()
       },
       onChangePageSize: function (value) {
-        this.pageSize = value
+        this.params.size = value
         this.loadPartyAmDatas()
       },
+      dateClearSearch:function(){
+          this.params.startDate = '';
+          this.params.endDate = '';
+      },
+      onDateSearch:function(value){
+          this.params.startDate = value[0];
+          this.params.endDate = value[1];
+      },
       showDetail: function (index) {
-        //this.
-        console.log(index)
         var data = this.partyAmDatas[index]
-        console.log(data)
         this.$router.push({
-          'name': 'partySpecialResultDetail',
-          'path': '/partyAm/partySpecialResultDetail',
+          'name': 'partyleaderResultDetail',
+          'path': '/partyAm/partyleaderResultDetail',
           query: {'id': data.id}
         })
       },
@@ -144,39 +157,32 @@
       handleDelete: function (data) {
         var self = this
         self.$http({
-          url: self.$constants.BIURL + '/partyAm/deleteRm',
-          method: 'post',
-          data: self.$qs.stringify({id: data.id})
+          url: self.$constants.BIURL + '/leaderAm/'+data.id,
+          method: 'DELETE'
         })
           .then(function (response) {
-            if (response.status == 200) {
-              self.$Message.success({
-                content: '数据删除成功!',
-                duration: 2
-              })
-              self.loadPartyAmDatas()
+            if (response.data.code == 0) {
+                self.$Message.success({
+                  content: '数据删除成功!',
+                  duration: 2
+                })
+                self.loadPartyAmDatas()
             }
           }).catch(function (error) {
-          self.$Message.error({
-            content: error.message,
-            duration: 2
-          })
-          console.log(error)
+            self.$Message.error({
+              content: error.message,
+              duration: 2
+            })
         })
       },
       loadPartyAmDatas: function () {
         var self = this
         this.$Loading.start()
         self.$http({
-          url: self.$constants.BIURL + '/leaderAm/searchALeadertDetailByMonthAndUserId',
+          url: self.$constants.BIURL + '/leaderAm/leadertDetailList',
           method: 'get',
           dataType: 'json',
-          params: {
-            current: self.current,
-            size: self.pageSize,
-            title: self.query.title,
-            deptCode: self.$constants.userInfo.deptCode
-          }
+          params: self.params
         })
           .then(function (response) {
             self.$Loading.finish()
@@ -187,8 +193,10 @@
             }
           }).catch(function (error) {
           self.$Loading.error()
-          console.log(error)
         })
+      },
+      exportExcel:function(){
+         exportUtils.exportExcel(this.$constants.BIURL+'/leaderAm/exportExcel',self.params);
       }
     },
     mounted: function () {

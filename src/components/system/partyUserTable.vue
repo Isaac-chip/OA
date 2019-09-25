@@ -258,7 +258,7 @@ export default {
         handleDelete:function(data){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/user/'+data.uId,
+                url:self.$constants.BIURL+'/political/user/'+data.uid,
                 method:'DELETE'
             })
             .then(function (response) {
@@ -279,6 +279,7 @@ export default {
         },
         resetPwd:function(index){
             var self = this;
+            const data = this.partyUserDatas[index];
             self.$http({
                 url:self.$constants.BIURL+'/political/user/resetPwd/'+data.userId,
                 method:'GET'
@@ -291,11 +292,10 @@ export default {
                     });
                 }
             }) .catch(function (error) {
-                    self.$Message.error({
-                    content: error.message,
+                self.$Message.error({
+                    content: "系统错误",
                     duration: 2
                 });
-                console.log(error);
             });
         },
         loadDepartment:function(){

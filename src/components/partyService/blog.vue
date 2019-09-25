@@ -66,10 +66,10 @@
       <BreadcrumbItem>互动交流</BreadcrumbItem>
     </Breadcrumb>
     <div class="operation-bar">
-      <Button type="success" @click="openAddModal">新建主题</Button>
+      <Button @click="openAddModal">新建主题</Button>
       <div class="search-box">
-        <Input v-model="searchCatVal" placeholder="输入主题关键字查找" style="width: 150px" />
-        <Button type="success" @click="changeCatQuery">查询</Button>
+        <Input v-model="searchCatVal" placeholder="输入主题关键字查找" style="width: 250px" />
+        <Button @click="changeCatQuery">查询</Button>
       </div>
     </div>
     <div class="bi-container">
@@ -88,49 +88,18 @@ export default {
     return {
       currentCatPage: 1,
       currentTopicPage: 1,
-      
       pageCatSize: 10,
       pageTopicSize: 10,
-
       totalCount: 1,
       topicCount: 1,
-
       searchCatVal: '',
       searchTopicVal: '',
-
       addModalVisible: false,
       topicModalVisible: false,
       addTopicModalVisible: false,
-
       Editform: new Object(),
       topicForm: new Object(),
-
-      catTableData: [
-        {
-          name: "John Brown",
-          age: 18,
-          address: "New York No. 1 Lake Park",
-          date: "2016-10-03"
-        },
-        {
-          name: "Jim Green",
-          age: 24,
-          address: "London No. 1 Lake Park",
-          date: "2016-10-01"
-        },
-        {
-          name: "Joe Black",
-          age: 30,
-          address: "Sydney No. 1 Lake Park",
-          date: "2016-10-02"
-        },
-        {
-          name: "Jon Snow",
-          age: 26,
-          address: "Ottawa No. 2 Lake Park",
-          date: "2016-10-04"
-        }
-      ],
+      catTableData: [],
       catTableColumns: [
         {
           type: "index",
@@ -166,7 +135,6 @@ export default {
                 h('Button',
                   {
                     props: {
-                        type: 'primary',
                         size: 'small'
                     },
                     style: {
@@ -181,7 +149,6 @@ export default {
                   h('Button',
                     {
                       props: {
-                          type: 'error',
                           size: 'small'
                       },
                       style: {
@@ -196,7 +163,6 @@ export default {
                   h('Button',
                     {
                       props: {
-                          type: 'success',
                           size: 'small'
                       },
                       style: {
@@ -213,34 +179,7 @@ export default {
           }
         }
       ],
-      
-
-      topicTableData: [
-        {
-          name: "John Brown",
-          age: 18,
-          address: "New York No. 1 Lake Park",
-          date: "2016-10-03"
-        },
-        {
-          name: "Jim Green",
-          age: 24,
-          address: "London No. 1 Lake Park",
-          date: "2016-10-01"
-        },
-        {
-          name: "Joe Black",
-          age: 30,
-          address: "Sydney No. 1 Lake Park",
-          date: "2016-10-02"
-        },
-        {
-          name: "Jon Snow",
-          age: 26,
-          address: "Ottawa No. 2 Lake Park",
-          date: "2016-10-04"
-        }
-      ],
+      topicTableData: [],
       topicTableColumns: [
         {
           type: "index",
@@ -494,26 +433,42 @@ export default {
       }
     },
     delCat (id) {
-      this.$http({
-        url: `${this.$constants.BIURL}/blog/catalog/${id}`,
-        method: 'DELETE',
-      }).then(res => {
-        this.$Message.success('删除成功');
-        this.initCatlog()
-      }).catch(err => {
-
-      })
+      var self = this;
+      this.$Modal.confirm({
+          title:'系统提示',
+          content:'确定要删除该记录吗?',
+          okText:'确定',
+          cancelText:'取消',
+          onOk:function(){
+              self.$http({
+                url: `${self.$constants.BIURL}/blog/catalog/${id}`,
+                method: 'DELETE',
+              }).then(res => {
+                self.$Message.success('删除成功');
+                self.initCatlog()
+              })
+          }
+      });
+      
     },
     delTopic (id) {
-      this.$http({
-        url: `${this.$constants.BIURL}/blog/topic/${id}`,
-        method: 'DELETE',
-      }).then(res => {
-        this.$Message.success('删除成功');
-        this.openTopicModal(this.topicForm.catlogId,this.topicForm.plateName)
-      }).catch(err => {
-
-      })
+      var self = this;
+      this.$Modal.confirm({
+          title:'系统提示',
+          content:'确定要删除该记录吗?',
+          okText:'确定',
+          cancelText:'取消',
+          onOk:function(){
+              self.$http({
+                url: `${self.$constants.BIURL}/blog/topic/${id}`,
+                method: 'DELETE',
+              }).then(res => {
+                self.$Message.success('删除成功');
+                self.openTopicModal(self.topicForm.catlogId,self.topicForm.plateName)
+              })
+          }
+      });
+      
     },
     openTopicModal (id,plateName) {
       this.topicModalVisible = true
