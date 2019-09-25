@@ -14,6 +14,8 @@
       :headers="headers"
       type="drag"
       :action="this.$constants.BIURL +'/political/score/rule/excel/import'"
+      :format="['xls']"
+      :on-format-error="handleFormatError"
     >
       <div style="padding: 20px 0">
         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
@@ -22,9 +24,9 @@
     </Upload>
     <ul>
       <li v-for="(i,index) in defaultList" :key="index" class="file-list">
-          <span >文件名:{{i.name}}</span>
-          <span>--状态:{{i.msg}}</span>
-           <span>--说明:{{i.data}}</span>
+        <span>文件名:{{i.name}}</span>
+        <span>--状态:{{i.msg}}</span>
+        <span>--说明:{{i.data}}</span>
       </li>
     </ul>
   </el-dialog>
@@ -60,16 +62,29 @@ export default {
       this.importModalShow = true;
     },
     cancel() {
-     
-        this.importModalShow = false;
-      this.$emit("importModalCancel")
+      this.importModalShow = false;
+      this.$emit("importModalCancel");
     },
     handleSuccess(res, file) {
-      this.defaultList.push({ name: file.name, msg: file.response.msg, data:file.response.data });
+      this.defaultList.push({
+        name: file.name,
+        msg: file.response.msg,
+        data: file.response.data
+      });
     },
-    
-    onError(res, file){
-      this.defaultList.push({ name: file.name, msg: file.response.msg,data:file.response.data });
+
+    onError(res, file) {
+      this.defaultList.push({
+        name: file.name,
+        msg: file.response.msg,
+        data: file.response.data
+      });
+    },
+    handleFormatError(file) {
+     
+      this.$Message.error( 
+          file.name +
+          "是不接受的文件类型,请选择xls文件")
     }
   }
 };
@@ -81,7 +96,7 @@ export default {
 }
 
 ul {
-  .file-list{
+  .file-list {
     list-style: none;
     border-bottom: 1px dashed #ccc;
   }

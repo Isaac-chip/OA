@@ -6,14 +6,23 @@
     width="50%"
     @close="cancel"
   >
-    <Form
-    v-loading="loading"
-     ref="formValidate" :rules="ruleValidate" :model="model" :label-width="100">
-       <FormItem label="积分规则名称" prop="ruleName">
-        <Input v-model="model.ruleName" placeholder />
-      </FormItem>
+    <el-form
+      label-width="120px"
+      v-loading="loading"
+      ref="formValidate11"
+      :rules="ruleValidate"
+      :model="model"
+      @submit.native.prevent="handleSubmit"
+    >
+      <el-form-item label="积分规则名称" prop="ruleName">
+        <el-input v-model="model.ruleName" placeholder />
+      </el-form-item>
+      
+       <el-form-item label="创建人名称" prop="creatorName">
+        <el-input v-model="model.creatorName" placeholder />
+      </el-form-item>
 
-      <FormItem label="选择栏目" prop="catalogId">
+      <el-form-item size="mini" label="选择栏目" prop="catalogId">
         <treeselect
           v-model="model.catalogId"
           :options="departments"
@@ -22,42 +31,80 @@
           noResultsText="没有找到匹配结果"
           placeholder="请选择所属栏目..."
         />
-      </FormItem>
+      </el-form-item>
 
-       <FormItem label="默认分值" prop="defScore">
-        <Input type="number" v-model="model.defScore" placeholder />
-      </FormItem>
-      <FormItem label="最低分" prop="minScore">
-        <Input type="number" v-model="model.minScore" placeholder />
-      </FormItem>
-      <FormItem label="最高分" prop="maxScore">
-        <Input type="number" v-model="model.maxScore" placeholder />
-      </FormItem>
-      <FormItem label="是否禁用" prop="disabled">
-        <i-switch v-model="model.disabled"  />
-        </FormItem>
+     
 
+ <Row  type="flex" >
+     <Col :span="8" >
+            <el-form-item label="默认分值" prop="defScore">
+        <!-- <el-input type="number" v-model="model.defScore" placeholder /> -->
+         <InputNumber  :min="1" v-model="model.defScore" placeholder="请输入数字"></InputNumber>
+      </el-form-item>
+        </Col>
+        <Col :span="8" >
+            <el-form-item label="最低分" prop="minScore">
+        <!-- <el-input type="number" v-model="model.minScore" placeholder /> -->
+         <InputNumber  :min="1" v-model="model.minScore"  placeholder="请输入数字"></InputNumber>
+      </el-form-item>
+        </Col>
+      
+        <Col :span="8" >
+          <el-form-item label="最高分" prop="maxScore">
+        <!-- <el-input type="number" v-model="model.maxScore" placeholder /> -->
+          <InputNumber  :min="1" v-model="model.maxScore"  placeholder="请输入数字"></InputNumber>
+      </el-form-item>
+        </Col>
+      </Row>
 
+    
+     
+      <el-form-item label="是否禁用" prop="disabled">
+        <i-switch v-model="model.disabled" />
+      </el-form-item>
 
-      <FormItem>
-        <Button type="primary" @click="handleSubmit()">提交</Button>
-        <Button @click="handleReset()" style="margin-left: 8px">重置</Button>
-      </FormItem>
-    </Form>
+      <el-form-item>
+        <el-button type="primary" native-type="submit">提交</el-button>
+        <!-- <Button @click="handleReset()" style="margin-left: 8px">重置</Button> -->
+      </el-form-item>
+    </el-form>
   </el-dialog>
 </template>
 
 <script>
-import Treeselect from '@riophae/vue-treeselect';
-import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "RuleModal",
-  components:{Treeselect},
+  components: { Treeselect },
   data() {
+   var validmin = (rule, value, callback) => {
+        if (value == '') {
+          callback(new Error('请输入最低分'));
+        } else {
+          if (this.model.maxScore != '') {
+            this.$refs.formValidate11.validateField('maxScore');
+          }
+          callback();
+        }
+      };
+
+       var validmax = (rule, value, callback) => {
+        if (value == '') {
+          callback(new Error('请输入最高分'));
+        } else if (value <= this.model.minScore) {
+          callback(new Error('最高分不得低于最低分'));
+        } else {
+          callback();
+        }
+      };
+      
+
     return {
       ruleEditModalShow: false,
       ruleValidate: {
-
+        maxScore: [{ validator: validmax, trigger: "blur" }],
+        minScore: [{ validator: validmin, trigger: "blur" }],
         ruleName: [
           {
             required: true,
@@ -66,27 +113,34 @@ export default {
           }
         ]
       },
+
       model: {
         catalogId: {
-          type:Number
+          type: Number
         },
         catalogName: "",
         createTime: 0,
         creator: 0,
         creatorName: "",
-        defScore: 0,
+        defScore: '',
         deleted: false,
         disabled: false,
         id: 0,
-        maxScore: 0,
-        minScore: 0,
+        maxScore: {
+          type:Number
+        },
+        minScore:  {
+          type:Number
+        },
         modifier: "",
-        modifyTime: 0,
+        modifyTime: {
+          type: Number
+        },
         ruleName: "",
         tenantId: ""
       },
       loading: false,
-      departments:[]
+      departments: []
     };
   },
   methods: {
@@ -94,7 +148,7 @@ export default {
       this.ruleEditModalShow = true;
 
       this.model = { ...row };
-      this.loadDepartment()
+      this.loadDepartment();
     },
     asyncOK() {},
     cancel() {
@@ -102,11 +156,11 @@ export default {
       this.$emit("ruleEditModalCancel");
     },
     handleSubmit() {
-
-      this.$refs["formValidate"].validate(valid => {
+      this.$refs["formValidate11"].validate((valid) => {
         if (valid) {
-          this.loading = true
-          const method = this.model.id==0?'POST':'PUT'
+          //合格
+          this.loading = true;
+          const method = this.model.id == 0 ? "POST" : "PUT";
           this.$http({
             url: this.$constants.BIURL + "/political/score/rule",
             method: method,
@@ -114,7 +168,7 @@ export default {
             data: this.model
           })
             .then(res => {
-              this.loading = false
+              this.loading = false;
               this.handleReset();
               this.cancel();
               if (res.data.code == 0) {
@@ -125,64 +179,68 @@ export default {
               }
             })
             .catch(err => {
-              this.loading = false
+              this.loading = false;
               this.handleReset();
               this.cancel();
               // console.log(err, "ruleerr");
             });
-        }else {
-
         }
       });
       // console.log("handleSubmit");
     },
     handleReset() {
-      this.$refs["formValidate"].resetFields();
+      this.$refs["formValidate11"].resetFields();
     },
 
     /**栏目 */
-    loadDepartment(){
-
-            this.loading = true
-            this.$http({
-                url:this.$constants.BIURL+'/political/catalog/findAll',
-                method:'GET',
-                params:{
-                    queryStr:""
+    loadDepartment() {
+      this.loading = true;
+      this.$http({
+        url: this.$constants.BIURL + "/political/catalog/findAll",
+        method: "GET",
+        params: {
+          queryStr: ""
+        }
+      })
+        .then(response => {
+          this.loading = false;
+          if (response.data.code == 0) {
+            const { data } = response.data;
+            const arrChange = arr =>
+              arr.map(item => {
+                const res = {};
+                if (item.children && item.children.length == 0) {
+                  delete item.children;
+                } else {
+                  arrChange(item.children);
                 }
-            })
-            .then(response=> {
-               this.loading = false
-                if(response.data.code ==0){
-                    const {data} = response.data;
-                    const arrChange = arr => arr.map(item => {
-                        const res = {};
-                        if(item.children && item.children.length == 0){
-                           delete item.children ;
-                        }else{
-                            arrChange(item.children);
-                        }
-                    });
-                    arrChange(data);
-                    this.departments = data;
+              });
+            arrChange(data);
+            this.departments = data;
+          } else {
+            this.$Message.error(response.data.msg || "请求栏目列表错误");
+          }
+        })
+        .catch(function(error) {
+          this.$Message.error({
+            content: error.message,
+            duration: 2
+          });
+          // console.log(error);
+        });
+    },
 
-                }else {
-                  this.$Message.error(response.data.msg||"请求栏目列表错误")
-                }
-            }).catch(function (error) {
-                    this.$Message.error({
-                    content: error.message,
-                    duration: 2
-                });
-                // console.log(error);
-            });
-        },
-
-         orgSelect(node){
-          //  console.log(node)
-            this.model.catalogId = node.id;
-            this.$set(this.model,'catalogName',node.title)
-        },
+    orgSelect(node) {
+      //  console.log(node)
+      this.model.catalogId = node.id;
+      this.$set(this.model, "catalogName", node.title);
+    }
   }
 };
 </script>
+
+<style lang="less" scoped>
+/deep/.ivu-input-number {
+  width: 150px;
+}
+</style>

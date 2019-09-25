@@ -1,6 +1,8 @@
 <template>
   <div>
-    <Table border :columns="columns" :loading="ruleLoading" :data="records">
+    <Table border
+    
+     :columns="columns" :loading="ruleLoading" :data="records">
       <template slot-scope="{ row }" slot="deleted">{{ row.deleted | deletedFilter }}</template>
 
       <template slot-scope="{ row }" slot="disabled">{{ row.disabled | disabledFilter }}</template>
@@ -45,6 +47,7 @@ export default {
   },
 
   data() {
+    
     return {
       selectedType: "",
       selectedUrl: "",
@@ -54,52 +57,52 @@ export default {
           title: "序号",
          
           key: "index",
-          width: 80
+          minWidth: 80
         },
 
       
         {
           title: "栏目名称",
           key: "catalogName",
-          width: 120
+          minWidth: 120
         },
         {
           title: "规则名称",
           key: "ruleName",
           sortable: true,
-          width: 160
+          minWidth: 160
         },
         {
           title: "默认分值",
           key: "defScore",
-          maxWidth: 90,
-          width: 120
+      
+          minWidth: 120
         },
         {
           title: "最低分",
           key: "minScore",
           maxWidth: 80,
-          width: 120
+          minWidth: 120
         },
         {
           title: "最高分",
           key: "maxScore",
-          maxWidth: 80,
-          width: 120
+        
+          minWidth: 120
         },
 
         {
           title: "创建人名称",
           key: "creatorName",
-          maxWidth: 120,
-          width: 120
+         
+          minWidth: 120
         },
 
         {
           title: "状态",
           slot: "disabled",
-          maxWidth: 80,
-          width: 120
+         
+          minWidth: 120
         },
 
         {
@@ -108,7 +111,8 @@ export default {
           fixed: "right",
           width: 180
         }
-      ]
+      ],
+     
     };
   },
   filters: {
