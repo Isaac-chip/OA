@@ -37,10 +37,10 @@
                     <FormItem label="标题" prop="title">
                         <Input v-model="contentForm.title" placeholder="请输入标题" />
                     </FormItem>
-                    <FormItem label="有效日期">
+                    <FormItem label="有效日期" prop="expiryDate">
                         <DatePicker v-model="contentForm.expiryDate" type="datetime" placeholder="请选择有效日期" ></DatePicker>
                     </FormItem>
-                    <FormItem label="序号">
+                    <FormItem label="序号" prop="sortNo">
                         <Input v-model="contentForm.sortNo" type="number" placeholder="请输入标题" />
                     </FormItem>
                     <FormItem label="标题图片" >
@@ -75,7 +75,7 @@
                             <img :src="preImagePath + imgName" v-if="visible" style="width: 100%">
                         </Modal>
                     </FormItem>
-                    <FormItem label="发布状态" >
+                    <FormItem label="发布状态" prop="state" >
                          <!-- v-model="contentForm.isTop" -->
                         <RadioGroup v-model="contentForm.state">
                             <Radio label="1" >已发布</Radio>
@@ -84,7 +84,7 @@
                     </FormItem>
                     <Row>
                         <Col span="6">
-                            <FormItem  label="是否置顶" >
+                            <FormItem prop="isTop" label="是否置顶" >
                                 <RadioGroup v-model="contentForm.isTop">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
@@ -92,7 +92,7 @@
                             </FormItem>
                         </Col>
                         <Col span="7">
-                            <FormItem v-model="contentForm.isDailyPush" label="每日推送" >
+                            <FormItem prop="isDailyPush" v-model="contentForm.isDailyPush" label="每日推送" >
                                  <RadioGroup v-model="contentForm.isDailyPush">
                                     <Radio label="1" >是</Radio>
                                     <Radio label="0">否</Radio>
@@ -103,6 +103,7 @@
                     <Row style="height:360px;margin-bottom:20px;">
                         <quill-editor ref="myTextEditor"
                             :options="editorOption" 
+                            placeholder="请输入..."
                             v-model="contentForm.content">
                         </quill-editor>
                     </Row>
@@ -304,6 +305,9 @@ export default {
         showContentModal:function(){
             this.contentModal = true;
             this.isUpdate = false;
+            this.$refs['contentForm'].resetFields();
+            this.contentForm.catalogId = null;
+            this.contentForm.content = '';
             this.loadCatalog();
         },
         orgSelect:function(node){
@@ -403,6 +407,9 @@ export default {
         },
         updateContent:function(index){
             this.isUpdate = true;
+            this.$refs['contentForm'].resetFields();
+            this.contentForm.catalogId = null;
+            this.contentForm.content = '';
             this.loadCatalog();
             this.contentForm = Object.assign({}, this.contentDatas[index]);
             this.contentForm.isTop = this.contentForm.isTop+'';
@@ -436,7 +443,7 @@ export default {
                         content: '数据删除成功!',
                         duration: 2
                     });
-                    self.loadUser();
+                    self.loadContents();
                 }
             }) .catch(function (error) {
                     self.$Message.error({

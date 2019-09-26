@@ -33,6 +33,10 @@
                 <template slot-scope="{ row, index }" slot="action">
                     <Button  size="small" style="margin-right: 5px" @click="deleteMatter(index)">删除</Button>
                 </template>
+
+                <template slot-scope="{row}" slot="scoreType">
+                    <span>{{scoreTypeDatas[row.scoreType]}}</span>
+                </template>
             </Table>
             <Page :total="dataCount" :page-size="params.size" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
@@ -62,6 +66,7 @@ export default {
                 endDate:'',
                 query:''
             },
+            scoreTypeDatas:['很满意','满意','一般','不满意','差'],
             matterCloumns:[
                 {
                     type: 'index',
@@ -81,7 +86,8 @@ export default {
                     key: 'operatingUserName'
                 },{
                     title: '满意度',
-                    key: 'scoreType'
+                    key: 'scoreType',
+                    slot:'scoreType'
                 },{
                     title: '评分',
                     key: 'score'
@@ -174,7 +180,8 @@ export default {
         },
         deleteMatter:function(index){
             var self = this;
-            const data = this.windowDatas[index];
+            const data = this.scoreDatas[index];
+            console.log(data);
             this.$Modal.confirm({
                 title:'系统提示',
                 content:'确定要删除该记录吗?',
@@ -188,7 +195,7 @@ export default {
         handleDelete:function(data){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/operating/window/'+data.id,
+                url:self.$constants.BIURL+'/operating/score/'+data.id,
                 method:'DELETE'
             })
             .then(function (response) {

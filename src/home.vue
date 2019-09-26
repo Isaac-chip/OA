@@ -186,7 +186,13 @@
               okText:'确定',
               cancelText:'取消',
               onOk:function(){
-                  self.handleLogOut();
+                //清空token
+                  window.localStorage.setItem('userInfo', {});
+                  self.$constants.access_token = '';
+                  self.$router.push({
+                    path:'/'
+                  });
+                  //self.handleLogOut();
               }
           });
       },

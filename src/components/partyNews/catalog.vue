@@ -26,9 +26,6 @@
         </Col>
         <Col span="18" style="height:100%;overflow-y:scroll">
             <Form ref="catalogRefForm" :model="catalogForm" :rules="catalogRuleValidate" :label-width="80" >
-                <FormItem label="上级栏目">
-                    <Input v-model="catalogName" placeholder="请输入组织名称" />
-                </FormItem>
                 <FormItem label="栏目名称" prop="catalogName">
                     <Input v-model="catalogForm.catalogName" placeholder="请输入栏目名称" />
                 </FormItem>
@@ -197,7 +194,6 @@ export default {
                     var url = self.$constants.BIURL+'/political/catalog';
                     var method = 'POST';
                     if(self.isUpdate){
-                        url = self.$constants.BIURL+'/political/catalog';
                         method='PUT';
                     }
                     self.$http({
