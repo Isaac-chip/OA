@@ -13,7 +13,7 @@
         <Row class="selectHeader" :gutter="16">
             <Col span="12">
                 <div class="orgview">
-                    <Tree show-checkbox @on-check-change="treeCheckClick" class="dept_tree" :data="departmentDatas"></Tree>
+                    <Tree :check-directly="true" show-checkbox @on-check-change="treeCheckClick" class="dept_tree" :data="departmentDatas"></Tree>
                 </div>
             </Col>
             <Col span="12" class="userview" >
@@ -100,6 +100,10 @@ export default {
             default: function prevToThree() {
           
             }
+        },
+        defaultDatas:{
+            type:[Object,Array],
+            default:() =>{}
         }
     },
     data(){
@@ -117,6 +121,11 @@ export default {
             resultDatas:[]
         }
     },
+    watch:{
+        defaultDatas:function(value){
+            this.resultDatas = value;
+        }
+    },
     methods:{
         treeCheckClick:function(obj,item){
             this.current = 1;
@@ -128,11 +137,10 @@ export default {
         loadDepartment:function(){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/education/exam/student/department/list',
+                url:self.$constants.BIURL+'/political/department/findDeptByCode',
                 method:'GET',
                 params:{
-                    objId:self.examSubjectId,
-                    query:self.deptQueryStr
+                    deptCode:self.$constants.userInfo.deptCode
                 }
             })
             .then(function (response) {
@@ -215,7 +223,7 @@ export default {
            var self = this;
            return new Promise(resolve => {
                self.current += 1;
-               if(self.currentPage = self.current){
+               if(self.currentPage == self.current){
                    return;
                }
                self.loadUserByDept(self.deptCode,resolve);

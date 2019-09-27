@@ -81,11 +81,11 @@ axios.interceptors.request.use(config => {
   var url = config.url;
   //如果是登录请求则不需要带token
   if(url.indexOf('oauth/token') == -1){
-    access_token = constants.access_token;
+    access_token = Vue.prototype.$constants.access_token;
     if (access_token ==null || access_token =='') {
       var userInfo =window.localStorage.getItem('userInfo');
       if(userInfo !=null && userInfo!=''){
-        constants.userInfo = JSON.parse(userInfo);
+        Vue.prototype.$constants.userInfo = JSON.parse(userInfo);
         access_token = JSON.parse(userInfo).access_token;
       }
     }

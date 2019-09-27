@@ -83,7 +83,7 @@ export default {
             meetingModal:false,
             meetingCloumns:[
                 {
-                    type: 'index',
+                    key: 'index',
                     width: 70,
                     title:'序号',
                     align: 'center'
@@ -197,10 +197,13 @@ export default {
                 params:self.params
             })
             .then(function (response) {
-                if(response.status ==200){
+                if(response.data.code == 0){
                     var data = response.data;
                     self.meetingDatas = data.data.records;
                     self.dataCount = data.data.total;
+                     self.meetingDatas.forEach((item,index) => {
+                        item["index"]= index + (self.params.current -1)*  self.params.size +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({

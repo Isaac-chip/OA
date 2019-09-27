@@ -165,7 +165,7 @@ export default {
                 width: 60,
                 align: 'center'
             },{
-                type: 'index',
+                key: 'index',
                 width: 70,
                 title:'序号',
                 align: 'center'
@@ -379,10 +379,10 @@ export default {
         loadDepartment:function(){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/department/list',
+                url:self.$constants.BIURL+'/political/department/findDeptByCode',
                 method:'GET',
                 params:{
-                    query:self.deptQueryStr
+                    deptCode:self.$constants.userInfo.deptCode
                 }
             })
             .then(function (response) {
@@ -409,8 +409,8 @@ export default {
         },
         loadPartyInData:function(){
             var self = this;
-            if(!self.signParams.deptId || self.signParams.deptId == null){
-                self.signParams.deptCode = '';
+            if(!self.signParams.deptId =='' || self.signParams.deptId == null){
+                self.signParams.deptCode = self.$constants.userInfo.deptCode;
             }
             self.signParams.tenantId = self.$constants.userInfo.tenantId;
             self.$http({
@@ -422,6 +422,9 @@ export default {
                     var data = response.data;
                     self.partyInDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.partyInDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }).catch(function (error) {
             self.$Message.error({

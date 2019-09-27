@@ -134,6 +134,13 @@
         deep: true
       }
     },
+    created:function(){
+       var userInfo =window.localStorage.getItem('userInfo');
+        if(userInfo !=null && userInfo!=''){
+          this.$constants.userInfo = JSON.parse(userInfo);
+          this.$constants.access_token = JSON.parse(userInfo).access_token;
+        }
+    },
     methods:{
       loadMenus:function(){
           var self = this;

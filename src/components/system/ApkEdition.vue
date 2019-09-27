@@ -126,10 +126,10 @@ export default {
             if(userInfo !=null && userInfo!=''){
                 access_token = JSON.parse(userInfo).access_token;
             }
-            this.uploadHeaders = {
-                'Authorization': "bearer " + access_token
-            };
         }
+        this.uploadHeaders = {
+            'Authorization': "bearer " + access_token
+        };
         this.fileServer = this.$constants.BIURL +'/apkEdition/upload';
     },
     methods:{

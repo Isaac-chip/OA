@@ -108,7 +108,7 @@ export default {
             },
             matterCloumns:[
                 {
-                    type: 'index',
+                    key: 'index',
                     width: 70,
                     title:'序号',
                     align: 'center'
@@ -221,6 +221,9 @@ export default {
                     var data = response.data;
                     self.matterDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.matterDatas.forEach((item,index) => {
+                        item["index"]= index + (self.params.current -1)*  self.params.size +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({

@@ -76,7 +76,7 @@
           <Row>
             <Col span="12">
               <FormItem label="基础分" prop="score">
-                <Input v-model="amListfromValidate.score" type="number" placeholder="请输入基础分"></Input>
+                <Input v-model="amListfromValidate.score" placeholder="请输入基础分"></Input>
               </FormItem>
             </Col>
             <Col span="12">
@@ -97,7 +97,7 @@
             </Col>
             <Col span="12">
               <FormItem label="考核次数" prop="khcs">
-                <Input v-model="amListfromValidate.khcs" type="number" placeholder="请输入考核次数"/>
+                <Input v-model="amListfromValidate.khcs" placeholder="请输入考核次数"/>
               </FormItem>
             </Col>
           </Row>
@@ -113,7 +113,7 @@
             </Col>
             <Col span="12">
               <FormItem label="提醒次数" prop="txcs">
-                <Input v-model="amListfromValidate.txcs" type="number" placeholder="请输入提醒次数"/>
+                <Input v-model="amListfromValidate.txcs"  placeholder="请输入提醒次数"/>
               </FormItem>
             </Col>
           </Row>
@@ -129,7 +129,7 @@
             </Col>
             <Col span="12">
               <FormItem label="预警天数" prop="priorDays">
-                <Input v-model="amListfromValidate.priorDays" type="number" placeholder="请输入提前预警天数"></Input>
+                <Input v-model="amListfromValidate.priorDays" placeholder="请输入提前预警天数"></Input>
               </FormItem>
             </Col>
           </Row>
@@ -165,70 +165,43 @@
           <div v-show="partyCom">
             <div style="margin:0px 28px">
               <div style="margin-bottom:10px">不参加考核党委</div>
-
-              <AutoComplete
-                icon="ios-search"
-                placeholder="请输入党委名称搜索"
-                @on-search="searchPartyOrgs"
-                style="width:300px">
-                <Option v-for="item in partyOrgs" :value="item.dId" :key="item.deptName">{{ item.deptName }}</Option>
-              </AutoComplete>
-              <div style="margin-top:10px">
-                <Tag v-for="item in partyOutOrgs" :key="item.deptId" type="dot" closable color="primary" @on-close="deletePartyOrgs(item)">
-                  {{item.deptName}}
-                </Tag>
-              </div>
-
+              <select-dept
+                :deptType="2"
+                :defaultDatas="partyOutOrgs"
+                :resultSelectDatas ="resultDangWDatas"
+              ></select-dept>
             </div>
           </div>
           <!-- 支部 -->
           <div v-show="partyZb">
             <FormItem label="支部">
-              <CheckboxGroup v-model="checkGroups">
-                <Checkbox label="0">村（社区）党组织</Checkbox>
-                <Checkbox label="1">机关事业单位党组织</Checkbox>
-                <Checkbox label="2">国有企业党组织</Checkbox>
-                <Checkbox label="3">非公有制经济经济和社会党组织</Checkbox>
+              <CheckboxGroup v-model="partyGroups">
+                <Checkbox v-for="(item,index) in deptTypeDatas" :label="item.subKey" :key="index">{{item.subVal}}</Checkbox>
               </CheckboxGroup>
             </FormItem>
 
             <div style="margin:0px 28px">
               <div style="margin-bottom:10px">不参加考核支部</div>
-              <AutoComplete
-                icon="ios-search"
-                placeholder="请输入支部名称搜索"
-                style="width:300px">
-                <Option v-for="item in partyBranchs" :value="item.dId" :key="item.deptName">{{ item.deptName }}</Option>
-              </AutoComplete>
-              <div style="margin-top:10px">
-                <Tag v-for="item in partyOutBranchs" :key="item.deptId" type="dot" closable color="primary"
-                     @on-close="deletePartyOutBranchs(item)">{{item.deptName}}
-                </Tag>
-              </div>
-
+              <select-dept
+                :deptType="1"
+                :resultSelectDatas="resultZhiBDatas"
+                :partyType="partyGroups"
+                :defaultDatas="partyOutBranchs"
+              ></select-dept>
             </div>
           </div>
           <!-- 个人-->
           <div v-show="partyPeople">
             <FormItem label="角色分类">
-              <CheckboxGroup v-model="checkGroups">
+              <CheckboxGroup v-model="roleGroups">
                 <Checkbox v-for="item in roleLists" :key="item.rid" :label="item.rid">{{item.roleName}}</Checkbox>
               </CheckboxGroup>
             </FormItem>
             <div style="margin:0px 28px">
               <div style="margin-bottom:10px">不参加考核用户</div>
-              <AutoComplete
-                icon="ios-search"
-                placeholder="请输入用户姓名搜索"
-                style="width:300px">
-                <Option v-for="item in partyPeoples" :value="item.dId" :key="item.deptName">{{ item.userName }}</Option>
-              </AutoComplete>
-              <div style="margin-top:10px">
-                <Tag v-for="item in partyOutPeoples" :key="item.userName" type="dot" closable color="primary"
-                     @on-close="deletePartyOutPeoples(item)">{{item.userName}}
-                </Tag>
-              </div>
-
+              <select-user
+                :resultSelectDatas="resultPeopleDatas"
+                :defaultDatas="partyOutPeoples"></select-user>
             </div>
           </div>
         </Form>
@@ -253,7 +226,21 @@
 </style>
 
 <script>
+  import SelectDept from '../public/selectDept'
+  import SelectUser from '../public/selectUser'
+
+  const validateSequence = (rule, value, callback) => {
+      if (value === '') {
+            callback(new Error('必填项，不能为空'));
+      } else if (!Number.isInteger(+value)) {
+            callback(new Error('只能输入数字'));
+      }  else {
+            callback();
+      }
+};
+
   export default {
+    components:{SelectDept,SelectUser},
     data () {
       return {
         // 初始化信息总条数
@@ -267,6 +254,9 @@
           title: '',
           fixedType: -1
         },
+        deptTypeDatas:[],
+        partyGroups:[],
+        roleGroups:[],
         partyAmListCloumns: [
           {
             type: 'selection',
@@ -284,11 +274,12 @@
           },
           {
             title: '考核年度',
-            key: 'yearly'
-          },
-          {
-            title: '基础分',
-            key: 'score'
+            key: 'yearly',
+            render: (h, params) => {
+              const row = params.row
+              var text = row.partyAssessmentVo.yearly
+              return h('span', text)
+            }
           },
           {
             title: '考核类型',
@@ -296,7 +287,7 @@
             render: (h, params) => {
               const row = params.row
               var text = '专项考核'
-              switch (row.xtype) {
+              switch (row.partyAssessmentVo.xtype) {
                 case 0:
                   text = '专项考核'
                   break
@@ -314,6 +305,10 @@
           {
             title: '清单标题',
             key: 'title'
+          },
+          {
+            title: '基础分',
+            key: 'score'
           },
           {
             title: '目标要求',
@@ -369,22 +364,22 @@
             {required: true, type: 'date', message: '结束时间不能为空', trigger: 'change'}
           ],
           score: [
-            {required: true, message: '基础分不能为空', trigger: 'blur'}
+            {required: true, validator: validateSequence, trigger: 'blur'}
           ],
           khpl: [
             {required: true, message: '考核评率不能为空', trigger: 'change'}
           ],
           khcs: [
-            {required: true, message: '考核次数不能为空', trigger: 'blur'}
+            {required: true, validator: validateSequence, message: '考核次数不能为空', trigger: 'blur'}
           ],
           txzq: [
             {required: true, message: '提醒周期不能为空', trigger: 'change'}
           ],
           txcs: [
-            {required: true, message: '提醒次数不能为空', trigger: 'blur'}
+            {required: true, validator: validateSequence, message: '提醒次数不能为空', trigger: 'blur'}
           ],
           priorDays: [
-            {required: true, message: '预警天数不能为空', trigger: 'blur'}
+            {required: true, validator: validateSequence, message: '预警天数不能为空', trigger: 'blur'}
           ]
         },
         _modal: {},
@@ -392,11 +387,8 @@
         partyZb: false,
         partyPeople: false,
         checkGroups: ['0'],
-        partyOrgs: [],  //存储搜索出来的党委
         partyOutOrgs: [], //不参加考核的党委
-        partyBranchs: [],  //存储搜索出来的支部
         partyOutBranchs: [], //不参加考核的支部
-        partyPeoples: [], //搜索出来的用户
         partyOutPeoples: [], //不参加考核的用户
         partyAmType: '0' // 考核类型  0 党委  1 支部  2 个人
       }
@@ -418,6 +410,7 @@
             self.partyCom = false
             self.partyZb = true
             self.partyPeople = false
+            self.findDeptType();
             break
           case 2:
             self.partyCom = false
@@ -426,32 +419,45 @@
             self.loadRoles();
             break
         }
-
+      },
+      /**
+       * 不参加考核党委返回结果
+       */
+      resultDangWDatas:function(data){
+          this.partyOutOrgs = data;
+      },
+      resultZhiBDatas:function(data){
+          this.partyOutBranchs = data;
+      },
+      resultPeopleDatas:function(data){
+        this.partyOutPeoples = data;
       },
       /**
        * 根据考核类型查找考核项
        */
       onSearchPartyAm: function (value) {
-        var self = this
-        this.$http({
-          url: this.$constants.BIURL + '/partyAm/findPartyAmByxType?xtype=' + value,
-          method: 'get'
-        }).then(function (response) {
-          if (response.status == 200) {
-            if (response.data.data && response.data.data.length > 0) {
-              self.partyAmDatas = response.data.data
-            } else {
-              self.partyAmDatas = []
+        if(value){
+          var self = this
+          this.$http({
+            url: this.$constants.BIURL + '/partyAm/findPartyAmByxType?xtype=' + value,
+            method: 'get'
+          }).then(function (response) {
+            if (response.status == 200) {
+              if (response.data.data && response.data.data.length > 0) {
+                self.partyAmDatas = response.data.data
+                if(self.isUpdate){
+                  self.amListfromValidate.tpId = self.amListfromValidate.tpId;
+                }
+              } else {
+                self.partyAmDatas = []
+              }
             }
-          }
-        })
+          })
+        }
       },
       onSeach: function () {
         this.current = 1
         this.loadPartyAmDatas()
-      },
-      handleDateChange: function (year) {
-        this.amListfromValidate.yearly = year
       },
       changepage: function (value) {
         this.current = value
@@ -511,9 +517,17 @@
         })
       },
       amObject: function (index) {
-        this.modalPartyAmPeople = true
-        this._modal = this.partyAmListDatas[index]
-        this.loadPartyAmObjectByTopicId(this._modal.oId, this._modal.id)
+        this.modalPartyAmPeople = true;
+        //初始化数据
+        this.partyAmType = '0';
+        this.roleGroups = [];
+        this.partyGroups = [];
+        this.partyOutOrgs = [];
+        this.partyOutBranchs = [];
+        this.partyOutPeoples = [];
+        this._modal = this.partyAmListDatas[index];
+        
+        this.loadPartyAmObjectByTopicId(this._modal.tpId, this._modal.id)
       },
       /**
        * 加载考核对象
@@ -526,17 +540,23 @@
           method: 'get',
           dataType: 'json',
           params: {
-            oId: self._modal.partyAssessmentVo.id,  //考核责任项ID
-            topicId: self._modal.id, //考核明细项ID
+            oId: oid,  //考核责任项ID
+            topicId: topicId, //考核明细项ID
           }
-        })
-          .then(function (response) {
+        }).then(function (response) {
             self.$Loading.finish()
-            if (response.status == 200) {
+            if (response.data.code == 0) {
               var data = response.data.data
               if (data) {
                 if (data.joinObjects) {
-                  self.checkGroups = JSON.parse(data.joinObjects)
+                  if(data.type == 1){
+                      self.partyGroups = data.joinObjects.split(',');
+                  }
+
+                  if(data.typ == 2 ){
+                      self.roleGroups =  data.joinObjects.split(',');
+                  }
+                  
                 }
                 self.typeChange(data.type)
                 self.partyAmType = data.type + ''
@@ -559,21 +579,24 @@
                 }
               }
             }
-          }).catch(function (error) {
-          self.$Loading.error()
-          console.log(error)
-        })
+          })
       },
       update: function (index) {
-        this.amListfromValidate = Object.assign({}, this.partyAmDatas[index])
-        this.amListfromValidate.xtype = this.amListfromValidate.xtype + ''
-        console.log(this.amListfromValidate)
+        this.amListfromValidate = Object.assign({}, this.partyAmListDatas[index])
+        console.log(this.amListfromValidate);
+        //this.amListfromValidate.xtype = this.amListfromValidate.xtype + ''
+        this.amListfromValidate.khpl = this.amListfromValidate.khpl +'';
+        this.amListfromValidate.txzq = this.amListfromValidate.txzq +'';
+        this.amListfromValidate.toNotice = this.amListfromValidate.toNotice+'';
+        this.amListfromValidate.fixedType = this.amListfromValidate.fixedType+'';
+        this.onSearchPartyAm(this.amListfromValidate.fixedType);
+        delete this.amListfromValidate['partyAssessmentVo'];
         this.addPartyAm = true
         this.isUpdate = true
       },
       remove: function (index) {
         var self = this
-        const data = this.partyAmDatas[index]
+        const data = this.partyAmListDatas[index]
 
         this.$Modal.confirm({
           title: '系统提示',
@@ -629,20 +652,23 @@
             title: self.query.title,
             fixedType: self.query.fixedType
           }
-        })
-          .then(function (response) {
+        }).then(function (response) {
             self.$Loading.finish()
             if (response.status == 200) {
               var data = response.data.data
               self.partyAmListDatas = data.records
               self.dataCount = data.total
             }
-          }).catch(function (error) {
-          self.$Loading.error()
-          console.log(error)
-        })
+          })
       },
-      findDepartment: function (type, query, items) {
+      /**
+       * 查找部门
+       * @param type 部门类型
+       * @param size 每页显示记录数
+       * @param query 关键字
+       * @param items 接收的返回对象
+       */
+      findDepartment: function (type,size, query, items) {
         var self = this
         this.$Loading.start()
         self.$http({
@@ -650,6 +676,8 @@
           method: 'get',
           dataType: 'json',
           params: {
+            current:1,
+            size:size,
             deptType: type,
             deptName: query
           }
@@ -661,40 +689,14 @@
               items = data.records
             }
           }).catch(function (error) {
-          self.$Loading.error()
-          console.log(error)
+          self.$Loading.error();
         })
-      },
-      //查找党委
-      searchPartyOrgs: function (value) {
-        this.findDepartment(1, value, this.partyOrgs)
-      },
-      //移除不参加考核的党委
-      deletePartyOrgs: function (item) {
-        this.partyOutOrgs.remove(item)
-      },
-      //查找支部
-      searchPartyOrgs: function (value) {
-        //查找支部
-        this.findDepartment(2, value, self.partyBranchs)
-      },
-      //移除不参加考核的支部
-      deletePartyOrgs: function (item) {
-        this.partyOutBranchs.remove(item)
-      },
-      //查找用户
-      searchPartyPeoples: function () {
-
-      },
-      //移除不参加考核的用户
-      deletePartyOutPeople: function (item) {
-        this.partyOutPeoples.remove(item)
       },
       //保存考核对象
       saveAmObject: function () {
         var self = this
         //要求考核的支部 或者 角色
-        var arrIds = self.checkGroups
+        var arrIds = [];
         //不参加考核的党委、支部、或者个人
         var outArrIds = []
         //处理考核对象
@@ -704,9 +706,11 @@
             outArrIds = self.partyOutOrgs
             break
           case 1:
+            arrIds = self.partyGroups;
             outArrIds = self.partyOutBranchs
             break
           case 2:
+            arrIds = self.roleGroups;
             outArrIds = self.partyOutPeoples
             break
         }
@@ -720,16 +724,18 @@
         if (outArrIds && outArrIds.length > 0) {
           outObjects = JSON.stringify(outArrIds)
         }
+
+        console.log(outObjects);
         //保存数据
         this.$Loading.start()
         self.$http({
           url: self.$constants.BIURL + '/partyAmObject/saveRmObj',
           method: 'post',
           dataType: 'json',
-          params: {
+          data: {
             oid: self._modal.partyAssessmentVo.id,  //考核责任项ID
             topicId: self._modal.id, //考核明细项ID
-            partyAmType: self.partyAmType, //考核类型
+            type: self.partyAmType, //考核类型
             joinObjects: joinObjects, //考核对象
             outObjects: outObjects //不参加考核对象
           }
@@ -758,6 +764,22 @@
           self.$Loading.error()
           console.log(error)
         })
+      },
+      /**查找党组织类型 */
+      findDeptType:function(){
+        var self = this;
+          this.$http({
+              url:self.$constants.BIURL+'/biDictType/findPartyType',
+              method:'GET',
+              dataType:'json'
+          }).then(function (response) {
+             var data = response.data;
+             if(data.code == 0){
+               console.log(data);
+                self.deptTypeDatas = data.data;
+                
+              }
+            })
       },
       loadRoles:function(){
             var self = this;

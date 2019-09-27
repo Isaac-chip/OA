@@ -130,7 +130,7 @@
           },
           {
             title: '创建人',
-            key: 'age'
+            key: 'userName'
           },
           {
             title: '创建时间',

@@ -96,7 +96,7 @@ export default {
             },
             userSignCloumns:[
                 {
-                    type: 'index',
+                    key: 'index',
                     width: 70,
                     title:'序号',
                     align: 'center'
@@ -170,7 +170,7 @@ export default {
             this.loadUserSign();
         },
         onChangePageSize:function(value){
-            this.params.size = value;
+            this.params.pageSize = value;
             this.loadUserSign();
         },
         orgSelect:function(node){
@@ -187,6 +187,9 @@ export default {
             this.loadUserSign();
         },
         searchByQuery:function(){
+            if(this.params.deptId == '' || this.params.deptId == null){
+                this.params.deptCode = this.$constants.userInfo.deptCode;
+            }
             this.loadUserSign();
         },
         loadUserSign:function(){
@@ -202,6 +205,9 @@ export default {
                     var data = response.data;
                     self.userSignDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.userSignDatas.forEach((item,index) => {
+                        item["index"]= index + (self.params.pageNo -1)*  self.params.pageSize +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -227,10 +233,10 @@ export default {
         loadDepartment:function(){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/department/list',
+                url:self.$constants.BIURL+'/political/department/findDeptByCode',
                 method:'GET',
                 params:{
-                    query:self.deptQueryStr
+                    deptCode:self.$constants.userInfo.deptCode
                 }
             })
             .then(function (response) {

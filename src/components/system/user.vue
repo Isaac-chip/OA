@@ -132,7 +132,7 @@ export default {
             isUpdate:false,
             queryStr:'',
             usersCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 70,
                 title:'序号',
                 align: 'center'
@@ -164,6 +164,7 @@ export default {
                 name:'',
                 userType:0,
                 deptId:null,
+                deptCode:'',
                 deptName:null,
                 phone:'',
                 email:'',
@@ -228,6 +229,9 @@ export default {
                     console.log(data);
                     self.usersDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.usersDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -246,6 +250,7 @@ export default {
         orgSelect:function(node){
             this.userForm.deptId = node.did;
             this.userForm.deptName = node.title;
+            this.userForm.deptCode = node.deptCode;
         },
         loadDepartment:function(){
             var self = this;

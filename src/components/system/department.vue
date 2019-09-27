@@ -169,7 +169,7 @@
         },
         deptRuleValidate:{
           parentId:[
-            { required: true, message: '所属组织不能为空', trigger: 'blur' }
+            { required: true,type:'number', message: '所属组织不能为空', trigger: 'blur' }
           ],
           deptName: [
             { required: true, message: '部门名称不能为空', trigger: 'blur' }
@@ -337,10 +337,10 @@
       loadDepartment:function(){
         var self = this;
         self.$http({
-          url:self.$constants.BIURL+'/political/department/list',
+          url:self.$constants.BIURL+'/political/department/findDeptByCode',
           method:'GET',
           params:{
-            query:self.deptQueryStr
+            deptCode:self.$constants.userInfo.deptCode
           }
         })
           .then(function (response) {

@@ -159,6 +159,7 @@ export default {
             console.log(this.uploadHeaders);
         }
         this.fileServer = this.$constants.BIURL +'/political/user/excel/import';
+        this.params.deptCode = this.$constants.userInfo.deptCode;
     },
     methods:{
         changepage:function(value){
@@ -211,6 +212,9 @@ export default {
         },
         loadPartyUsers:function(){
             var self = this;
+            if(this.params.deptCode == null || this.params.deptCode ==''){
+                this.params.deptCode = self.$constants.userInfo.deptCode;
+            }
             self.$http({
                 url:self.$constants.BIURL+'/political/user/list',
                 method:'GET',
@@ -301,10 +305,10 @@ export default {
         loadDepartment:function(){
             var self = this;
             self.$http({
-                url:self.$constants.BIURL+'/political/department/list',
+                url:self.$constants.BIURL+'/political/department/findDeptByCode',
                 method:'GET',
                 params:{
-                    query:self.deptQueryStr
+                    deptCode:self.$constants.userInfo.deptCode
                 }
             })
             .then(function (response) {

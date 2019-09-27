@@ -69,7 +69,7 @@ export default {
             scoreTypeDatas:['很满意','满意','一般','不满意','差'],
             matterCloumns:[
                 {
-                    type: 'index',
+                    key: 'index',
                     width: 70,
                     title:'序号',
                     align: 'center'
@@ -144,6 +144,9 @@ export default {
                     var data = response.data;
                     self.scoreDatas = data.data.records;
                     self.dataCount = data.data.total;
+                     self.scoreDatas.forEach((item,index) => {
+                        item["index"]= index + (self.params.current -1)*  self.params.size +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -169,6 +172,7 @@ export default {
                 if(response.status ==200){
                     var data = response.data;
                     self.windowDatas = data.data.records;
+                    
                 }
             }) .catch(function (error) {
                 self.$Message.error({

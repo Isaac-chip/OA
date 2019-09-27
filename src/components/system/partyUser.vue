@@ -305,6 +305,7 @@ export default {
                 politics:'',
                 officerName:'',
                 minority:'',
+                deptCode:'',
                 sex:'',
                 rybz:'',
                 ryfl:'',
@@ -378,6 +379,7 @@ export default {
          orgSelect:function(node){
             this.partyUserForm.deptId = node.did;
             this.partyUserForm.deptName = node.title;
+            this.partyUserForm.deptCode = node.deptCode;
         },
         loadDepartment:function(){
             var self = this;

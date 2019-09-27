@@ -17,6 +17,7 @@
                                         v-model="WorkLogDto.villageId"
                                         :options="villageDatas"
                                         :max-height="200"
+                                         @select="villageSelect"
                                         noResultsText="没有找到匹配结果"
                                         placeholder="请选择村(社区)..." />
                             </FormItem>
@@ -49,14 +50,14 @@
                             <Icon type="ios-arrow-down"></Icon>
                         </a>
                         <DropdownMenu slot="list">
-                            <DropdownItem name="del" ref="del" :data-index="index">删除</DropdownItem>
-                            <DropdownItem name="detail" ref="detail" :data-index="index">查看详情</DropdownItem>
-                            <DropdownItem name="push" ref="push" :data-index="index">优秀日志推送</DropdownItem>
+                            <DropdownItem :name="'del'+index" :ref="'del'+index" :data-index="index">删除</DropdownItem>
+                            <DropdownItem :name="'detail'+index" :ref="'detail'+index" :data-index="index">查看详情</DropdownItem>
+                            <DropdownItem :name="'push'+index" :ref="'push'+index" :data-index="index">优秀日志推送</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </template>
             </Table>
-            <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
+            <Page :total="dataCount" :page-size="pageSize" show-total @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
 
             <Drawer :closable="false" width="540" v-model="isDetail">
                 <p :style="pStyle">日志详细信息</p>
@@ -196,9 +197,10 @@ export default {
             WorkLogDto:{
                 current:1,
                 size:15,
-                type:1,
+                type:3,
                 logType:3,
                 villageId:null,
+                villageCode:null,
                 query:'',
                 tenantId:'',
                 startDate:'',
@@ -232,6 +234,10 @@ export default {
             this.WorkLogDto.villageId = node.id;
             this.loadWorkLogByQuery();
         },
+        villageSelect:function(node){
+            this.WorkLogDto.villageId = node.id;
+            this.WorkLogDto.villageCode = node.villageCode;
+        },
         searchByQuery:function(){
             this.loadWorkLogByQuery();
         },
@@ -248,19 +254,20 @@ export default {
         loadVillage:function(){
             var self = this;
             self.$http({
-            url:self.$constants.BIURL+'/political/village/list',
+            url:self.$constants.BIURL+'/political/village/findVillageByDeptId',
             method:'GET',
             params:{
-                queryStr:self.queryStr
+                deptId:self.$constants.userInfo.deptId
             }
             }) .then(function (response) {
-                if(response.status ==200){
-                var data = response.data;
-                console.log(data);
-                const arrChange = function(datas){
+                if(response.data.code == 0){
+                    var data = response.data;
+                    if(data){
+                        const arrChange = function(datas){
                         for(var i =0; i<datas.length;i++){
                             var item = datas[i];
-                            if(item.children && item.children.length == 0){
+                            item.label = item.villageName;
+                            if(item.children == null){
                                 delete item.children ;
                             }else{
                                 if(item.children !=null){
@@ -268,40 +275,37 @@ export default {
                                 }
                             }
                         }
-                    };
-                arrChange(data.data);
-                self.villageDatas = data.data;
-                if(self.isUpdate){
-                    self.villageForm.parentId = self.villageForm.parentId;
+                        };
+                        arrChange(data.data);
+                        self.villageDatas = data.data;
+                        if(self.isUpdate){
+                            self.villageForm.parentId = self.villageForm.parentId;
+                        }
+                    }
+                
                 }
-                }
-            }).catch(function (error) {
-            self.$Message.error({
-                content: error.message,
-                duration: 2
-            });
-            console.log(error);
-            });
+            })
         },
         oparHandler:function(name){
            const self = this;
            var index = this.$refs[name].$el.dataset.index;
+           console.log(index);
            var data = this.workLogDatas[index];
+           console.log(data);
            switch(name){
-               case 'del':
-                   self.deleteWorkLog(index);
+               case 'del'+index:
+                   self.deleteWorkLog(data);
                    break;
-                case 'detail':
+                case 'detail'+index:
                    self.loadWorkLogById(data.id);
                    self.isDetail = true;
                     break;
-                case 'push':
+                case 'push'+index:
                     break;
            }
         },
-        deleteWorkLog:function(index){
+        deleteWorkLog:function(data){
             var self = this;
-            const data = this.workLogDatas[index];
             this.$Modal.confirm({
                 title:'系统提示',
                 content:'确定要删除该记录吗?',
@@ -364,6 +368,9 @@ export default {
             self.WorkLogDto.current = self.current;
             self.WorkLogDto.size = self.size;
             self.WorkLogDto.tenantId = self.$constants.userInfo.tenantId;
+            if(self.WorkLogDto.villageId == '' || self.WorkLogDto.villageCode == null){
+                self.WorkLogDto.villageCode = '';
+            }
             self.$http({
                 url:self.$constants.BIURL+'/worklog/findWorkLogByQuery',
                 method:'POST',
@@ -375,17 +382,15 @@ export default {
                     var data = response.data;
                     self.workLogDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.workLogDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
-            }) .catch(function (error) {
-                self.$Message.error({
-                    content: error.message,
-                    duration: 2
-                });
-                console.log(error);
-            });
+            })
         }
     },
     mounted:function(){
+        console.log(this.$constants.userInfo.deptId)
         this.loadVillage();
         this.loadWorkLogByQuery();
     }

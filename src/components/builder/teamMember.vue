@@ -13,6 +13,7 @@
                    <Col span="8">
                         <FormItem label="所属村社区:">
                             <treeselect
+                                    v-model="params.villageId"
                                     :options="villageDatas"
                                     :max-height="200"
                                     @select="orgSearchSelect"
@@ -22,7 +23,7 @@
                    </Col>
                    <Col span="8">
                         <FormItem label="用户名:">
-                        <Input v-model="queryStr" search enter-button @on-search="onSeach" placeholder="输入用户名或者姓名查找" />
+                        <Input v-model="params.query" search enter-button @on-search="onSeach" placeholder="输入用户名或者姓名查找" />
                     </FormItem>
                    </Col>
                </Form>
@@ -34,43 +35,27 @@
                 <Button @click="showUserModal" icon="ios-cloud-upload">导出</Button>
                 </Col>
             </Row>
-            <Table ref="selection" :columns="usersCloumns" :data="usersDatas" :min-height="200">
+            <Table border ref="selection" :columns="usersCloumns" :data="usersDatas" :min-height="200">
                 <template slot-scope="{ row, index }" slot="action">
                     <Button  size="small" style="margin-right: 5px" @click="deleteUser(index)">移除</Button>
                 </template>
             </Table>
-            <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
+            <Page :total="dataCount" :page-size="params.size" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
 
-        <Modal v-model="userModal" title="新增" :footer-hide="true" :mask-closable="false" class="userFrom">
-                <Form ref="userForm" :model="userForm"  :label-width="80"  >
-                    <Row>
-                        <Col span="16">
-                            <FormItem label="所属组织" prop="deptName">
-                                <treeselect 
-                                        v-model="userForm.villageId"
-                                        :options="villageDatas"
-                                        :max-height="200"
-                                        @select="orgSelect"
-                                        noResultsText="没有找到匹配结果"
-                                        placeholder="请选择所属组织..." />
-                            </FormItem>
-                        </Col>
-                    </Row>
-                    <Row style="margin:0px 28px 10px">
-                        <div style="margin:10px 0px">添加工作队员</div>
-                        <Select
-                            v-model="joinPeoples"
-                            filterable
-                            remote
-                            multiple 
-                            :remote-method="loadUser"
-                             placeholder="请输入用户姓名搜索"
-                            :loading="false"
-                            style="width:300px">
-                            <Option v-for="item in peoples" :value="item.userId" :key="item.userId">{{ item.name }}</Option>
-                        </Select>
-                    </Row>
+        <Modal v-model="userModal" title="添加工作队长" :footer-hide="true" :mask-closable="false" class="userFrom">
+                <Form ref="userForm" :model="userForm"  :label-width="80" :rules="userFormValidate" >
+                    <FormItem label="所属组织" prop="villageId">
+                        <treeselect 
+                                v-model="userForm.villageId"
+                                :options="villageDatas"
+                                :max-height="200"
+                                @select="orgSelect"
+                                noResultsText="没有找到匹配结果"
+                                placeholder="请选择所属组织..." />
+                    </FormItem>
+                    <select-user
+                        :resultSelectDatas="resultSelectDatas"></select-user>
                     <Row>
                         <div style="text-align:center">
                             <Button type="primary" @click="addUser('userForm')">提交</Button>
@@ -99,9 +84,10 @@
 
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import SelectUser from '../public/selectUser'
 
 export default {
-    components: { Treeselect },
+    components: { Treeselect,SelectUser},
     data() {
         return {
             // 初始化信息总条数
@@ -116,7 +102,7 @@ export default {
             isUpdate:false,
             queryStr:'',
             usersCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 70,
                 title:'序号',
                 align: 'center'
@@ -145,21 +131,34 @@ export default {
                 userIds:'',
                 type:1
             },
+            params:{
+                current:1,
+                size:15,
+                villageCode:null,
+                query:'',
+                villageId:null,
+                type:1
+            },
             peoples:[],
-            joinPeoples:[]
+            joinPeoples:[],
+            userFormValidate:{
+                villageId :[
+                    {required: true, message: '所属村社区不能为空', trigger: 'change'}
+                ]
+            }
         }
     },
     methods:{
         onSeach:function(){
-            this.current = 1;
+            this.params.current = 1;
             this.loadVillagePeople();
         },
         changepage:function(value){
-            this.current = value;
+            this.params.current = value;
             this.loadVillagePeople();
         },
         onChangePageSize:function(value){
-            this.pageSize = value;
+            this.params.size = value;
             this.loadVillagePeople();
         },
         showUserModal:function(){
@@ -167,19 +166,29 @@ export default {
             this.isUpdate = false;
         },
         orgSearchSelect:function(node){
-            this.villageId = node.id;
+            this.params.villageId = node.id;
+            this.params.villageCode = node.villageCode;
             this.loadVillagePeople();
         },
         orgSelect:function(node){
-            this.userFrom.villageId = node.id;
+            this.userForm.villageId = node.id;
+        },
+        resultSelectDatas:function(data){
+            var self = this;
+            self.joinPeoples = [];
+            if(data){
+                data.forEach(item => {
+                    self.joinPeoples.push(item.userId);
+                });
+            }
         },
         loadVillage:function(){
             var self = this;
             self.$http({
-            url:self.$constants.BIURL+'/political/village/list',
+            url:self.$constants.BIURL+'/political/village/findVillageByDeptId',
             method:'GET',
             params:{
-                queryStr:self.queryStr
+                deptId:self.$constants.userInfo.deptId
             }
             }) .then(function (response) {
                 if(response.status ==200){
@@ -203,67 +212,28 @@ export default {
                     self.villageForm.parentId = self.villageForm.parentId;
                 }
                 }
-            }).catch(function (error) {
-            self.$Message.error({
-                content: error.message,
-                duration: 2
-            });
-            console.log(error);
-            });
+            })
         },
         loadVillagePeople:function(){
             var self = this;
-            self.$http({
-            url:self.$constants.BIURL+'/political/village/people/list',
-            method:'GET',
-            params:{
-                current:self.current,
-                size:self.pageSize,
-                villageId:self.villageId,
-                type:self.type,
-                query:self.queryStr
+            if(self.params.villageId == null || self.params.villageId == ''){
+                self.params.villageCode = '';
             }
+            self.$http({
+                url:self.$constants.BIURL+'/political/village/people/list',
+                method:'GET',
+                params:self.params
             }) .then(function (response) {
                 if(response.status ==200){
                     var data = response.data;
                     self.usersDatas = data.data.records;
                     self.dataCount = data.data.total;
-                }
-            }).catch(function (error) {
-            self.$Message.error({
-                content: error.message,
-                duration: 2
-            });
-            console.log(error);
-            });
-        },
-        loadUser:function(){
-            var self = this;
-            self.$http({
-                url:self.$constants.BIURL+'/user/list',
-                method:'GET',
-                dataType:'json',
-                params:{
-                    current:1,
-                    size:20,
-                    querys:self.queryStr,
-                    tenantId:self.$constants.userInfo.tenantId
+                    self.usersDatas.forEach((item,index) => {
+                        item["index"]= index + (self.params.current -1)*  self.params.size +1
+                    });
                 }
             })
-            .then(function (response) {
-                if(response.status ==200){
-                    var data = response.data;
-                    self.peoples = data.data.records
-                }
-            }) .catch(function (error) {
-                self.$Message.error({
-                    content: error.message,
-                    duration: 2
-                });
-                console.log(error);
-            });
         },
-        /**添加用户 */
         addUser:function(name){
             var self = this;
             if(self.userForm.villageId == '' || self.userForm.villageId ==null) {
@@ -340,7 +310,7 @@ export default {
                 params:{
                     villageId:data.villageId,
                     userId:data.userId,
-                    type:self.type
+                    type:1
                 }
             })
             .then(function (response) {
