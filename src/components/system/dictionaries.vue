@@ -73,7 +73,7 @@
               <div class="left_content" style="display:flex;">
                 <div style="display:flex;width:200px;">
                   <span class="i-icon i-icon-add" @click="add_diag2()"></span>
-                  <span class="i-icon i-icon-edit" @click="edit_diag()"></span>
+                  <span class="i-icon i-icon-edit" @click="edit_diag2()"></span>
                   <span class="i-icon i-icon-delete" @click="del_diag2()"></span>
                   <span class="i-icon i-icon-refresh" @click="refresh()"></span>
                 </div>
@@ -178,7 +178,15 @@
         <Row>
           <FormItem label="备注" prop="memo">
             <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
-            <textarea name id cols="65" rows="5" v-model="deptForm.memo" placeholder style="width:90%;"></textarea>
+            <textarea
+              name
+              id
+              cols="65"
+              rows="5"
+              v-model="deptForm.memo"
+              placeholder
+              style="width:90%;"
+            ></textarea>
           </FormItem>
         </Row>
         <Row>
@@ -305,13 +313,71 @@
         <Row>
           <FormItem label="备注" prop="memo">
             <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
-            <textarea name id cols="65" rows="5" v-model="deptForm2.memo" placeholder></textarea>
+            <textarea name  cols="65" rows="5" v-model="deptForm2.memo" placeholder style="80%;" id="textarea"></textarea>
           </FormItem>
         </Row>
         <Row>
           <div style="text-align:center">
             <Button type="primary" @click="add_commit2()">提交</Button>
             <Button style="margin-left: 8px" @click="deptFormModal2=false">关闭</Button>
+          </div>
+        </Row>
+      </Form>
+    </Modal>
+
+    <!-- 分类选项 编辑模态框 -->
+        <Modal
+      v-model="edit_deptFormModal2"
+      title="编辑分类选项"
+      :footer-hide="true"
+      :mask-closable="false"
+      style="width:600px"
+    >
+      <Form ref="deptForm2" :model="edit_table2_form"  :rules="edit_deptRuleValidate2" :label-width="80">
+        <Row>
+          <!-- <Col span="12">
+            <FormItem label="父类名称" prop="dictName">
+              <Input disabled v-model="deptForm2.dictName" placeholder="请输入父类名称" />
+            </FormItem>
+          </Col> -->
+          <!-- <Col span="12">
+            <FormItem label="序号" prop="orderNo">
+             
+              <InputNumber :max="10000" :min="1" v-model="deptForm2.orderNo" style="width:100%;"></InputNumber>
+            </FormItem>
+          </Col> -->
+        </Row>
+
+        <Row>
+          <Col span="12">
+            <FormItem label="值域" prop="subKey">
+              <Input v-model="edit_table2_form.subKey" placeholder="请输入值域" />
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <!-- <FormItem label="状态" prop="partyType">
+                        <Select v-model="deptForm.partyType" placeholder="请选择状态">
+                            <Option value='0'>启用</Option>
+                            <Option value='1'>禁用</Option>
+                           
+                        </Select>
+            </FormItem>-->
+            <FormItem label="显示值" prop="subVal">
+              <Input v-model="edit_table2_form.subVal" placeholder="请输入显示值" />
+            </FormItem>
+          </Col>
+        </Row>
+
+        <Row>
+          <FormItem label="备注" prop="memo">
+            <!-- <Input v-model="deptForm.memo" placeholder="输入描述" /> -->
+            <textarea name  cols="65" rows="5" v-model="edit_table2_form.memo" placeholder style="80%;" id="textarea"></textarea>
+          </FormItem>
+        </Row>
+        <Row>
+          <div style="text-align:center">
+            <Button type="primary" @click="edit_commit2()">提交</Button>
+            <Button style="margin-left: 8px" @click="edit_deptFormModal2=false">关闭</Button>
           </div>
         </Row>
       </Form>
@@ -334,6 +400,7 @@ export default {
       deptFormModal: false,
       deptFormModal2: false,
       edit_deptFormModal: false,
+      edit_deptFormModal2:false,
       table_line_value: "", //选中表格的单元行数据
       deptForm: {
         dictName: "",
@@ -341,6 +408,14 @@ export default {
         orderNo: "",
         memo: ""
         // tenantId: ""
+      },
+      edit_table2_form: {
+        id: "",
+        dictCode: "",
+        dictId: "",
+        dictName: "",
+        subKey: "",
+        subVal: ""
       },
       deptForm2: {
         //修改分类选项的表单
@@ -359,6 +434,22 @@ export default {
         orderNo: "",
         memo: "",
         showType: ""
+      },
+      edit_deptRuleValidate2:{
+         subKey: [
+          {
+            required: true,
+            message: "值域不能为空",
+            trigger: "blur"
+          }
+        ],
+        subVal: [
+          {
+            required: true,
+            message: "显示值不能为空",
+            trigger: "blur"
+          }
+        ],
       },
       edit_deptRuleValidate: {
         dictName: [
@@ -407,14 +498,7 @@ export default {
           }
         ],
 
-        orderNo: [
-          // {
-          //     required: true,
-          //     // type: "string",
-          //     message: "序号不能为空",
-          //     trigger: "change"
-          // }
-        ]
+        orderNo: []
       },
       deptRuleValidate: {
         dictName: [
@@ -555,6 +639,29 @@ export default {
     };
   },
   methods: {
+    edit_commit2(){
+            this.$http({
+        url: this.$constants.BIURL + "/biDictValue",
+        method: "put",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        data: this.edit_table2_form
+      })
+        .then(res => {
+          this.edit_deptFormModal2 = false;
+          console.log(res);
+          this.load_list();
+          if (res.data.code == 0) {
+            this.$Message.success(res.data.msg);
+          } else {
+            this.$Message.error(res.data.msg || "请求规则列表错误");
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     // 分类选项的表格部分
     del_diag2() {
       if (!this.flag2) {
@@ -839,6 +946,13 @@ export default {
         this.edit_deptForm.id = this.table_line_value.id;
       }
     },
+    edit_diag2() {
+      if (!this.flag2) {
+        this.$Message.error("请点击选择一条记录后操作");
+        // return false;
+      }
+      this.edit_deptFormModal2 = true
+    },
     search() {
       this.flag = false;
       var self = this;
@@ -915,12 +1029,12 @@ export default {
           this.load_list();
           if (res.data.code == 0) {
             this.$Message.success(res.data.msg);
-             this.deptFormModal = false;
-               this.deptForm.dictName = ""
-               this.deptForm.dictCode = ""
-               this.deptForm.orderNo = ""
-               this.deptForm.memo = ""
-               this.deptForm.showType = ""
+            this.deptFormModal = false;
+            this.deptForm.dictName = "";
+            this.deptForm.dictCode = "";
+            this.deptForm.orderNo = "";
+            this.deptForm.memo = "";
+            this.deptForm.showType = "";
           } else {
             this.$Message.error(res.data.msg || "请求规则列表错误");
           }
@@ -1008,7 +1122,7 @@ export default {
       this.pages.size = size;
       this.load_list();
     },
-       changePage2(current) {
+    changePage2(current) {
       // alert(current)
       this.pages2.current = current;
       if (this.flag) {
@@ -1020,7 +1134,6 @@ export default {
         return;
       }
       this.load_list();
-    
     },
     changeSize2(size) {
       this.pages2.size = size;
@@ -1046,7 +1159,6 @@ export default {
       this.deptForm2.dictName = value.dictName;
 
       this.click_get_table_value(this.deptForm2.dictCode);
-
     },
     click_get_table_value(code, pageNo = "1", pageSize = "10") {
       this.$http({
@@ -1087,6 +1199,12 @@ export default {
       console.log(value);
       this.flag2 = true;
       this.cate_id = value.id;
+      this.edit_table2_form.id = value.id
+      this.edit_table2_form.dictCode = value.dictCode
+      this.edit_table2_form.dictId = value.dictId
+      this.edit_table2_form.dictName = value.dictName
+      this.edit_table2_form.subKey = value.subKey
+      this.edit_table2_form.subVal = value.subVal
     },
     show(index) {
       this.$Modal.info({
@@ -1145,5 +1263,8 @@ export default {
 .pageView {
   text-align: right;
   margin-top: 20px;
+}
+#textarea {
+  width: 90%;
 }
 </style>
