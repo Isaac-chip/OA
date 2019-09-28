@@ -259,7 +259,7 @@
         roleGroups:[],
         partyAmListCloumns: [
           {
-            type: 'selection',
+            key: 'index',
             width: 60,
             align: 'center'
           },
@@ -553,8 +553,14 @@
                       self.partyGroups = data.joinObjects.split(',');
                   }
 
-                  if(data.typ == 2 ){
+                  if(data.type == 2 ){
                       self.roleGroups =  data.joinObjects.split(',');
+                      var temp = [];
+                      self.roleGroups.forEach(i=>{
+                          i = parseInt(i);
+                          temp.push(i);
+                      });
+                      self.roleGroups = temp;
                   }
                   
                 }
@@ -658,6 +664,9 @@
               var data = response.data.data
               self.partyAmListDatas = data.records
               self.dataCount = data.total
+              self.partyAmListDatas.forEach((item,index) => {
+                  item["index"]= index + (self.current -1)*  self.pageSize +1
+              });
             }
           })
       },
