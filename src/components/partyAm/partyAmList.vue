@@ -338,7 +338,7 @@
           khcs: '',
           txzq: '',
           txcs: '',
-          toNotice: '',
+          toNotice: '0',
           priorDays: '',
           memo: '',
           toPeoples: {
@@ -472,7 +472,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             self.amListfromValidate.startTime = self.$convertDate(self.amListfromValidate.startTime)
-            self.amListfromValidate.endTime = self.$convertDate(self.amListfromValidate.endTime)
+            self.amListfromValidate.endTime = self.$convertDate(self.amListfromValidate.endTime);
             var url = ''
             if (self.isUpdate) {
               url = self.$constants.BIURL + '/partyAmList/updateRmList'
@@ -707,10 +707,18 @@
             break
           case 1:
             arrIds = self.partyGroups;
+            if(arrIds.length == 0){
+              self.$Message.error('请至少选择一个参加考核的党支部类型!');
+              return ;
+            }
             outArrIds = self.partyOutBranchs
             break
           case 2:
             arrIds = self.roleGroups;
+             if(arrIds.length == 0){
+              self.$Message.error('请至少选择一个参加考核的角色!');
+              return ;
+            }
             outArrIds = self.partyOutPeoples
             break
         }

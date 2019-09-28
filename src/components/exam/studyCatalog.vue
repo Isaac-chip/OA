@@ -19,6 +19,9 @@
                     <Button  size="small" style="margin-right: 5px" @click="updateContent(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteContent(index)">删除</Button>
                 </template>
+                <template slot-scope="{row }" slot="imgtpl">
+                    <img v-if="row.catalogIcon" :src="$constants.PREPATH+row.catalogIcon" style="width:64px;height:64px;margin-top:5px;" />
+                </template>
             </Table>
             <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
@@ -121,7 +124,7 @@ export default {
             },
             contentFilePath:'',
             contentCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 65,
                 title:'序号',
                 align: 'center'
@@ -129,19 +132,7 @@ export default {
                 title: '专题图片',
                 key: 'catalogIcon',
                 width:'100px',
-                render : (h, params) => {
-                    var self = this;
-                    var catalogIcon = params.row.catalogIcon;
-                    return h('img',{
-                        attrs:{
-                            src:self.$constants.PREPATH+catalogIcon
-                        },
-                        style: {
-                            width: '64px',
-                            height:'64px'
-                        }
-                    }) 
-                }
+                slot:'imgtpl'
             },{
                 title: '专题名称',
                 key: 'catalogName',
@@ -233,6 +224,9 @@ export default {
                     console.log(data);
                     self.contentDatas = data.data.records;
                     self.dataCount = data.data.total;
+                     self.contentDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({

@@ -104,7 +104,8 @@ import exportUtils from '@/vendor/export.js'
           size:10,
           startDate:'',
           endDate:'',
-          query:''
+          query:'',
+          deptCode:''
         },
         partyAmDatas: [],
         isUpdate: false,
@@ -177,7 +178,8 @@ import exportUtils from '@/vendor/export.js'
       },
       loadPartyAmDatas: function () {
         var self = this
-        this.$Loading.start()
+        this.$Loading.start();
+        self.params.deptCode = self.$constants.userInfo.deptCode;
         self.$http({
           url: self.$constants.BIURL + '/leaderAm/leadertDetailList',
           method: 'get',

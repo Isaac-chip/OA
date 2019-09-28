@@ -16,6 +16,7 @@
                    <Col span="8">
                         <FormItem label="试卷:">
                             <Select v-model="subjectId">
+                                <Option value="-1">所有试卷</Option>
                                 <Option  v-for="item in examSubjectDatas" :value="item.id" :key="item.id">{{ item.subject }}</Option>
                             </Select>
                         </FormItem>
@@ -47,7 +48,7 @@
                         <Input type="textarea" :autosize="{minRows: 2,maxRows: 4}" v-model="examQuestionForm.question" placeholder="请输入试题内容" />
                     </FormItem>
                      <FormItem label="试题分值" prop="score">
-                        <Input v-model="examQuestionForm.score" placeholder="请输入基础分值" />
+                        <Input type="number" v-model="examQuestionForm.score" placeholder="请输入基础分值" />
                     </FormItem>
                     <div class="questionHeader">
                         <div>试题选项</div>
@@ -65,7 +66,7 @@
                             <div class="w-10"></div>
                             <div class="w-20">{{item.answer}}</div>
                             <div class="w-40"><Input size="small" v-model="item.memo"></Input></div>
-                            <div class="w-20 center"><Checkbox  v-model="item.isRight"></Checkbox></div>
+                            <div class="w-20 center"><Checkbox  v-model="item.isRight" ></Checkbox></div>
                             <div class="w-20 center"><Icon type="md-close" @click="removeOptions(index)" /></div>
                         </div>
                     </div>
@@ -154,7 +155,7 @@ export default {
             queryStr:'',
             examSubjectDatas:[],
             examQuestionCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 70,
                 title:'序号',
                 align: 'center'
@@ -230,6 +231,7 @@ export default {
             this.loadAnswer(data.id);
             this.examQuestionForm = Object.assign({}, data);
             this.examQuestionModal = true;
+            this.isUpdate = true;
         },
         addOptions:function(){
             var length = this.examQuestionOptions.length;
@@ -263,6 +265,9 @@ export default {
                     var data = response.data;
                     self.examQuestionDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.examQuestionDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }).catch(function (error) {
                 self.$Message.error({
@@ -283,6 +288,11 @@ export default {
                 var data = response.data;
                 console.log(data);
                 self.examQuestionOptions = data.data;
+                if(self.examQuestionOptions){
+                    self.examQuestionOptions.forEach(i=>{
+                        delete i.createdDate;
+                    });
+                }
             }).catch(function (error) {
                 self.$Message.error({
                     content: error.message,
@@ -317,6 +327,37 @@ export default {
                 this.$Message.error('试题选项不能为空!');
                 return;
             }
+
+            if(self.examQuestionOptions.length >0){
+                var answerTxt = false;
+                self.examQuestionOptions.forEach(element => {
+                    if(element.memo == '' || element.memo == null){
+                        answerTxt = true;
+                        return;
+                    }
+                });
+
+                if(answerTxt){
+                     this.$Message.error('请输入选项内容!');
+                    return;
+                }
+
+                var isRight = false;
+
+                self.examQuestionOptions.forEach(element => {
+                    if(element.isRight){
+                        isRight = element.isRight;
+                        return;
+                    }
+                });
+
+                //必须要设置一个试题答案
+                if(!isRight){
+                    this.$Message.error('至少需要设置一个试题答案!');
+                    return;
+                }
+            }
+
             self.examQuestionForm.answers = JSON.stringify(self.examQuestionOptions);
             var url = self.$constants.BIURL+'/education/exam/question';
             var method = 'POST';
@@ -339,6 +380,7 @@ export default {
                         }); 
                     }else{
                         self.current = 1;
+                        self.isUpdate = false;
                         self.hideExamModel(name);
                         self.loadExamQuestion();
                         if(self.isUpdate){

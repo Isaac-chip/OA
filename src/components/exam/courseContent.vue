@@ -18,6 +18,9 @@
                     <Button  size="small" style="margin-right: 5px" @click="updateContent(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteContent(index)">删除</Button>
                 </template>
+                <template slot-scope="{row }" slot="imgtpl">
+                    <img v-if="row.titlePic" :src="$constants.PREPATH+row.titlePic" style="width:64px;height:64px;margin-top:5px;" />
+                </template>
             </Table>
             <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
@@ -30,9 +33,9 @@
                      <FormItem label="副标题" prop="subTitle">
                         <Input v-model="courseForm.subTitle" placeholder="请输入副标题" />
                     </FormItem>
-                    <FormItem label="有效日期">
+                    <!-- <FormItem label="有效日期">
                         <DatePicker v-model="courseForm.expiryDate" type="datetime" placeholder="请选择有效日期" ></DatePicker>
-                    </FormItem>
+                    </FormItem> -->
                      <FormItem label="作者">
                         <Input v-model="courseForm.author" placeholder="请输入作者" />
                     </FormItem>
@@ -153,12 +156,13 @@ export default {
             isUpdate:false,
             queryStr:'',
             catalogId:-1,
+            prePath:'',
             editorOption:{
                 height:'400px'
             },
             contentFilePath:'',
             contentCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 65,
                 title:'序号',
                 align: 'center'
@@ -166,19 +170,7 @@ export default {
                 title: '预览图片',
                 key: 'titlePic',
                 width:'120px',
-                render : (h, params) => {
-                    var self = this;
-                    var titlePic = params.row.titlePic;
-                    return h('img',{
-                        attrs:{
-                            src:self.$constants.PREPATH+titlePic
-                        },
-                        style: {
-                            width: '64px',
-                            height:'64px'
-                        }
-                    }) 
-                }
+                slot:'imgtpl'
             },{
                 title: '标题',
                 key: 'title',
@@ -216,7 +208,6 @@ export default {
                 catalogId:null,
                 state:0,
                 title:'',
-                expiryDate:'',
                 author:'',
                 newsfrom:'',
                 content:'',
@@ -274,7 +265,6 @@ export default {
                 catalogId:null,
                 state:0,
                 title:'',
-                expiryDate:'',
                 author:'',
                 newsfrom:'',
                 content:'',
@@ -304,6 +294,9 @@ export default {
                     console.log(data);
                     self.contentDatas = data.data.records;
                     self.dataCount = data.data.total;
+                    self.contentDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -323,7 +316,8 @@ export default {
             this.$refs[name].validate((valid) => {
                 if(valid){
                     self.courseForm.tenantId = self.$constants.userInfo.tenantId;
-                    self.courseForm.expiryDate = self.$convertDate(self.courseForm.expiryDate);
+                    //self.courseForm.expiryDate = self.$convertDate(self.courseForm.expiryDate);
+                    
                     self.courseForm.creatorId = self.$constants.userInfo.userId;
                     var url = self.$constants.BIURL+'/course/content';
                     var method = 'POST';

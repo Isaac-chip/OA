@@ -43,9 +43,9 @@
         <FormItem label="村(社区)名称" prop="villageName">
             <Input v-model="villageForm.villageName" placeholder="请输入村(社区)名称" />
         </FormItem>
-        <FormItem label="村(社区)编号" prop="villageCode">
+        <!-- <FormItem label="村(社区)编号" prop="villageCode">
             <Input v-model="villageForm.villageCode" placeholder="请输入村(社区)编号" />
-        </FormItem>
+        </FormItem> -->
         <Row>
           <FormItem label="所属村社区">
             <treeselect
@@ -72,7 +72,7 @@
         <Row>
             <FormItem label="图片资料" >
                 <div class="demo-upload-list" :key="item.url" v-for="item in uploadList">
-                    <img :src="'http://120.24.51.37/group1/'+item.url">
+                    <img :src="preImagePath+item.url">
                     <div class="demo-upload-list-cover">
                         <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                         <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -86,30 +86,30 @@
                     :max-size="2048"
                     :on-format-error="handleFormatError"
                     :on-exceeded-size="handleMaxSize"
-                    :before-upload="handleBeforeUpload"
+                    :headers="uploadHeaders" 
                     multiple
                     type="drag"
-                    action="http://localhost:9011/file/fileUpload"
+                    :action="filePath"
                     style="display: inline-block;width:58px;">
                     <div style="width: 58px;height:58px;line-height: 58px;">
                         <Icon type="ios-camera" size="20"></Icon>
                     </div>
                 </Upload>
 
-                <Modal title="图片预览" v-model="visible">
-                    <img :src="'http://120.24.51.37/group1/' + imgName + ''" v-if="visible" style="width: 100%">
+                 <Modal title="图片预览" v-model="visible">
+                    <img :src="preImagePath + imgName" v-if="visible" style="width: 100%">
                 </Modal>
             </FormItem>
         </Row>
         <Row>
           <Col span="12">
             <FormItem label="经度" prop="lng">
-              <Input v-model="villageForm.lng" placeholder="请输入经度" />
+              <Input type="number" v-model="villageForm.lng" placeholder="请输入经度" />
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem label="纬度" prop="lat">
-              <Input v-model="villageForm.lat" placeholder="请输入纬度" />
+              <Input type="number" v-model="villageForm.lat" placeholder="请输入纬度" />
             </FormItem>
           </Col>
         </Row>
@@ -118,7 +118,7 @@
             <Input v-model="villageForm.address" placeholder="所在位置" />
           </FormItem>
         </Row>
-        <Row>
+        <!-- <Row>
           <FormItem label="两委班子">
               <Select
                   v-model="twoCommittees"
@@ -147,10 +147,10 @@
                   <Option v-for="item in peoples" :value="item.userId" :key="item.userId">{{ item.name }}</Option>
               </Select>
           </FormItem>
-        </Row>
+        </Row> -->
         <Row>
           <FormItem label="村集体经济收入(单位：万元):" prop="income">
-            <Input v-model="villageForm.income" placeholder="村集体经济收入" />
+            <Input type="number" v-model="villageForm.income" placeholder="村集体经济收入" />
           </FormItem>
         </Row>
         <Row>
@@ -191,6 +191,7 @@
         current:1,
         size:15,
         queryStr:'',
+        isUpdate : false,
         villageFormModal:false,
         props: {
           stripe: false,
@@ -202,7 +203,7 @@
           treeType: true,
           isFold: true,
           expandType: false,
-          selectionType: true
+          selectionType: false
         },
         columns: [
           {
@@ -250,7 +251,8 @@
           tenantId:'',
           twoCommittees:'',
           supervisoryCommittee:'',
-          departments:''
+          departments:'',
+          enclosures:[]
         },
         peoples:[],
         twoCommittees:[],
@@ -268,14 +270,32 @@
         visible: false,
         uploadList: [],
         departmentDatas:[],
-        villagePartys:[]
+        villagePartys:[],
+        filePath:''
       }
     },
+    created:function(){
+        this.filePath = this.$constants.BIURL + '/file/upload';
+        this.setHeaders();
+        this.preImagePath = this.$constants.PREPATH;
+    },
     methods:{
+      setHeaders:function(){
+          var self = this;
+          var access_token = this.$constants.access_token;
+          if(access_token == null || access_token ==''){
+              var userInfo =window.localStorage.getItem('userInfo');
+              if(userInfo !=null && userInfo!=''){
+                  access_token = JSON.parse(userInfo).access_token;
+              }
+          }
+          self.uploadHeaders = {
+              'Authorization': "bearer " + access_token
+          };  
+      },
       showDeptModal:function(){
         this.villageFormModal = true;
         this.isUpdate = false;
-        this.loadDepartment();
       },
       orgSelect:function(node){
         this.villageForm.parentId = node.id;
@@ -313,13 +333,7 @@
                   self.villageForm.parentId = self.villageForm.parentId;
               }
             }
-          }).catch(function (error) {
-          self.$Message.error({
-            content: error.message,
-            duration: 2
-          });
-          console.log(error);
-        });
+          })
       },
       addVillage:function(name){
         var self = this;
@@ -342,16 +356,34 @@
               self.villageForm.supervisoryCommittee = self.supervisoryCommittee.join(',');
             }
 
+            if(self.uploadList && self.uploadList.length > 0){
+               var enclosure = {
+                  attName:'',
+                  attPath:'',
+                  attType:1
+               }
+                self.uploadList.forEach(element => {
+                    enclosure.attName = element.name;
+                    enclosure.attPath = element.url;
+                    self.villageForm.enclosures.push(enclosure);
+                });
+            }
+
+            var method = "POST";
+            if(self.isUpdate){
+                method = "PUT";
+            }
+
             self.villageForm.tenantId = self.$constants.userInfo.tenantId;
             self.$http({
               url:self.$constants.BIURL+'/political/village',
-              method:'POST',
+              method:method,
               dataType:'json',
               data:self.villageForm
             }).then(function (response) {
                 if(response.status ==200){
                   var data = response.data;
-                  self.villageForm.parentId = -1;
+                  self.villageForm.parentId = null;
                   if(data.code == 1){
                     self.$Message.error({
                       content: data.data,
@@ -360,6 +392,9 @@
                   }else{
                     self.current = 1;
                     self.villageFormModal = false;
+                    self.villagePartys = [];
+                    self.uploadList = [];
+                    self.villageForm.parentId = null;
                     self.$refs['villageForm'].resetFields();
                     self.loadVillage();
                     if(self.isUpdate){
@@ -389,7 +424,9 @@
       hideVillageModel:function(name){
         this.$refs[name].resetFields();
         this.villageFormModal = false;
-        this.villageForm.parentId = -1;
+        this.villageForm.parentId = null;
+        this.villagePartys = [];
+        this.uploadList = [];
       },
       loadUser:function(){
             var self = this;
@@ -417,6 +454,38 @@
                 console.log(error);
             });
         },
+        loadVillageById : function(id){
+            var self = this;
+            self.$http({
+                url:self.$constants.BIURL+'/political/village/'+id,
+                method:'GET',
+                dataType:'json',
+            })
+            .then(function (response) {
+                if(response.data.code == 0){
+                    var data = response.data;
+                    self.villageForm = data.data;
+                    //关联的党组织
+                    if(self.villageForm.partyList && self.villageForm.partyList.length >0){
+                        self.villagePartys = [];
+                        self.villageForm.partyList.forEach(i=>{
+                            self.villagePartys.push(i.deptCode);
+                        });
+                    }
+
+                    //关联的附件
+                    if(self.villageForm.enclosures && self.villageForm.enclosures.length >0){
+                        self.uploadList = [];
+                        self.villageForm.enclosures.forEach(i=>{
+                            self.uploadList.push({
+                              name:i.attName,
+                              url:i.attPath
+                            });
+                        });
+                    }
+                }
+            })
+        },
       updateVillage:function(data){
           this.isUpdate = true;
           this.villageForm = Object.assign({}, data);
@@ -424,6 +493,8 @@
               this.villageForm.parentId = null;
           }
           this.villageFormModal = true;
+
+          this.loadVillageById(this.villageForm.id);
       },
       deleteVillage:function(data){
           var self = this;
@@ -493,7 +564,6 @@
       handleSuccess :function(response, file, fileList){
             var data = response.data;
             if(data){
-                this.villageForm.villagePic = data.filePath;
                 this.uploadList.push({
                     'name':data.name,
                     'url':data.filePath
@@ -519,15 +589,11 @@
                 title: '系统提示',
                 content: '上传的图片文件不能超过4M.'
             });
-        },
-        handleBeforeUpload () {
-            const check = this.uploadList.length < 1;
-            return check;
         }
-
     },
     mounted:function(){
       this.loadVillage();
+      this.loadDepartment();
     }
   }
 </script>

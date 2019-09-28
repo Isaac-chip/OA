@@ -19,6 +19,9 @@
                     <Button  size="small" style="margin-right: 5px" @click="updateContent(index)">修改</Button>
                     <Button  size="small" style="margin-right: 5px" @click="deleteContent(index)">删除</Button>
                 </template>
+                 <template slot-scope="{row }" slot="imgtpl">
+                    <img v-if="row.titlePic" :src="$constants.PREPATH+row.titlePic" style="width:64px;height:64px;margin-top:5px;" />
+                </template>
             </Table>
             <Page :total="dataCount" :page-size="pageSize" show-total show-sizer @on-change="changepage" @on-page-size-change="onChangePageSize" class="pageView"></Page>
         </div>
@@ -154,7 +157,7 @@ export default {
             },
             contentFilePath:'',
             contentCloumns:[{
-                type: 'index',
+                key: 'index',
                 width: 65,
                 title:'序号',
                 align: 'center'
@@ -162,19 +165,7 @@ export default {
                 title: '预览图片',
                 key: 'titlePic',
                 width:'120px',
-                render : (h, params) => {
-                    var self = this;
-                    var titlePic = params.row.titlePic;
-                    return h('img',{
-                        attrs:{
-                            src:self.$constants.PREPATH+titlePic
-                        },
-                        style: {
-                            width: '64px',
-                            height:'64px'
-                        }
-                    }) 
-                }
+                slot:'imgtpl'
             },{
                 title: '标题',
                 key: 'title',
@@ -185,7 +176,8 @@ export default {
                 width:'220px'
             },{
                 title: '创建时间',
-                key: 'creatTs',
+                key: 'createTs',
+                 width:'180px'
             },{
                  title: '置顶',
                 key: 'isTop',
@@ -302,6 +294,9 @@ export default {
                     console.log(data);
                     self.contentDatas = data.data.records;
                     self.dataCount = data.data.total;
+                     self.contentDatas.forEach((item,index) => {
+                        item["index"]= index + (self.current -1)*  self.pageSize +1
+                    });
                 }
             }) .catch(function (error) {
                 self.$Message.error({
@@ -349,6 +344,7 @@ export default {
                                 self.current = 1;
                                 self.contentModal = false;
                                 self.$refs['studyContentForm'].resetFields();
+                                self.uploadList = [];
                                 self.clearForm();
                                 self.loadContents();
                                 if(self.isUpdate){

@@ -82,12 +82,12 @@
               </Col>
               <Col span="16">
                 <div class="table_content">
-                  <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" placeholder="填写退回原因"></Input>
+                  <Input type="textarea" :disabled="resultDetail.reportState == '1'" :autosize="{minRows: 3,maxRows: 5}" placeholder="填写退回原因"></Input>
                 </div>
               </Col>
             </Row>
             <Row style="margin-left:250px;margin-top:20px;">
-              <Button type="primary" style="margin-right: 5px">退回</Button>
+              <Button v-show="resultDetail.reportState != '1'" type="primary" style="margin-right: 5px" @click="undo">退回</Button>
               <Button type="error" to="/partyAm/partyLeaderResult">关闭</Button>
             </Row>
           </Col>
@@ -189,6 +189,7 @@
           totalScore: '',
           reportTime: '',
           reportTitle: '',
+          reportState:'',
           enclosures:[]
         }
       }
@@ -213,6 +214,29 @@
               self.resultDetail = data;
             }
           })
+      },
+      undo:function(){
+        var id = this.$route.query.id;
+         this.$Modal.confirm({
+          title: '系统提示',
+          content: '确定要回退该记录吗?',
+          okText: '确定',
+          cancelText: '取消',
+          onOk: function () {
+            self.handleSubmit(id);
+          }
+        })
+      },
+      handleSubmit:function(id){
+        var self = this
+        self.$http({
+          url: self.$constants.BIURL + '/leaderAm/undo/' + id,
+          method: 'GET'
+        }).then(function (response) {
+            if (response.data.code = 0) {
+                resultDetail.reportState = '1';
+            }
+        })
       }
 
     },
