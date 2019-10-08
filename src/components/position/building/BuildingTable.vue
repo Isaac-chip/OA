@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{records}}
+    
     <Table border :columns="columns" :loading="ruleLoading" :data="records">
      
       <template slot-scope="{ row }" slot="createdDate">{{ row.createdDate | modifyTimeFilter }}</template>
